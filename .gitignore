@@ -1,0 +1,22 @@
+# Python virtual environment
+venv/
+.env
+
+# VSCode
+.vscode/
+
+# Cache
+__pycache__/
+*.pyc
+.cache/
+.claude/
+.docker/
+.npm/
+.ollama/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# model files, model can be downloaded at https://huggingface.co/Norm11/qwen2.5-3b-grpo-hotpotqa/tree/main
+model/grpo_rag

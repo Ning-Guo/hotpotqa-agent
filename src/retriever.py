@@ -1,0 +1,106 @@
+# src/retriever.py
+"""
+FAISS-backed dense retriever using cosine similarity.
+
+Supports save/load of the FAISS index so subsequent runs skip the encoding step.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+
+import faiss
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+
+class Retriever:
+    """
+    Each paragraph is indexed as "<title>\n<text>".
+
+    Parameters
+    ----------
+    paragraphs      : list of {"title": str, "text": str} dicts
+    embedding_model : SentenceTransformer model name
+    """
+
+    def __init__(self, paragraphs: list[dict], embedding_model: str = "all-MiniLM-L6-v2"):
+        self.paragraphs  = paragraphs
+        self.texts       = [f"{p['title']}\n{p['text']}" for p in paragraphs]
+        self.embed_model = SentenceTransformer(embedding_model)
+
+        print(f"Building FAISS index over {len(self.texts):,} paragraphs...")
+        embeddings = self.embed_model.encode(
+            self.texts,
+            convert_to_numpy=True,
+            show_progress_bar=True,
+            batch_size=256,
+        ).astype(np.float32)
+
+        faiss.normalize_L2(embeddings)
+        self.index = faiss.IndexFlatIP(embeddings.shape[1])
+        self.index.add(embeddings)
+
+    # ------------------------------------------------------------------
+    # Retrieval
+    # ------------------------------------------------------------------
+
+    def retrieve(self, query: str, top_k: int = 5) -> list[str]:
+        """Returns paragraph text strings."""
+        return [p["text"] for p in self._search(query, top_k)]
+
+    def retrieve_with_meta(self, query: str, top_k: int = 5) -> list[dict]:
+        """Returns full paragraph dicts (title, text)."""
+        return self._search(query, top_k)
+
+    def _search(self, query: str, top_k: int) -> list[dict]:
+        q_vec = self.embed_model.encode([query], convert_to_numpy=True).astype(np.float32)
+        faiss.normalize_L2(q_vec)
+        _, indices = self.index.search(q_vec, min(top_k, len(self.paragraphs)))
+        return [self.paragraphs[i] for i in indices[0]]
+
+    # ------------------------------------------------------------------
+    # Save / load (skip re-encoding on repeated runs)
+    # ------------------------------------------------------------------
+
+    def save(self, index_path: str, corpus_path: str) -> None:
+        """Save FAISS index and corpus to disk."""
+        os.makedirs(os.path.dirname(index_path), exist_ok=True)
+        faiss.write_index(self.index, index_path)
+        with open(corpus_path, "w") as f:
+            for p in self.paragraphs:
+                f.write(json.dumps(p) + "\n")
+        print(f"Saved index → {index_path}")
+        print(f"Saved corpus → {corpus_path}")
+
+    @classmethod
+    def load(cls, index_path: str, corpus_path: str, embedding_model: str = "all-MiniLM-L6-v2"):
+        """
+        Load a pre-built FAISS index from disk. Much faster than re-encoding.
+        """
+        with open(corpus_path) as f:
+            paragraphs = [json.loads(line) for line in f if line.strip()]
+
+        obj = cls.__new__(cls)
+        obj.paragraphs  = paragraphs
+        obj.texts       = [f"{p['title']}\n{p['text']}" for p in paragraphs]
+        obj.embed_model = SentenceTransformer(embedding_model)
+        obj.index       = faiss.read_index(index_path)
+        print(f"Loaded FAISS index ({len(paragraphs):,} paragraphs) from {index_path}")
+        return obj
+
+
+# ---------------------------------------------------------------------------
+# Union retrieval helper (shared by graph nodes)
+# ---------------------------------------------------------------------------
+
+def union_retrieve(retriever: Retriever, queries: list[str], top_k: int) -> list[dict]:
+    """Retrieve for each query and merge results, deduped by title."""
+    seen, results = set(), []
+    for q in queries:
+        for p in retriever.retrieve_with_meta(q, top_k=top_k):
+            if p["title"] not in seen:
+                seen.add(p["title"])
+                results.append(p)
+    return results
