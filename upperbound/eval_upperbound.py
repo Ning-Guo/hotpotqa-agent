@@ -236,15 +236,15 @@ def main():
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
-    if args.output is None:
-        slug = args.model.replace("/", "_").replace("-", "_").lower()
-        args.output = os.path.join(RESULTS_DIR, f"eval_{slug}_rag.json")
-
     # Load data
     eval_items = load_jsonl(args.eval)
     if args.n:
         eval_items = eval_items[:args.n]
     print(f"Loaded {len(eval_items)} eval items from {args.eval}")
+
+    if args.output is None:
+        slug = args.model.replace("/", "_").replace("-", "_").lower()
+        args.output = os.path.join(RESULTS_DIR, f"eval_{slug}_n{len(eval_items)}_rag.json")
 
     # Load retriever
     if args.load_index:
@@ -285,4 +285,6 @@ def main():
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.set_start_method("spawn", force=True)
     main()
