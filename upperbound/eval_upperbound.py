@@ -104,6 +104,10 @@ class LargeModel:
             print("vLLM not installed — falling back to HuggingFace transformers (slow).")
             print("Install vLLM for GPU batch inference:  pip install vllm")
             self._load_hf(tensor_parallel_size)
+        except Exception as e:
+            print(f"vLLM failed to initialize ({e}).")
+            print("Falling back to HuggingFace transformers...")
+            self._load_hf(tensor_parallel_size)
 
     def _load_hf(self, _tensor_parallel_size: int):
         import torch
