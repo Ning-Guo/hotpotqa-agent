@@ -257,10 +257,11 @@ def make_answer_final_node(model, tokenizer, device: str, reasoner: "Reasoner"):
 
 _YES_NO = {"yes", "no", "true", "false"}
 
+
 def make_verify_node(threshold: float = 0.3):
     """
-    Deterministic faithfulness check: fraction of answer tokens present in
-    retrieved context. Retries only when answer is almost entirely ungrounded.
+    Token-overlap faithfulness check: fraction of answer tokens present in
+    retrieved context. Retries only when the answer is almost entirely ungrounded.
 
     For yes/no answers, token-overlap is meaningless ("yes"/"no" never appear
     in Wikipedia passages). Instead we check entity coverage: do the retrieved
@@ -284,13 +285,14 @@ def make_verify_node(threshold: float = 0.3):
         if set(pred_tokens) <= _YES_NO:
             entities = re.findall(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b', state["question"])
             if not entities:
-                return {"verified": True}  # no named entities to check against
+                return {"verified": True}
             covered = sum(1 for e in entities if e.lower() in context_text)
             return {"verified": covered / len(entities) >= 0.5}
 
         context_tokens = set(_normalize(context_text).split())
         grounded = sum(1 for t in pred_tokens if t in context_tokens)
         return {"verified": grounded / len(pred_tokens) >= threshold}
+
     return verify
 
 
@@ -411,10 +413,11 @@ def make_web_search_node(top_k: int = 3):
             # Full corpus miss: use only web passages to avoid noise
             combined = new_passages if new_passages else state["retrieved"]
         return {
-            "retrieved":      combined,
-            "queries_used":   state["queries_used"] + [f"[wiki] {state['question']}"],
-            "retrieval_mode": "web_search",
-            "retry_count":    state["retry_count"] + 1,
+            "retrieved":          combined,
+            "queries_used":       state["queries_used"] + [f"[wiki] {state['question']}"],
+            "retrieval_mode":     "web_search",
+            "retry_count":        state["retry_count"] + 1,
+            "uncovered_entities": [],  # cleared — web search has handled them
         }
     return web_search
 
@@ -474,14 +477,14 @@ def _extract_entities_from_queries(queries: list) -> list:
 def should_retry(state: QAState) -> str:
     if state["verified"]:
         return "end"
-    # Some entities were missing from corpus — go directly to web search
-    if state.get("uncovered_entities"):
+    if state["retry_count"] >= 2:
+        return "end"
+    # Entities missing from corpus — skip local retry, go straight to web search
+    if state.get("uncovered_entities") and state["retry_count"] == 0:
         return "web_retry"
     if state["retry_count"] == 0:
         return "local_retry"
-    if state["retry_count"] == 1:
-        return "web_retry"
-    return "end"
+    return "web_retry"  # retry_count == 1
 
 
 # ---------------------------------------------------------------------------

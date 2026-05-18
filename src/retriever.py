@@ -3,6 +3,10 @@
 FAISS-backed dense retriever using cosine similarity.
 
 Supports save/load of the FAISS index so subsequent runs skip the encoding step.
+
+Note: A BM25 hybrid (RRF fusion) was evaluated and reverted — see README
+section "Experiments That Did Not Help" for the full ablation results and
+reasoning.
 """
 
 from __future__ import annotations
@@ -25,7 +29,7 @@ class Retriever:
     embedding_model : SentenceTransformer model name
     """
 
-    def __init__(self, paragraphs: list[dict], embedding_model: str = "all-MiniLM-L6-v2"):
+    def __init__(self, paragraphs: list, embedding_model: str = "all-MiniLM-L6-v2"):
         self.paragraphs  = paragraphs
         self.texts       = [f"{p['title']}\n{p['text']}" for p in paragraphs]
         self.embed_model = SentenceTransformer(embedding_model)
@@ -46,15 +50,15 @@ class Retriever:
     # Retrieval
     # ------------------------------------------------------------------
 
-    def retrieve(self, query: str, top_k: int = 5) -> list[str]:
+    def retrieve(self, query: str, top_k: int = 5) -> list:
         """Returns paragraph text strings."""
         return [p["text"] for p in self._search(query, top_k)]
 
-    def retrieve_with_meta(self, query: str, top_k: int = 5) -> list[dict]:
+    def retrieve_with_meta(self, query: str, top_k: int = 5) -> list:
         """Returns full paragraph dicts (title, text)."""
         return self._search(query, top_k)
 
-    def _search(self, query: str, top_k: int) -> list[dict]:
+    def _search(self, query: str, top_k: int) -> list:
         q_vec = self.embed_model.encode([query], convert_to_numpy=True).astype(np.float32)
         faiss.normalize_L2(q_vec)
         _, indices = self.index.search(q_vec, min(top_k, len(self.paragraphs)))
@@ -95,7 +99,7 @@ class Retriever:
 # Union retrieval helper (shared by graph nodes)
 # ---------------------------------------------------------------------------
 
-def union_retrieve(retriever: Retriever, queries: list[str], top_k: int) -> list[dict]:
+def union_retrieve(retriever: Retriever, queries: list, top_k: int) -> list:
     """Retrieve for each query and merge results, deduped by title."""
     seen, results = set(), []
     for q in queries:

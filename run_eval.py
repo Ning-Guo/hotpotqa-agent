@@ -7,7 +7,7 @@ Computes EM, F1, context recall, answer coverage, and faithfulness.
 Saves per-item results + summary to results/eval_live.json.
 
 Usage:
-    python3 run_eval.py                    # full 200-question eval
+    python3 run_eval.py                    # full 500-question eval
     python3 run_eval.py --n 20             # quick smoke test (first 20 questions)
     python3 run_eval.py --load-index       # skip FAISS rebuild
 """
@@ -56,7 +56,7 @@ def main():
                         help="Evaluate only first N questions (for quick testing)")
     parser.add_argument("--load-index", action="store_true",
                         help="Load pre-built FAISS index from config.INDEX_PATH")
-    parser.add_argument("--output",     default=os.path.join(RESULTS_DIR, "eval_live.json"))
+    parser.add_argument("--output",    default=os.path.join(RESULTS_DIR, "eval_live.json"))
     args = parser.parse_args()
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
