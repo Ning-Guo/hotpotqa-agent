@@ -33,6 +33,10 @@ import json
 import os
 import sys
 
+# Must be set before vLLM is imported — vLLM v1 forks its EngineCore process
+# and CUDA cannot be re-initialized in a forked subprocess on Linux.
+os.environ.setdefault("VLLM_WORKER_MULTIPROC_METHOD", "spawn")
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tqdm import tqdm
@@ -285,6 +289,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import multiprocessing
-    multiprocessing.set_start_method("spawn", force=True)
     main()
