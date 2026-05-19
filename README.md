@@ -4,9 +4,24 @@ A live inference multi-hop QA agent built on **LangGraph** and **Qwen2.5-3B-Inst
 evaluated on the HotpotQA benchmark. The agent classifies, decomposes, retrieves,
 and answers every question entirely at inference time — no pre-computed artifacts.
 
-The GRPO-trained 3B agent achieves **EM=0.574** on 500 HotpotQA questions,
-**outperforming a 32B model doing simple RAG (EM=0.554)**, while achieving
-significantly higher context recall (0.887 vs 0.748).
+## Versions
+
+### v1 — Agent + MiniLM + Gradio UI
+Core agentic pipeline with multi-hop decomposition, GRPO answer synthesis, and
+a local Gradio demo UI with real-time reasoning steps.
+
+- **EM=0.504**, F1=0.584, ctx_recall=0.794 (500 questions, `all-MiniLM-L6-v2`)
+- Outperforms simple RAG at the same model size by +4.6pp EM
+- Milestones: LangGraph pipeline, GRPO adapter, Wikipedia fallback, Gradio UI
+
+### v2 — BGE embedding upgrade
+Swapped retrieval embedding from `all-MiniLM-L6-v2` to `BAAI/bge-base-en-v1.5`,
+a model trained specifically for asymmetric QA retrieval.
+
+- **EM=0.574**, F1=0.660, ctx_recall=0.887 (500 questions, `BAAI/bge-base-en-v1.5`)
+- +7.0pp EM and +9.3pp ctx_recall over v1 — retrieval was the primary bottleneck
+- Note: the upper/lower bound baselines (14B, 32B) were evaluated with MiniLM
+  embeddings and are not directly comparable to the v2 number
 
 > Full experiment results, design decisions, and future plans: [Analysis.md](Analysis.md)
 
@@ -174,19 +189,28 @@ python upperbound/eval_upperbound.py \
 
 ## Results Summary
 
+**v1 — MiniLM embeddings** (upper/lower bounds use same embedding for fair comparison)
+
 | System | EM | F1 | ctx_recall |
 |---|---|---|---|
 | 3B Base + RAG (lower bound) | 0.458 | 0.541 | 0.748 |
 | 3B GRPO + RAG only | 0.468 | 0.552 | 0.748 |
-| 3B GRPO + Agent (MiniLM) | 0.504 | 0.584 | 0.794 |
+| **3B GRPO + Agent (v1)** | **0.504** | **0.584** | **0.794** |
 | 14B Base + RAG | 0.544 | 0.649 | 0.748 |
 | 32B Base + RAG | 0.554 | 0.656 | 0.748 |
-| **3B GRPO + Agent (BGE)** | **0.574** | **0.660** | **0.887** |
 
-The BGE embedding upgrade (+7pp EM, +9.3pp ctx_recall) pushed the 3B agent past
-the 32B RAG baseline. Better retrieval was the primary bottleneck — the agent
-design and GRPO training were already effective; the embedding model was the
-limiting factor.
+The v1 agent closes most of the gap to 32B RAG with a 3B model. GRPO training
+adds +1pp EM; the multi-hop agent design adds +3.6pp.
+
+**v2 — BGE embeddings** (embedding upgrade, upper/lower bounds not re-run)
+
+| System | EM | F1 | ctx_recall |
+|---|---|---|---|
+| **3B GRPO + Agent (v2)** | **0.574** | **0.660** | **0.887** |
+
++7.0pp EM and +9.3pp ctx_recall over v1. The BGE model was trained for
+asymmetric QA retrieval (short query → long passage), which matches this task
+exactly. Retrieval was the primary bottleneck in v1.
 
 See [Analysis.md](Analysis.md) for full run-by-run results, ablation studies,
 design decisions, and the future improvement plan.
