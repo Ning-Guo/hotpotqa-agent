@@ -30,9 +30,15 @@ class Retriever:
     """
 
     def __init__(self, paragraphs: list, embedding_model: str = "all-MiniLM-L6-v2"):
-        self.paragraphs  = paragraphs
-        self.texts       = [f"{p['title']}\n{p['text']}" for p in paragraphs]
-        self.embed_model = SentenceTransformer(embedding_model)
+        self.paragraphs   = paragraphs
+        self.texts        = [f"{p['title']}\n{p['text']}" for p in paragraphs]
+        self.embed_model  = SentenceTransformer(embedding_model)
+        # BGE models require a task prefix on queries (not on documents)
+        self._query_prefix = (
+            "Represent this sentence for searching relevant passages: "
+            if embedding_model.startswith("BAAI/bge")
+            else ""
+        )
 
         print(f"Building FAISS index over {len(self.texts):,} paragraphs...")
         embeddings = self.embed_model.encode(
@@ -59,10 +65,17 @@ class Retriever:
         return self._search(query, top_k)
 
     def _search(self, query: str, top_k: int) -> list:
-        q_vec = self.embed_model.encode([query], convert_to_numpy=True).astype(np.float32)
+        q_vec = self.embed_model.encode(
+            [self._query_prefix + query], convert_to_numpy=True
+        ).astype(np.float32)
         faiss.normalize_L2(q_vec)
-        _, indices = self.index.search(q_vec, min(top_k, len(self.paragraphs)))
-        return [self.paragraphs[i] for i in indices[0]]
+        scores, indices = self.index.search(q_vec, min(top_k, len(self.paragraphs)))
+        results = []
+        for score, idx in zip(scores[0], indices[0]):
+            p = dict(self.paragraphs[idx])   # copy — don't mutate original
+            p["score"] = round(float(score), 4)
+            results.append(p)
+        return results
 
     # ------------------------------------------------------------------
     # Save / load (skip re-encoding on repeated runs)
@@ -87,10 +100,15 @@ class Retriever:
             paragraphs = [json.loads(line) for line in f if line.strip()]
 
         obj = cls.__new__(cls)
-        obj.paragraphs  = paragraphs
-        obj.texts       = [f"{p['title']}\n{p['text']}" for p in paragraphs]
-        obj.embed_model = SentenceTransformer(embedding_model)
-        obj.index       = faiss.read_index(index_path)
+        obj.paragraphs    = paragraphs
+        obj.texts         = [f"{p['title']}\n{p['text']}" for p in paragraphs]
+        obj.embed_model   = SentenceTransformer(embedding_model)
+        obj.index         = faiss.read_index(index_path)
+        obj._query_prefix = (
+            "Represent this sentence for searching relevant passages: "
+            if embedding_model.startswith("BAAI/bge")
+            else ""
+        )
         print(f"Loaded FAISS index ({len(paragraphs):,} paragraphs) from {index_path}")
         return obj
 

@@ -204,6 +204,35 @@ check entity coverage: do the retrieved passages mention at least 50% of the
 named entities from the question? If yes, the retrieval is considered valid and
 the yes/no answer is trusted.
 
+### 2.7 Embedding model upgrade: all-MiniLM-L6-v2 → BAAI/bge-base-en-v1.5
+
+**Problem**: `all-MiniLM-L6-v2` (22M params) was trained for symmetric sentence
+similarity, not asymmetric question→passage retrieval. Short factual queries
+produced mediocre similarity scores against long Wikipedia paragraphs, causing
+relevant passages to rank below irrelevant ones.
+
+**Root cause**: MiniLM was distilled on general sentence pairs. It does not
+model the asymmetric relationship "does this paragraph answer this question?"
+BGE-base was trained with contrastive learning on QA pairs with hard negatives,
+explicitly targeting this use case.
+
+**Fix**: Swapped embedding model to `BAAI/bge-base-en-v1.5` (109M params, BERT-base).
+Added query-time prefix `"Represent this sentence for searching relevant passages: "`
+required by BGE for query encoding (documents are encoded without prefix).
+The prefix is applied automatically in `Retriever._search()` when the model
+name starts with `BAAI/bge`.
+
+**Expected impact**: ~11pp NDCG@10 improvement on BEIR retrieval benchmarks.
+Higher ctx_recall and ans_coverage, translating to better final answer quality.
+
+| | all-MiniLM-L6-v2 | BAAI/bge-base-en-v1.5 |
+|---|---|---|
+| Parameters | 22M | 109M |
+| BEIR avg NDCG@10 | ~42 | ~53 |
+| Optimised for | Symmetric similarity | Asymmetric QA retrieval |
+| Query prefix required | No | Yes |
+| Index size (500q corpus) | ~90MB | ~440MB |
+
 ---
 
 ## 3. Bugs Fixed
@@ -466,6 +495,86 @@ Context recall is unchanged — GRPO only affects answer generation, not retriev
 6. **Bridge benefits most from the agent (+6.4pp over base 3B RAG)** —
    decomposition is most valuable for multi-hop chains. Comparison questions
    favour larger models due to stronger language understanding.
+
+---
+
+### Run 7 — BGE embedding upgrade (500 questions)
+
+> Swapped embedding model from `all-MiniLM-L6-v2` (22M) to `BAAI/bge-base-en-v1.5`
+> (109M). All other settings identical to Run 5. Index rebuilt from scratch.
+
+| Metric | Value |
+|---|---|
+| Exact Match | 0.5740 |
+| Token F1 | 0.6603 |
+| Context Recall | 0.8870 |
+| Ans Coverage | 0.9060 |
+| Faithfulness | 0.8887 |
+
+| Type | EM | F1 | n |
+|---|---|---|---|
+| bridge | 0.5746 | 0.6661 | 409 |
+| comparison | 0.5714 | 0.6344 | 91 |
+
+| Level | EM | F1 | n |
+|---|---|---|---|
+| easy | 0.6162 | 0.7093 | 99 |
+| medium | 0.6058 | 0.6746 | 312 |
+| hard | 0.4157 | 0.5557 | 89 |
+
+| Stat | Value |
+|---|---|
+| Verified (first attempt) | 490 / 500 (98.0%) |
+| Retried | 15 / 500 (3.0%) |
+| Web search triggered | 10 / 500 (2.0%) |
+
+**Delta vs Run 5 (MiniLM baseline):**
+
+| Metric | MiniLM | BGE | Delta |
+|---|---|---|---|
+| EM | 0.5040 | **0.5740** | **+7.0pp** |
+| F1 | 0.5842 | **0.6603** | **+7.6pp** |
+| ctx_recall | 0.7940 | **0.8870** | **+9.3pp** |
+| ans_coverage | 0.8120 | **0.9060** | **+9.4pp** |
+| Bridge EM | 0.4817 | **0.5746** | **+9.3pp** |
+| Comparison EM | **0.6044** | 0.5714 | -3.3pp |
+| Hard EM | 0.3483 | **0.4157** | **+6.7pp** |
+
+**Analysis:**
+
+1. **ctx_recall is the main driver** — jumping from 0.794 to 0.887 confirms that
+   retrieval quality was the primary bottleneck. BGE was trained for asymmetric
+   QA retrieval (short query → long passage), which exactly matches our use case.
+
+2. **Bridge benefits enormously (+9.3pp)** — bridge questions require finding the
+   right passage given a specific entity-focused sub-query. BGE's hard-negative
+   training makes it much better at this.
+
+3. **Comparison drops slightly (-3.3pp)** — possible cause: BGE retrieves more
+   passages that are superficially relevant but contain conflicting entity
+   mentions, adding noise to the comparison synthesis step. The comparison path
+   retrieves via `union_retrieve` across multiple rewritten queries — higher
+   precision per query may paradoxically introduce more noise when merged.
+
+4. **Hard questions gain +6.7pp** — harder questions require finding less obvious
+   passages. BGE's stronger semantic understanding handles these cases better.
+
+5. **3B GRPO Agent now exceeds 32B RAG (0.574 vs 0.554)** — a GRPO-trained 3B
+   model with multi-hop decomposition and BGE retrieval outperforms a model
+   nearly 11× larger doing simple single-query retrieval.
+
+---
+
+### Updated Full Ablation Table (n=500)
+
+| System | Model | Embedding | Strategy | EM | F1 | ctx_recall |
+|---|---|---|---|---|---|---|
+| Lower bound | Qwen2.5-3B | MiniLM | Simple RAG | 0.4580 | 0.5408 | 0.748 |
+| GRPO RAG-only | Qwen2.5-3B | MiniLM | Simple RAG | 0.4680 | 0.5515 | 0.748 |
+| Agent v1 | Qwen2.5-3B | MiniLM | Multi-hop agent | 0.5040 | 0.5842 | 0.794 |
+| Upper bound | Qwen2.5-14B | MiniLM | Simple RAG | 0.5440 | 0.6486 | 0.748 |
+| Upper bound | Qwen2.5-32B | MiniLM | Simple RAG | 0.5540 | 0.6556 | 0.748 |
+| **Agent v2 (ours)** | **Qwen2.5-3B** | **BGE-base** | **Multi-hop agent** | **0.5740** | **0.6603** | **0.887** |
 
 ---
 

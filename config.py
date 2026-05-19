@@ -26,6 +26,6 @@ REASONING_MAX_TOKENS = 48   # classification / decomposition outputs are shorter
 # ---------------------------------------------------------------------------
 # Retrieval
 # ---------------------------------------------------------------------------
-EMBEDDING_MODEL        = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL        = "BAAI/bge-base-en-v1.5"
 TOP_K                  = 5    # passages per sub-query
 FAITHFULNESS_THRESHOLD = 0.3  # verify: fraction of answer tokens in context

@@ -4,9 +4,9 @@ A live inference multi-hop QA agent built on **LangGraph** and **Qwen2.5-3B-Inst
 evaluated on the HotpotQA benchmark. The agent classifies, decomposes, retrieves,
 and answers every question entirely at inference time — no pre-computed artifacts.
 
-The GRPO-trained 3B agent achieves **EM=0.504** on 500 HotpotQA questions,
-closing most of the gap to a 32B model doing simple RAG (EM=0.554), while
-achieving higher context recall (0.794 vs 0.748).
+The GRPO-trained 3B agent achieves **EM=0.574** on 500 HotpotQA questions,
+**outperforming a 32B model doing simple RAG (EM=0.554)**, while achieving
+significantly higher context recall (0.887 vs 0.748).
 
 > Full experiment results, design decisions, and future plans: [Analysis.md](Analysis.md)
 
@@ -72,8 +72,9 @@ Wikipedia web search.
 
 ### Retriever
 
-FAISS dense index with `all-MiniLM-L6-v2` embeddings. Each paragraph is
+FAISS dense index with `BAAI/bge-base-en-v1.5` embeddings. Each paragraph is
 encoded as `"<title>\n<text>"` and indexed with `IndexFlatIP` (cosine similarity).
+BGE uses a query-time prefix for asymmetric QA retrieval.
 
 ---
 
@@ -95,6 +96,7 @@ hotpotqa-agent/
 ├── upperbound/
 │   ├── eval_upperbound.py  Evaluate large models (14B/32B) as RAG-only baseline
 │   └── README.md           Hardware guide for GPU eval
+├── serve.py                Local demo UI (Gradio) with real-time reasoning steps
 ├── run_agent.py            CLI demo: single question
 ├── run_eval.py             Batch evaluation over grpo_val.jsonl
 ├── debug_agent.py          Step-by-step trace of a single question
@@ -115,6 +117,21 @@ Set your adapter path in `config.py`:
 ```python
 GRPO_ADAPTER_REPO = "your-hf-username/your-adapter-repo"  # or local path
 ```
+
+### Local demo UI
+
+Start a Gradio web app at `http://localhost:7860` (branch local-ui) with real-time reasoning steps,
+context passages, and keyword highlighting:
+
+```bash
+python serve.py                # builds FAISS index on first run
+python serve.py --load-index   # reuse saved index (faster start)
+python serve.py --port 8080    # custom port
+```
+
+The UI shows each agent step as it happens (classify → decompose → retrieve →
+answer → verify), highlights query keywords in retrieved passages, and labels
+whether context came from the inner vector database or Wikipedia web search.
 
 ### Run a single question
 
@@ -161,12 +178,15 @@ python upperbound/eval_upperbound.py \
 |---|---|---|---|
 | 3B Base + RAG (lower bound) | 0.458 | 0.541 | 0.748 |
 | 3B GRPO + RAG only | 0.468 | 0.552 | 0.748 |
-| **3B GRPO + Agent (ours)** | **0.504** | **0.584** | **0.794** |
+| 3B GRPO + Agent (MiniLM) | 0.504 | 0.584 | 0.794 |
 | 14B Base + RAG | 0.544 | 0.649 | 0.748 |
 | 32B Base + RAG | 0.554 | 0.656 | 0.748 |
+| **3B GRPO + Agent (BGE)** | **0.574** | **0.660** | **0.887** |
 
-The agent's multi-hop decomposition achieves the best context recall across all
-model sizes. GRPO training adds +1pp EM; the agent design adds +3.6pp.
+The BGE embedding upgrade (+7pp EM, +9.3pp ctx_recall) pushed the 3B agent past
+the 32B RAG baseline. Better retrieval was the primary bottleneck — the agent
+design and GRPO training were already effective; the embedding model was the
+limiting factor.
 
 See [Analysis.md](Analysis.md) for full run-by-run results, ablation studies,
 design decisions, and the future improvement plan.
