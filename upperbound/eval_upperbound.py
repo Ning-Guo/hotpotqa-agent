@@ -81,8 +81,9 @@ class LargeModel:
     HuggingFace fallback processes one prompt at a time (much slower).
     """
 
-    def __init__(self, model_name: str, tensor_parallel_size: int = 1):
+    def __init__(self, model_name: str, tensor_parallel_size: int = 1, adapter: str = None):
         self.model_name = model_name
+        self._adapter   = adapter
         self._backend   = None
         self._load(tensor_parallel_size)
 
@@ -113,11 +114,17 @@ class LargeModel:
         import torch
         from transformers import AutoTokenizer, AutoModelForCausalLM
         self._hf_tok = AutoTokenizer.from_pretrained(self.model_name)
-        self._hf_mdl = AutoModelForCausalLM.from_pretrained(
+        base = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype=torch.bfloat16,
             device_map="auto",
         )
+        if self._adapter:
+            from peft import PeftModel
+            print(f"Loading GRPO adapter from '{self._adapter}'...")
+            self._hf_mdl = PeftModel.from_pretrained(base, self._adapter)
+        else:
+            self._hf_mdl = base
         self._hf_mdl.eval()
         self._backend = "hf"
         print("HuggingFace backend ready.")
@@ -234,6 +241,8 @@ def main():
                         help="Load pre-built FAISS index from config.INDEX_PATH")
     parser.add_argument("--tensor-parallel", type=int, default=1,
                         help="Number of GPUs for tensor parallelism (vLLM only)")
+    parser.add_argument("--adapter",         default=None,
+                        help="HF repo ID or local path to a LoRA adapter (e.g. GRPO)")
     parser.add_argument("--output",          default=None,
                         help="Output JSON path (auto-named if omitted)")
     args = parser.parse_args()
@@ -247,8 +256,9 @@ def main():
     print(f"Loaded {len(eval_items)} eval items from {args.eval}")
 
     if args.output is None:
-        slug = args.model.replace("/", "_").replace("-", "_").lower()
-        args.output = os.path.join(RESULTS_DIR, f"eval_{slug}_n{len(eval_items)}_rag.json")
+        slug    = args.model.replace("/", "_").replace("-", "_").lower()
+        adapter = "_grpo" if args.adapter else ""
+        args.output = os.path.join(RESULTS_DIR, f"eval_{slug}{adapter}_n{len(eval_items)}_rag.json")
 
     # Load retriever
     if args.load_index:
@@ -259,7 +269,7 @@ def main():
         retriever.save(config.INDEX_PATH, config.CORPUS_PATH)
 
     # Load model
-    model = LargeModel(args.model, tensor_parallel_size=args.tensor_parallel)
+    model = LargeModel(args.model, tensor_parallel_size=args.tensor_parallel, adapter=args.adapter)
 
     # Run eval
     results = run_rag(eval_items, retriever, model, args.top_k)
