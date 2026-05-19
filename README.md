@@ -811,3 +811,85 @@ HotpotQA-style (question, passage, short-answer) triples.
   in one shot — our structured decomposition adds overhead without benefit at scale.
 - **`pipeline` >> `direct` for large model**: Structured reasoning helps even
   strong models, validating the architectural approach.
+
+
+
+
+
+
+
+
+============================================================
+  LIVE AGENT EVAL  |  n=500  top-k=5
+============================================================
+  Exact Match    : 0.5040   (prior best: 0.5450)
+  Token F1       : 0.5842   (prior best: 0.6200)
+  Context Recall : 0.7940
+  Ans Coverage   : 0.8120
+  Faithfulness   : 0.8859
+
+  Verified       : 493/500
+  Retried        : 18/500
+  Web search     : 13/500
+
+  By question type:
+    bridge         EM=0.4817  F1=0.5699  (n=409)
+    comparison     EM=0.6044  F1=0.6487  (n=91)
+============================================================
+
+=================================================================
+  UPPER BOUND (RAG-only)  |  Qwen/Qwen2.5-32B-Instruct
+  n=500  top-k=5
+=================================================================
+  Exact Match    : 0.5540   (agent baseline: 0.5600)
+  Token F1       : 0.6556   (agent baseline: 0.6751)
+  Context Recall : 0.7480
+  Ans Coverage   : 0.7060
+
+  By question type:
+    bridge         EM=0.5257  F1=0.6296  (n=409)
+    comparison     EM=0.6813  F1=0.7725  (n=91)
+
+  By difficulty:
+    easy           EM=0.6465  F1=0.7460  (n=99)
+    hard           EM=0.3933  F1=0.5582  (n=89)
+    medium         EM=0.5705  F1=0.6548  (n=312)
+=================================================================
+
+=================================================================
+  UPPER BOUND (RAG-only)  |  Qwen/Qwen2.5-14B-Instruct
+  n=500  top-k=5
+=================================================================
+  Exact Match    : 0.5440   (agent baseline: 0.5600)
+  Token F1       : 0.6486   (agent baseline: 0.6751)
+  Context Recall : 0.7480
+  Ans Coverage   : 0.7060
+
+  By question type:
+    bridge         EM=0.5208  F1=0.6263  (n=409)
+    comparison     EM=0.6484  F1=0.7488  (n=91)
+
+  By difficulty:
+    easy           EM=0.6465  F1=0.7463  (n=99)
+    hard           EM=0.4607  F1=0.5924  (n=89)
+    medium         EM=0.5353  F1=0.6336  (n=312)
+=================================================================
+
+=================================================================
+  LOWER BOUND (RAG-only)  |  Qwen/Qwen2.5-3B-Instruct
+  n=500  top-k=5
+=================================================================
+  Exact Match    : 0.4580   (agent baseline: 0.5600)
+  Token F1       : 0.5408   (agent baseline: 0.6751)
+  Context Recall : 0.7480
+  Ans Coverage   : 0.7060
+
+  By question type:
+    bridge         EM=0.4181  F1=0.5042  (n=409)
+    comparison     EM=0.6374  F1=0.7057  (n=91)
+
+  By difficulty:
+    easy           EM=0.6162  F1=0.7061  (n=99)
+    hard           EM=0.3146  F1=0.4295  (n=89)
+    medium         EM=0.4487  F1=0.5202  (n=312)
+=================================================================

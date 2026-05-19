@@ -111,19 +111,11 @@ class LargeModel:
 
     def _load_hf(self, _tensor_parallel_size: int):
         import torch
-        from transformers import (
-            AutoTokenizer,
-            AutoModelForCausalLM,
-            BitsAndBytesConfig,
-        )
-        quant = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-        )
+        from transformers import AutoTokenizer, AutoModelForCausalLM
         self._hf_tok = AutoTokenizer.from_pretrained(self.model_name)
         self._hf_mdl = AutoModelForCausalLM.from_pretrained(
             self.model_name,
-            quantization_config=quant,
+            torch_dtype=torch.bfloat16,
             device_map="auto",
         )
         self._hf_mdl.eval()
@@ -218,6 +210,10 @@ def run_rag(items: list, retriever: Retriever, model: LargeModel, top_k: int) ->
             "ctx_precision":  None,
             "ans_coverage":   answer_coverage(retrieved, item["answer"]),
             "faithfulness":   faithfulness(pred, retrieved),
+            "entailment":     None,
+            "contradiction":  None,
+            "neutral":        None,
+            "outcome":        None,
         })
     return results
 
