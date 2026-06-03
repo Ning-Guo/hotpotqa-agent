@@ -137,11 +137,13 @@ def main():
 
     # ── Trainer ───────────────────────────────────────────────────────────
     # Use DataCollatorForCompletionOnlyLM to compute loss only on
-    # the assistant turn (not on the user prompt).
-    # The response template marks where the assistant turn begins.
-    response_template = "<|im_start|>assistant\n"
+    # the assistant turn. Pass token IDs (not string) to avoid context-
+    # dependent tokenization mismatches with Qwen chat template.
+    response_template_ids = tokenizer.encode(
+        "<|im_start|>assistant\n", add_special_tokens=False
+    )
     collator = DataCollatorForCompletionOnlyLM(
-        response_template=response_template,
+        response_template=response_template_ids,
         tokenizer=tokenizer,
     )
 
