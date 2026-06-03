@@ -93,6 +93,7 @@ def main():
     print(f"  {len(dataset):,} training examples")
     print(f"  Bridge:     {sum(1 for x in dataset if x['type'] == 'bridge'):,}")
     print(f"  Comparison: {sum(1 for x in dataset if x['type'] == 'comparison'):,}")
+    dataset = dataset.remove_columns(["type"])
 
     # ── Load base model ───────────────────────────────────────────────────
     print(f"Loading base model: {args.base_model}")
@@ -131,7 +132,6 @@ def main():
         save_total_limit=2,
         report_to="none",
         dataloader_num_workers=2,
-        remove_unused_columns=False,
         max_seq_length=args.max_seq_len,
     )
 
