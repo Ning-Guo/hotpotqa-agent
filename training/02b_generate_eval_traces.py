@@ -44,7 +44,7 @@ from training.utils.format import (
     is_circular_sub_q1,
 )
 from training.utils.metrics import normalize_answer, exact_match
-from training.02_generate_sft_data import (
+from training.utils.inference import (
     BRIDGE_TEMPLATE, COMPARISON_TEMPLATE,
     run_api_inference, run_local_inference,
 )

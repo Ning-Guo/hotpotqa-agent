@@ -1,0 +1,21 @@
+# Training pipeline dependencies
+# Install with: pip install -r training/requirements.txt
+
+# Core ML
+torch>=2.1.0
+transformers>=4.47.0
+datasets>=2.18.0
+peft>=0.9.0
+trl>=0.15.0
+accelerate>=0.28.0
+
+# Data
+tqdm
+numpy
+
+# Optional: API-based teacher inference
+openai>=1.0.0
+
+# Optional: Flash Attention 2 (significant speedup on A100/H100)
+# Requires CUDA >= 11.8 and GCC >= 9.3
+# pip install flash-attn --no-build-isolation

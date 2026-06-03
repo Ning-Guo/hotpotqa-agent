@@ -135,13 +135,18 @@ def main():
 
     # ── Load SFT-merged model ─────────────────────────────────────────────
     print(f"Loading model: {args.base_model}")
-    model = AutoModelForCausalLM.from_pretrained(
-        args.base_model,
+    model_kwargs = dict(
         torch_dtype=torch.bfloat16,
         device_map="auto",
         trust_remote_code=True,
-        attn_implementation="flash_attention_2",   # comment out if not installed
     )
+    try:
+        import flash_attn  # noqa: F401
+        model_kwargs["attn_implementation"] = "flash_attention_2"
+        print("  Using Flash Attention 2")
+    except ImportError:
+        print("  flash-attn not found, using default attention")
+    model = AutoModelForCausalLM.from_pretrained(args.base_model, **model_kwargs)
 
     # ── LoRA config (fresh adapter on top of SFT-merged model) ────────────
     lora_config = LoraConfig(
