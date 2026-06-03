@@ -30,8 +30,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 from datasets import Dataset
 from peft import LoraConfig, get_peft_model, TaskType
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from trl import SFTTrainer, SFTConfig, DataCollatorForCompletionOnlyLM
+from transformers import AutoModelForCausalLM, AutoTokenizer, DataCollatorForSeq2Seq
+from trl import SFTTrainer, SFTConfig
 
 import training.config as cfg
 from training.utils.format import build_user_prompt
@@ -41,26 +41,49 @@ from training.utils.format import build_user_prompt
 # Dataset preparation
 # ---------------------------------------------------------------------------
 
-def load_sft_dataset(path: str, tokenizer) -> Dataset:
-    """Load clean SFT data and format as chat conversations."""
+def load_sft_dataset(path: str, tokenizer, max_seq_len: int) -> Dataset:
+    """
+    Load clean SFT data and tokenize with labels.
+    Labels are -100 for the system+user prompt tokens (no loss),
+    and the actual token IDs for the assistant turn (loss computed here).
+    This is more reliable than DataCollatorForCompletionOnlyLM for Qwen2.5.
+    """
     with open(path) as f:
         records = [json.loads(l) for l in f if l.strip()]
 
-    def to_chat(record):
+    rows = []
+    for record in records:
         user_msg = build_user_prompt(record["question"], record["passages"])
-        asst_msg = record["completion"]  # already <think>...<answer>...</answer>
-        # Apply tokenizer chat template
-        messages = [
-            {"role": "user",      "content": user_msg},
-            {"role": "assistant", "content": asst_msg},
-        ]
-        text = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=False
-        )
-        return {"text": text, "type": record["type"]}
+        asst_msg = record["completion"]
 
-    formatted = [to_chat(r) for r in records]
-    return Dataset.from_list(formatted)
+        # Tokenize prompt only (to find where assistant turn starts)
+        prompt_text = tokenizer.apply_chat_template(
+            [{"role": "user", "content": user_msg}],
+            tokenize=False, add_generation_prompt=True,
+        )
+        # Tokenize full conversation
+        full_text = tokenizer.apply_chat_template(
+            [{"role": "user", "content": user_msg},
+             {"role": "assistant", "content": asst_msg}],
+            tokenize=False, add_generation_prompt=False,
+        )
+
+        prompt_ids = tokenizer(prompt_text, add_special_tokens=False)["input_ids"]
+        full_enc   = tokenizer(full_text,   add_special_tokens=False,
+                               truncation=True, max_length=max_seq_len)
+        input_ids  = full_enc["input_ids"]
+
+        prompt_len = len(prompt_ids)
+        labels = [-100] * prompt_len + input_ids[prompt_len:]
+        labels = labels[:len(input_ids)]   # in case of truncation
+
+        rows.append({
+            "input_ids":      input_ids,
+            "attention_mask": full_enc["attention_mask"],
+            "labels":         labels,
+        })
+
+    return Dataset.from_list(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -89,11 +112,8 @@ def main():
 
     # ── Load dataset ──────────────────────────────────────────────────────
     print(f"Loading SFT data: {args.input}")
-    dataset = load_sft_dataset(args.input, tokenizer)
+    dataset = load_sft_dataset(args.input, tokenizer, args.max_seq_len)
     print(f"  {len(dataset):,} training examples")
-    print(f"  Bridge:     {sum(1 for x in dataset if x['type'] == 'bridge'):,}")
-    print(f"  Comparison: {sum(1 for x in dataset if x['type'] == 'comparison'):,}")
-    dataset = dataset.remove_columns(["type"])
 
     # ── Load base model ───────────────────────────────────────────────────
     print(f"Loading base model: {args.base_model}")
@@ -132,19 +152,16 @@ def main():
         save_total_limit=2,
         report_to="none",
         dataloader_num_workers=2,
-        max_seq_length=args.max_seq_len,
     )
 
     # ── Trainer ───────────────────────────────────────────────────────────
-    # Use DataCollatorForCompletionOnlyLM to compute loss only on
-    # the assistant turn. Pass token IDs (not string) to avoid context-
-    # dependent tokenization mismatches with Qwen chat template.
-    response_template_ids = tokenizer.encode(
-        "<|im_start|>assistant\n", add_special_tokens=False
-    )
-    collator = DataCollatorForCompletionOnlyLM(
-        response_template=response_template_ids,
+    # Labels are pre-computed in load_sft_dataset (-100 for prompt tokens).
+    # DataCollatorForSeq2Seq handles padding, respecting -100 in labels.
+    collator = DataCollatorForSeq2Seq(
         tokenizer=tokenizer,
+        model=model,
+        padding=True,
+        label_pad_token_id=-100,
     )
 
     trainer = SFTTrainer(
