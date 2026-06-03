@@ -138,7 +138,7 @@ def run_vllm_inference(prompts: list[str], model_name: str,
         model=model_name,
         dtype="bfloat16",
         trust_remote_code=True,
-        max_model_len=2048,
+        max_model_len=4096,
     )
     sampling_params = SamplingParams(temperature=0.0, max_tokens=max_new_tokens)
 
