@@ -49,7 +49,7 @@ from training.utils.format import (
 )
 from training.utils.inference import (
     BRIDGE_TEMPLATE, COMPARISON_TEMPLATE, INSUFFICIENT_TEMPLATE,
-    run_api_inference, run_local_inference,
+    run_api_inference, run_local_inference, run_vllm_inference,
 )
 from training.utils.metrics import normalize_answer, exact_match
 
@@ -133,9 +133,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input",      default=cfg.SFT_SOURCE_PATH)
     parser.add_argument("--output",     default=cfg.SFT_CLEAN_PATH)
+    parser.add_argument("--vllm",       action="store_true",
+                        help="Use vLLM backend (fastest, recommended for A100)")
     parser.add_argument("--local",      action="store_true",
-                        help="Use local teacher model instead of API")
-    parser.add_argument("--batch-size", type=int, default=4)
+                        help="Use HuggingFace transformers backend (fallback)")
+    parser.add_argument("--batch-size", type=int, default=64,
+                        help="Batch size (default 64 for vLLM, use 4-8 for --local)")
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--resume",     action="store_true",
                         help="Skip already-generated examples (resume interrupted run)")
@@ -164,7 +167,13 @@ def main():
     prompts = [build_teacher_prompt(ex) for ex in examples]
 
     # Run inference
-    if args.local:
+    if args.vllm:
+        completions = run_vllm_inference(
+            prompts, cfg.TEACHER_MODEL,
+            batch_size=args.batch_size,
+            max_new_tokens=args.max_tokens,
+        )
+    elif args.local:
         completions = run_local_inference(
             prompts, cfg.TEACHER_MODEL,
             batch_size=args.batch_size,
@@ -172,8 +181,8 @@ def main():
         )
     else:
         if not cfg.TEACHER_API_BASE:
-            sys.exit("ERROR: Set TEACHER_API_BASE / TEACHER_API_KEY / TEACHER_API_MODEL "
-                     "or use --local flag.")
+            sys.exit("ERROR: Set TEACHER_API_BASE / TEACHER_API_KEY / TEACHER_API_MODEL, "
+                     "or use --vllm / --local flag.")
         print(f"Using API: {cfg.TEACHER_API_MODEL} @ {cfg.TEACHER_API_BASE}")
         completions = run_api_inference(
             prompts, cfg.TEACHER_API_MODEL,

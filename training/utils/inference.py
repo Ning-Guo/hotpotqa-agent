@@ -124,10 +124,37 @@ def run_api_inference(prompts: list[str], model: str, base_url: str,
     return results
 
 
+def run_vllm_inference(prompts: list[str], model_name: str,
+                       batch_size: int = 64,
+                       max_new_tokens: int = 512) -> list[str]:
+    """Fast batched inference using vLLM (recommended for A100/large models).
+    Install: pip install vllm
+    """
+    from vllm import LLM, SamplingParams
+    from tqdm import tqdm
+
+    print(f"Loading teacher model with vLLM: {model_name}")
+    llm = LLM(
+        model=model_name,
+        dtype="bfloat16",
+        trust_remote_code=True,
+        max_model_len=2048,
+    )
+    sampling_params = SamplingParams(temperature=0.0, max_tokens=max_new_tokens)
+
+    results = []
+    for i in tqdm(range(0, len(prompts), batch_size), desc="Teacher inference (vLLM)"):
+        batch = prompts[i:i + batch_size]
+        outputs = llm.generate(batch, sampling_params)
+        for out in outputs:
+            results.append(out.outputs[0].text.strip())
+    return results
+
+
 def run_local_inference(prompts: list[str], model_name: str,
                         batch_size: int = 4,
                         max_new_tokens: int = 512) -> list[str]:
-    """Local model inference — device_map=auto handles single or multi-GPU."""
+    """Local model inference via HuggingFace transformers (fallback if vLLM unavailable)."""
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from tqdm import tqdm
