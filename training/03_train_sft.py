@@ -30,8 +30,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 from datasets import Dataset
 from peft import LoraConfig, get_peft_model, TaskType
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from trl import SFTTrainer, SFTConfig, DataCollatorForCompletionOnlyLM
 
 import training.config as cfg
 from training.utils.format import build_user_prompt
@@ -117,7 +117,7 @@ def main():
     model.print_trainable_parameters()
 
     # ── Training arguments ────────────────────────────────────────────────
-    training_args = TrainingArguments(
+    training_args = SFTConfig(
         output_dir=args.output,
         num_train_epochs=args.epochs,
         per_device_train_batch_size=args.batch_size,
@@ -132,6 +132,7 @@ def main():
         report_to="none",
         dataloader_num_workers=2,
         remove_unused_columns=False,
+        max_seq_length=args.max_seq_len,
     )
 
     # ── Trainer ───────────────────────────────────────────────────────────
@@ -149,9 +150,7 @@ def main():
         args=training_args,
         train_dataset=dataset,
         data_collator=collator,
-        dataset_text_field="text",
-        max_seq_length=args.max_seq_len,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
     )
 
     # ── Train ─────────────────────────────────────────────────────────────
