@@ -30,8 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 from datasets import Dataset
 from peft import LoraConfig, get_peft_model, TaskType
-from transformers import AutoModelForCausalLM, AutoTokenizer, DataCollatorForSeq2Seq
-from trl import SFTTrainer, SFTConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, DataCollatorForSeq2Seq, Trainer, TrainingArguments
 
 import training.config as cfg
 from training.utils.format import build_user_prompt
@@ -138,7 +137,7 @@ def main():
     model.print_trainable_parameters()
 
     # ── Training arguments ────────────────────────────────────────────────
-    training_args = SFTConfig(
+    training_args = TrainingArguments(
         output_dir=args.output,
         num_train_epochs=args.epochs,
         per_device_train_batch_size=args.batch_size,
@@ -152,11 +151,12 @@ def main():
         save_total_limit=2,
         report_to="none",
         dataloader_num_workers=2,
+        remove_unused_columns=False,
     )
 
     # ── Trainer ───────────────────────────────────────────────────────────
     # Labels are pre-computed in load_sft_dataset (-100 for prompt tokens).
-    # DataCollatorForSeq2Seq handles padding, respecting -100 in labels.
+    # Plain Trainer works directly with pre-tokenized input_ids + labels.
     collator = DataCollatorForSeq2Seq(
         tokenizer=tokenizer,
         model=model,
@@ -164,12 +164,11 @@ def main():
         label_pad_token_id=-100,
     )
 
-    trainer = SFTTrainer(
+    trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=dataset,
         data_collator=collator,
-        processing_class=tokenizer,
     )
 
     # ── Train ─────────────────────────────────────────────────────────────
