@@ -197,7 +197,7 @@ def main():
         train_dataset=dataset,
         reward_funcs=[reward_fn],
         peft_config=lora_config,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
     )
 
     # ── Train ─────────────────────────────────────────────────────────────
