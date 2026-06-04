@@ -136,7 +136,7 @@ def main():
     # ── Load SFT-merged model ─────────────────────────────────────────────
     print(f"Loading model: {args.base_model}")
     model_kwargs = dict(
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         device_map="auto",
         trust_remote_code=True,
     )
@@ -169,12 +169,12 @@ def main():
 
         # Rollout settings
         num_generations=args.num_gen,
-        max_new_tokens=cfg.GRPO_MAX_NEW_TOKENS,
+        max_completion_length=cfg.GRPO_MAX_NEW_TOKENS,
         max_prompt_length=cfg.GRPO_MAX_PROMPT_LEN,
 
         # KL penalty against the SFT-merged reference model
         # Prevents GRPO from drifting too far from SFT distribution
-        kl_coef=cfg.GRPO_KL_COEF,
+        beta=cfg.GRPO_KL_COEF,
 
         logging_steps=20,
         save_strategy="steps",
