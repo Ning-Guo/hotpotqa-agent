@@ -54,7 +54,7 @@ GRPO_BATCH_SIZE         = 4       # per device; must be divisible by GRPO_NUM_GE
 GRPO_GRAD_ACCUM         = 8       # effective batch = 32 prompts per gradient update
 GRPO_NUM_GENERATIONS    = 4       # rollouts per prompt
 GRPO_MAX_NEW_TOKENS     = 350     # p99 of completion (290) + 20% headroom = 348, rounded up
-GRPO_MAX_PROMPT_LEN     = 2600    # p99 of prompt (2463); was 1536 which truncated >50% of prompts
+GRPO_MAX_PROMPT_LEN     = 2048    # p90 of prompt (1932); balances coverage vs memory
 GRPO_KL_COEF            = 0.01    # KL penalty against SFT-merged model
 GRPO_EPOCHS             = 1
 
