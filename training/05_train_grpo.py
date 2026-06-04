@@ -60,7 +60,7 @@ def load_grpo_dataset(path: str, max_samples: int = None) -> Dataset:
 
     if max_samples and max_samples < len(records):
         records = records[:max_samples]
-        print(f"  Truncated to {max_samples:,} examples (--max-samples)")
+        print(f"  Using first {max_samples:,} examples (--max-samples)")
 
     rows = []
     for r in records:
@@ -172,6 +172,7 @@ def main():
         learning_rate=args.lr,
         lr_scheduler_type="cosine",
         bf16=True,
+        gradient_checkpointing=True,
 
         # Rollout settings
         num_generations=args.num_gen,

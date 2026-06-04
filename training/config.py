@@ -50,8 +50,8 @@ GRPO_LORA_R             = 16
 GRPO_LORA_ALPHA         = 32
 GRPO_LORA_TARGET_MODULES = SFT_LORA_TARGET_MODULES
 GRPO_LR                 = 5e-6
-GRPO_BATCH_SIZE         = 16      # per device; must be divisible by GRPO_NUM_GENERATIONS
-GRPO_GRAD_ACCUM         = 2       # effective batch = 32 prompts per gradient update
+GRPO_BATCH_SIZE         = 4       # per device; must be divisible by GRPO_NUM_GENERATIONS
+GRPO_GRAD_ACCUM         = 8       # effective batch = 32 prompts per gradient update
 GRPO_NUM_GENERATIONS    = 4       # rollouts per prompt
 GRPO_MAX_NEW_TOKENS     = 350     # p99 of completion (290) + 20% headroom = 348, rounded up
 GRPO_MAX_PROMPT_LEN     = 2600    # p99 of prompt (2463); was 1536 which truncated >50% of prompts
