@@ -122,7 +122,8 @@ def main():
         device_map="auto",
         trust_remote_code=True,
     )
-    model.enable_input_require_grads()
+    model.gradient_checkpointing_enable()                                                                                                           
+    model.enable_input_require_grads()  # required when gradient_checkpointing=True + LoRA
 
     # ── LoRA config ───────────────────────────────────────────────────────
     lora_config = LoraConfig(
@@ -146,6 +147,7 @@ def main():
         lr_scheduler_type="cosine",
         warmup_ratio=cfg.SFT_WARMUP_RATIO,
         bf16=True,
+        gradient_checkpointing=True,
         logging_steps=50,
         save_strategy="epoch",
         save_total_limit=2,

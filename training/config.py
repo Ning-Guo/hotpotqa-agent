@@ -37,8 +37,8 @@ SFT_LORA_TARGET_MODULES   = [
     "gate_proj", "up_proj", "down_proj",
 ]
 SFT_EPOCHS        = 3
-SFT_BATCH_SIZE    = 4       # per device
-SFT_GRAD_ACCUM    = 8       # effective batch = 32
+SFT_BATCH_SIZE    = 2       # per device (reduced for seq_len=2600; grad_accum compensates)                                                          
+SFT_GRAD_ACCUM    = 16      # effective batch = 32
 SFT_LR            = 2e-4
 SFT_MAX_SEQ_LEN   = 2600   # p99 of total length = 2548; round up for safety
 SFT_WARMUP_RATIO  = 0.05
