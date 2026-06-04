@@ -13,7 +13,7 @@
 #   pip uninstall vllm -y              # before steps 03–05
 
 # Core training stack — these exact versions are known to work together
-transformers==4.57.6
+transformers==4.47.0
 trl==0.15.2
 peft==0.13.2
 accelerate>=1.0.0       # must be >=1.0.0 for keep_torch_compile support
