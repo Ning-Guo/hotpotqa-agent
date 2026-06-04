@@ -172,7 +172,6 @@ def main():
         learning_rate=args.lr,
         lr_scheduler_type="cosine",
         bf16=True,
-        gradient_checkpointing=True,
 
         # Rollout settings
         num_generations=args.num_gen,
