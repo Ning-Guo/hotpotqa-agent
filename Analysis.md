@@ -714,3 +714,46 @@ the same agent would likely outperform 32B simple RAG:
 | F1-based reward function | +1–2pp overall | Low | 4 |
 | BM25 on bridge sub-queries only | +2–3pp bridge | Medium | 5 |
 | Larger base model (7B) | +5–10pp overall | High | 6 |
+
+---
+
+## 7. Training Data Token Length Analysis
+
+Measured on `sft_clean.jsonl` (16,266 examples) using the Qwen2.5-3B-Instruct
+tokenizer with full chat template applied. Script: `training/data/analyze_lengths.py`.
+
+### 7.1 Length distribution
+
+| Field | p50 | p90 | p95 | p99 | max |
+|-------|-----|-----|-----|-----|-----|
+| Prompt (system + user turn) | 1,459 | 1,932 | 2,098 | 2,463 | 3,743 |
+| Completion (assistant turn) | 76 | 183 | 211 | 290 | 512 |
+| Total (prompt + completion) | 1,554 | 2,025 | 2,186 | 2,548 | 3,839 |
+
+### 7.2 Truncation impact
+
+With the original `SFT_MAX_SEQ_LEN=2048`:
+- **1,471 / 16,266 examples truncated (9.0%)**
+- Truncation cuts off the assistant turn mid-completion, so the model never
+  sees the `</think><answer>` closing for those examples
+- 9% exceeds the acceptable threshold of ~3% → SFT re-training justified
+
+With the original `GRPO_MAX_PROMPT_LEN=1536`:
+- p50 of prompts is 1,459 tokens — meaning **>50% of GRPO prompts were
+  being truncated**, severely degrading the reward signal quality
+- This was the most impactful misconfiguration found
+
+### 7.3 Updated config values (statistically justified)
+
+| Parameter | Old | New | Basis |
+|-----------|-----|-----|-------|
+| `SFT_MAX_SEQ_LEN` | 2,048 | 2,600 | p99 of total (2,548) rounded up |
+| `GRPO_MAX_PROMPT_LEN` | 1,536 | 2,600 | p99 of prompt (2,463) rounded up |
+| `GRPO_MAX_NEW_TOKENS` | 512 | 350 | p99 of completion (290) × 1.2 headroom |
+
+### 7.4 Completion length insight
+
+Completions are short: p50=76 tokens, p99=290 tokens. The original 512-token
+cap meant GRPO was allocating generation budget for tokens that were never
+used. Reducing to 350 keeps full coverage of valid traces while cutting
+generation time per rollout by ~30%.
