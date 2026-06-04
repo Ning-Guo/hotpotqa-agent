@@ -50,10 +50,10 @@ GRPO_LORA_R             = 16
 GRPO_LORA_ALPHA         = 32
 GRPO_LORA_TARGET_MODULES = SFT_LORA_TARGET_MODULES
 GRPO_LR                 = 5e-6
-GRPO_BATCH_SIZE         = 4       # per device; must be divisible by GRPO_NUM_GENERATIONS
-GRPO_GRAD_ACCUM         = 8
-GRPO_NUM_GENERATIONS    = 4       # rollouts per prompt
-GRPO_MAX_NEW_TOKENS     = 512
+GRPO_BATCH_SIZE         = 16      # per device; must be divisible by GRPO_NUM_GENERATIONS
+GRPO_GRAD_ACCUM         = 2       # effective batch = 32 prompts per gradient update
+GRPO_NUM_GENERATIONS    = 4       # rollouts per prompt — keep at 4 for diversity
+GRPO_MAX_NEW_TOKENS     = 300     # set after p99 analysis; update once you run the stats command
 GRPO_MAX_PROMPT_LEN     = 1536
 GRPO_KL_COEF            = 0.01    # KL penalty against SFT-merged model
 GRPO_EPOCHS             = 1

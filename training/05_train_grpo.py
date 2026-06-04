@@ -49,7 +49,7 @@ from training.utils.metrics import (
 # Dataset preparation
 # ---------------------------------------------------------------------------
 
-def load_grpo_dataset(path: str) -> Dataset:
+def load_grpo_dataset(path: str, max_samples: int = None) -> Dataset:
     """
     Load GRPO training data.
     Dataset columns needed by reward functions are serialised as JSON strings
@@ -57,6 +57,10 @@ def load_grpo_dataset(path: str) -> Dataset:
     """
     with open(path) as f:
         records = [json.loads(l) for l in f if l.strip()]
+
+    if max_samples and max_samples < len(records):
+        records = records[:max_samples]
+        print(f"  Truncated to {max_samples:,} examples (--max-samples)")
 
     rows = []
     for r in records:
@@ -118,6 +122,8 @@ def main():
     parser.add_argument("--grad-accum",  type=int,   default=cfg.GRPO_GRAD_ACCUM)
     parser.add_argument("--lr",          type=float, default=cfg.GRPO_LR)
     parser.add_argument("--num-gen",     type=int,   default=cfg.GRPO_NUM_GENERATIONS)
+    parser.add_argument("--max-samples", type=int,   default=None,
+                        help="Cap dataset size for faster runs (e.g. 15000)")
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)
@@ -130,7 +136,7 @@ def main():
 
     # ── Load dataset ──────────────────────────────────────────────────────
     print(f"Loading GRPO data: {args.input}")
-    dataset = load_grpo_dataset(args.input)
+    dataset = load_grpo_dataset(args.input, max_samples=args.max_samples)
     print(f"  {len(dataset):,} training examples")
 
     # ── Load SFT-merged model ─────────────────────────────────────────────
