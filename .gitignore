@@ -20,3 +20,9 @@ Thumbs.db
 
 # model files, model can be downloaded at https://huggingface.co/Norm11/qwen2.5-3b-grpo-hotpotqa/tree/main
 model/grpo_rag
+
+# training files and data
+# training model https://huggingface.co/Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v2/
+# training data https://huggingface.co/datasets/Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset/tree/main/data
+training/checkpoints
+training/data 

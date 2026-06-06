@@ -1,0 +1,11 @@
+nohup: ignoring input
+Loading base model: Qwen/Qwen2.5-3B-Instruct
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.43s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.05s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.10s/it]
+Loading SFT adapter: /root/hotpotqa-agent/training/checkpoints/sft_adapter
+Merging adapter into base model weights...
+  Merge complete.
+Saving merged model → /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Parameters: 3.09B
+  Saved to: /root/hotpotqa-agent/training/checkpoints/sft_merged
+
+Next step: python training/05_train_grpo.py
