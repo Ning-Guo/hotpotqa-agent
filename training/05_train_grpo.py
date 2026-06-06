@@ -144,11 +144,14 @@ def main():
 
     # ── Load SFT-merged model ─────────────────────────────────────────────
     print(f"Loading model: {args.base_model}")
-    # Do NOT use device_map="auto" — it shards across GPUs (pipeline parallelism)
-    # which is incompatible with DDP. The Trainer handles device placement.
+    # Use device_map per local rank so FA2 initialises on GPU (not CPU).
+    # device_map="cuda:N" puts the whole model on one GPU without pipeline
+    # sharding, which is compatible with DDP.
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
     model_kwargs = dict(
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
+        device_map=f"cuda:{local_rank}",
     )
     try:
         import flash_attn  # noqa: F401

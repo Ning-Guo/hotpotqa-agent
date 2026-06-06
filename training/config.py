@@ -55,7 +55,7 @@ GRPO_GRAD_ACCUM         = 8       # effective batch = 32 prompts per gradient up
 GRPO_NUM_GENERATIONS    = 4       # rollouts per prompt
 GRPO_MAX_NEW_TOKENS     = 350     # p99 of completion (290) + 20% headroom = 348, rounded up
 GRPO_MAX_PROMPT_LEN     = 2600    # p99 of prompt (2548); covers full dataset
-GRPO_KL_COEF            = 0.01    # KL penalty against SFT-merged model
+GRPO_KL_COEF            = 0.05    # KL penalty — increased from 0.01; prior run saw KL→3.0
 GRPO_EPOCHS             = 1
 
 # ---------------------------------------------------------------------------

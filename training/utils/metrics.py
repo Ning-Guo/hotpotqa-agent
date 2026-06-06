@@ -51,13 +51,29 @@ def token_f1(pred: str, gold: str) -> float:
 # Grounding score
 # ---------------------------------------------------------------------------
 
+def _word_overlap(phrase: str, passage: str) -> float:
+    """
+    Soft grounding: fraction of content words in `phrase` that appear in `passage`.
+    More robust than exact substring match — partial credit for paraphrases.
+    Stopwords are excluded so short function words don't dominate.
+    """
+    _STOP = {"a", "an", "the", "of", "in", "on", "at", "to", "for",
+             "is", "was", "are", "were", "be", "been", "by", "with"}
+    p_words = [w for w in normalize_answer(phrase).split() if w not in _STOP]
+    if not p_words:
+        return 0.0
+    doc_words = set(normalize_answer(passage).split())
+    return sum(1 for w in p_words if w in doc_words) / len(p_words)
+
+
 def grounding_score(think: str, passages: list[dict],
                     gold_titles: list[str], qtype: str) -> float:
     """
     Check whether intermediate answers are grounded in gold passages.
 
-    Bridge:     does hop1_answer appear in the text of gold_titles[0]?
-    Comparison: do both intermediate answers appear in their respective passages?
+    Bridge:     word-overlap between hop1_answer and gold_titles[0] passage text.
+    Comparison: average word-overlap for both intermediate answers.
+    Uses soft overlap instead of exact substring match to reward paraphrases.
     """
     def passage_text(title: str) -> str:
         for p in passages:
@@ -70,10 +86,9 @@ def grounding_score(think: str, passages: list[dict],
         if not hop1 or not gold_titles:
             return 0.0
         gold_text = passage_text(gold_titles[0])
-        return float(normalize_answer(hop1) in gold_text)
+        return _word_overlap(hop1, gold_text)
 
     else:  # comparison
-        # Extract both intermediate answers
         m1 = re.search(r"Intermediate answer 1:\s*(.+?)(?:\n|$)", think)
         m2 = re.search(r"Intermediate answer 2:\s*(.+?)(?:\n|$)", think)
         ans1 = m1.group(1).strip() if m1 else ""
@@ -81,8 +96,7 @@ def grounding_score(think: str, passages: list[dict],
         scores = []
         for ans, title in zip([ans1, ans2], gold_titles[:2]):
             if ans and title:
-                text = passage_text(title)
-                scores.append(float(normalize_answer(ans) in text))
+                scores.append(_word_overlap(ans, passage_text(title)))
         return sum(scores) / max(len(scores), 1)
 
 
