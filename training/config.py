@@ -52,7 +52,7 @@ GRPO_LORA_TARGET_MODULES = SFT_LORA_TARGET_MODULES
 GRPO_LR                 = 5e-6
 GRPO_BATCH_SIZE         = 4       # per device; must be divisible by GRPO_NUM_GENERATIONS
 GRPO_GRAD_ACCUM         = 8       # effective batch = 32 prompts per gradient update
-GRPO_NUM_GENERATIONS    = 4       # rollouts per prompt
+GRPO_NUM_GENERATIONS    = 2       # rollouts per prompt (4→2 to fit 2600 token prompts in 80GB)
 GRPO_MAX_NEW_TOKENS     = 350     # p99 of completion (290) + 20% headroom = 348, rounded up
 GRPO_MAX_PROMPT_LEN     = 2600    # p99 of prompt (2548); covers full dataset
 GRPO_KL_COEF            = 0.05    # KL penalty — increased from 0.01; prior run saw KL→3.0
