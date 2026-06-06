@@ -122,8 +122,11 @@ def main():
     parser.add_argument("--grad-accum",  type=int,   default=cfg.GRPO_GRAD_ACCUM)
     parser.add_argument("--lr",          type=float, default=cfg.GRPO_LR)
     parser.add_argument("--num-gen",     type=int,   default=cfg.GRPO_NUM_GENERATIONS)
-    parser.add_argument("--max-samples", type=int,   default=None,
+    parser.add_argument("--max-samples",    type=int,  default=None,
                         help="Cap dataset size for faster runs (e.g. 15000)")
+    parser.add_argument("--max-prompt-len", type=int,  default=cfg.GRPO_MAX_PROMPT_LEN)
+    parser.add_argument("--use-vllm",       action="store_true", default=False,
+                        help="Use vLLM for rollout generation (3-5x faster; requires vllm installed)")
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)
@@ -176,7 +179,8 @@ def main():
         # Rollout settings
         num_generations=args.num_gen,
         max_completion_length=cfg.GRPO_MAX_NEW_TOKENS,
-        max_prompt_length=cfg.GRPO_MAX_PROMPT_LEN,
+        max_prompt_length=args.max_prompt_len,
+        use_vllm=args.use_vllm,
 
         # KL penalty against the SFT-merged reference model
         # Prevents GRPO from drifting too far from SFT distribution
