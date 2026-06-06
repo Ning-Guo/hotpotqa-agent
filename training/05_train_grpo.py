@@ -144,9 +144,10 @@ def main():
 
     # ── Load SFT-merged model ─────────────────────────────────────────────
     print(f"Loading model: {args.base_model}")
+    # Do NOT use device_map="auto" — it shards across GPUs (pipeline parallelism)
+    # which is incompatible with DDP. The Trainer handles device placement.
     model_kwargs = dict(
         torch_dtype=torch.bfloat16,
-        device_map="auto",
         trust_remote_code=True,
     )
     try:

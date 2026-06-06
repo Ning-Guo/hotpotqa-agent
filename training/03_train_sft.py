@@ -116,12 +116,20 @@ def main():
 
     # ── Load base model ───────────────────────────────────────────────────
     print(f"Loading base model: {args.base_model}")
+    #   pre single GPU script
+    #   119 -    # device_map="auto" conflicts with DDP (torchrun). Skip when LOCAL_RANK is set.                                                                 
+    #   120 -    is_distributed = int(os.environ.get("LOCAL_RANK", -1)) != -1                                                                                  
+    #   121 -    model_kwargs = dict(torch_dtype=torch.bfloat16, trust_remote_code=True)                                                                         
+    #   122 -    if not is_distributed:                                                                                                                        
+    #   123 -        model_kwargs["device_map"] = "auto"                                                                                                  
+    #   124 -    model = AutoModelForCausalLM.from_pretrained(args.base_model, **model_kwargs)  
+    # Do NOT use device_map="auto" — incompatible with DDP (torchrun).
     model = AutoModelForCausalLM.from_pretrained(
         args.base_model,
         torch_dtype=torch.bfloat16,
-        device_map="auto",
         trust_remote_code=True,
     )
+    
     model.gradient_checkpointing_enable()                                                                                                           
     model.enable_input_require_grads()  # required when gradient_checkpointing=True + LoRA
 
