@@ -1,8 +1,8 @@
 nohup: ignoring input
-W0606 10:29:02.997000 6494 torch/distributed/run.py:793] 
-W0606 10:29:02.997000 6494 torch/distributed/run.py:793] *****************************************
-W0606 10:29:02.997000 6494 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0606 10:29:02.997000 6494 torch/distributed/run.py:793] *****************************************
+W0606 10:43:47.426000 7870 torch/distributed/run.py:793] 
+W0606 10:43:47.426000 7870 torch/distributed/run.py:793] *****************************************
+W0606 10:43:47.426000 7870 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0606 10:43:47.426000 7870 torch/distributed/run.py:793] *****************************************
 Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
 Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
 Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
@@ -20,48 +20,44 @@ Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
   Using Flash Attention 2
   30,000 training examples
 Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
-  Using Flash Attention 2
-  30,000 training examples
-Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
   30,000 training examples
 Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
   Using Flash Attention 2
   Using Flash Attention 2
-You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.74it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.84it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.68it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.52it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.20it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.12it/s]
-Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.37it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.28it/s]
-Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.10it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.03it/s]
-Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.03it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.94it/s]
+  30,000 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.88s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.85s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.78s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.81s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.05s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.17s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.04s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.16s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.02s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.13s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.04s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.16s/it]
 
 Starting GRPO training...
   Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
-  KL coef: 0.01
+  KL coef: 0.05
   Rollouts per prompt: 4
 
 Starting GRPO training...
   Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
-  KL coef: 0.01
+  KL coef: 0.05
   Rollouts per prompt: 4
 
 Starting GRPO training...
   Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
-  KL coef: 0.01
+  KL coef: 0.05
   Rollouts per prompt: 4
 
 Starting GRPO training...
   Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
-  KL coef: 0.01
+  KL coef: 0.05
   Rollouts per prompt: 4
-  0%|          | 0/1874 [00:00<?, ?it/s][rank2]:[W606 10:31:39.235161140 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
-[rank1]:[W606 10:31:39.263072464 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
-[rank0]:[W606 10:31:39.272083497 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+  0%|          | 0/1874 [00:00<?, ?it/s][rank2]:[W606 10:46:24.142469451 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank1]:[W606 10:46:24.171356495 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W606 10:46:24.183896994 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
 [rank3]: Traceback (most recent call last):
-[rank3]:   File "/root/hotpotqa-agent/training/05_train_grpo.py", line 234, in <module>
+[rank3]:   File "/root/hotpotqa-agent/training/05_train_grpo.py", line 237, in <module>
 [rank3]:     main()
-[rank3]:   File "/root/hotpotqa-agent/training/05_train_grpo.py", line 222, in main
+[rank3]:   File "/root/hotpotqa-agent/training/05_train_grpo.py", line 225, in main
 [rank3]:     trainer.train()
 [rank3]:   File "/root/venv_train/lib/python3.11/site-packages/transformers/trainer.py", line 2164, in train
 [rank3]:     return inner_training_loop(
@@ -117,10 +113,10 @@ Starting GRPO training...
 [rank3]:     return tensor.float()
 [rank3]:            ^^^^^^^^^^^^^^
 [rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 6.68 GiB. GPU 3 has a total capacity of 79.25 GiB of which 5.74 GiB is free. Including non-PyTorch memory, this process has 73.50 GiB memory in use. Of the allocated memory 67.66 GiB is allocated by PyTorch, and 5.17 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-W0606 10:31:42.642000 6494 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6570 closing signal SIGTERM
-W0606 10:31:42.643000 6494 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6571 closing signal SIGTERM
-W0606 10:31:42.646000 6494 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6572 closing signal SIGTERM
-E0606 10:31:43.938000 6494 torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 6573) of binary: /root/venv_train/bin/python
+W0606 10:46:27.701000 7870 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 7949 closing signal SIGTERM
+W0606 10:46:27.702000 7870 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 7950 closing signal SIGTERM
+W0606 10:46:27.708000 7870 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 7951 closing signal SIGTERM
+E0606 10:46:29.128000 7870 torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 7952) of binary: /root/venv_train/bin/python
 Traceback (most recent call last):
   File "/root/venv_train/bin/torchrun", line 8, in <module>
     sys.exit(main())
@@ -146,10 +142,10 @@ Failures:
 ------------------------------------------------------------
 Root Cause (first observed failure):
 [0]:
-  time      : 2026-06-06_10:31:42
+  time      : 2026-06-06_10:46:27
   host      : e09bc34bc6da
   rank      : 3 (local_rank: 3)
-  exitcode  : 1 (pid: 6573)
+  exitcode  : 1 (pid: 7952)
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================
