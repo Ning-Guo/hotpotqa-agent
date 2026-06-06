@@ -69,7 +69,7 @@ REWARD_LENGTH_MAX_PENALTY = 0.05  # max penalty for long answers
 # Paths
 # ---------------------------------------------------------------------------
 BASE_DIR          = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR          = os.path.join(BASE_DIR, "data")
+DATA_DIR          = os.path.join(BASE_DIR, "data/data")
 CKPT_DIR          = os.path.join(BASE_DIR, "checkpoints")
 
 SFT_SOURCE_PATH   = os.path.join(DATA_DIR, "sft_source.jsonl")

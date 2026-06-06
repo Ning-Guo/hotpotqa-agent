@@ -1,0 +1,155 @@
+nohup: ignoring input
+W0606 10:29:02.997000 6494 torch/distributed/run.py:793] 
+W0606 10:29:02.997000 6494 torch/distributed/run.py:793] *****************************************
+W0606 10:29:02.997000 6494 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0606 10:29:02.997000 6494 torch/distributed/run.py:793] *****************************************
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+  Using first 30,000 examples (--max-samples)
+  Using first 30,000 examples (--max-samples)
+  Using first 30,000 examples (--max-samples)
+  Using first 30,000 examples (--max-samples)
+  30,000 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+  30,000 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+  30,000 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  30,000 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+  Using Flash Attention 2
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.74it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.84it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.68it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  3.52it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.20it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.12it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.37it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.28it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.10it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.03it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.03it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.94it/s]
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.01
+  Rollouts per prompt: 4
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.01
+  Rollouts per prompt: 4
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.01
+  Rollouts per prompt: 4
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.01
+  Rollouts per prompt: 4
+  0%|          | 0/1874 [00:00<?, ?it/s][rank2]:[W606 10:31:39.235161140 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank1]:[W606 10:31:39.263072464 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W606 10:31:39.272083497 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/root/hotpotqa-agent/training/05_train_grpo.py", line 234, in <module>
+[rank3]:     main()
+[rank3]:   File "/root/hotpotqa-agent/training/05_train_grpo.py", line 222, in main
+[rank3]:     trainer.train()
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/transformers/trainer.py", line 2164, in train
+[rank3]:     return inner_training_loop(
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/transformers/trainer.py", line 2522, in _inner_training_loop
+[rank3]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+[rank3]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/transformers/trainer.py", line 3655, in training_step
+[rank3]:     loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/trl/trainer/grpo_trainer.py", line 703, in compute_loss
+[rank3]:     per_token_logps = self._get_per_token_logps(model, input_ids, attention_mask, logits_to_keep)
+[rank3]:                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/trl/trainer/grpo_trainer.py", line 480, in _get_per_token_logps
+[rank3]:     logits = model(input_ids=input_ids, attention_mask=attention_mask, logits_to_keep=logits_to_keep + 1).logits
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank3]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank3]:          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank3]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 823, in forward
+[rank3]:     return model_forward(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 811, in __call__
+[rank3]:     return convert_to_fp32(self.model_forward(*args, **kwargs))
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 790, in convert_to_fp32
+[rank3]:     return recursively_apply(_convert_to_fp32, tensor, test_type=_is_fp16_bf16_tensor)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 119, in recursively_apply
+[rank3]:     {
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 120, in <dictcomp>
+[rank3]:     k: recursively_apply(
+[rank3]:        ^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 127, in recursively_apply
+[rank3]:     return func(data, *args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/root/venv_train/lib/python3.11/site-packages/accelerate/utils/operations.py", line 782, in _convert_to_fp32
+[rank3]:     return tensor.float()
+[rank3]:            ^^^^^^^^^^^^^^
+[rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 6.68 GiB. GPU 3 has a total capacity of 79.25 GiB of which 5.74 GiB is free. Including non-PyTorch memory, this process has 73.50 GiB memory in use. Of the allocated memory 67.66 GiB is allocated by PyTorch, and 5.17 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0606 10:31:42.642000 6494 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6570 closing signal SIGTERM
+W0606 10:31:42.643000 6494 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6571 closing signal SIGTERM
+W0606 10:31:42.646000 6494 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6572 closing signal SIGTERM
+E0606 10:31:43.938000 6494 torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 6573) of binary: /root/venv_train/bin/python
+Traceback (most recent call last):
+  File "/root/venv_train/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/root/venv_train/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/root/venv_train/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/root/venv_train/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/root/venv_train/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv_train/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/root/hotpotqa-agent/training/05_train_grpo.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-06-06_10:31:42
+  host      : e09bc34bc6da
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 6573)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
