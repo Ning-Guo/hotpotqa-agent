@@ -1,0 +1,84 @@
+nohup: ignoring input
+W0608 08:41:55.678000 35614 torch/distributed/run.py:793] 
+W0608 08:41:55.678000 35614 torch/distributed/run.py:793] *****************************************
+W0608 08:41:55.678000 35614 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0608 08:41:55.678000 35614 torch/distributed/run.py:793] *****************************************
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading tokenizer: /root/hotpotqa-agent/training/checkpoints/sft_merged
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+Loading GRPO data: /root/hotpotqa-agent/training/data/data/grpo_train.jsonl
+  Using first 200 examples (--max-samples)
+  200 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using first 200 examples (--max-samples)
+  200 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+  Using Flash Attention 2
+  Using first 200 examples (--max-samples)
+  200 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+  Using first 200 examples (--max-samples)
+  200 training examples
+Loading model: /root/hotpotqa-agent/training/checkpoints/sft_merged
+  Using Flash Attention 2
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.84s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.86s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.86s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.01s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.06s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.18s/it]
+[W608 08:42:07.784083208 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.06s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.18s/it]
+[W608 08:42:07.847520522 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.07s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.18s/it]
+[W608 08:42:07.938174955 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.13s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.26s/it]
+[W608 08:42:07.118185578 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.05
+  Rollouts per prompt: 2
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.05
+  Rollouts per prompt: 2
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.05
+  Rollouts per prompt: 2
+
+Starting GRPO training...
+  Reward weights: accuracy=0.7, grounding=0.25, length_penalty_max=0.05
+  KL coef: 0.05
+  Rollouts per prompt: 2
+  0%|          | 0/6 [00:00<?, ?it/s][rank1]:[W608 08:45:04.540785213 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W608 08:45:04.570831027 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]:[W608 08:45:04.610884174 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank2]:[W608 08:45:04.724039668 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+ 17%|█▋        | 1/6 [02:52<14:23, 172.72s/it] 33%|███▎      | 2/6 [05:44<11:28, 172.11s/it] 50%|█████     | 3/6 [08:38<08:39, 173.23s/it] 67%|██████▋   | 4/6 [09:02<03:48, 114.24s/it] 83%|████████▎ | 5/6 [12:35<02:29, 149.74s/it]100%|██████████| 6/6 [15:39<00:00, 161.57s/it]                                              {'train_runtime': 943.6118, 'train_samples_per_second': 0.424, 'train_steps_per_second': 0.006, 'train_loss': 4.9661563631768026e-05, 'rewards/combined_reward': 0.7466901119162397, 'reward': 0.7466901119162397, 'reward_std': 0.09528197557665408, 'completion_length': 115.88414634146342, 'kl': 0.0016391151101987174, 'epoch': 1.64}
+100%|██████████| 6/6 [15:40<00:00, 161.57s/it]100%|██████████| 6/6 [15:40<00:00, 156.80s/it]
+
+GRPO adapter saved → /root/hotpotqa-agent/training/checkpoints/grpo_test
+
+Next step: evaluate with
+  python run_eval.py --adapter training/checkpoints/grpo_adapter --load-index --output results/eval_sft_grpo.json
+
+GRPO adapter saved → /root/hotpotqa-agent/training/checkpoints/grpo_test
+
+Next step: evaluate with
+  python run_eval.py --adapter training/checkpoints/grpo_adapter --load-index --output results/eval_sft_grpo.json
+
+GRPO adapter saved → /root/hotpotqa-agent/training/checkpoints/grpo_test
+
+Next step: evaluate with
+  python run_eval.py --adapter training/checkpoints/grpo_adapter --load-index --output results/eval_sft_grpo.json
+
+GRPO adapter saved → /root/hotpotqa-agent/training/checkpoints/grpo_test
+
+Next step: evaluate with
+  python run_eval.py --adapter training/checkpoints/grpo_adapter --load-index --output results/eval_sft_grpo.json
+[rank0]:[W608 08:57:55.412114110 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
