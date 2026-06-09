@@ -127,6 +127,8 @@ def main():
     parser.add_argument("--max-prompt-len", type=int,  default=cfg.GRPO_MAX_PROMPT_LEN)
     parser.add_argument("--use-vllm",       action="store_true", default=False,
                         help="Use vLLM for rollout generation (3-5x faster; requires vllm installed)")
+    parser.add_argument("--resume-from-checkpoint", default=None,
+                        help="Path to checkpoint dir to resume from (e.g. training/checkpoints/grpo_adapter/checkpoint-500)")
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)
@@ -192,8 +194,8 @@ def main():
 
         logging_steps=20,
         save_strategy="steps",
-        save_steps=500,
-        save_total_limit=3,
+        save_steps=200,
+        save_total_limit=5,
         report_to="none",
     )
 
@@ -222,7 +224,7 @@ def main():
     print(f"  KL coef: {cfg.GRPO_KL_COEF}")
     print(f"  Rollouts per prompt: {args.num_gen}")
 
-    trainer.train()
+    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
 
     # ── Save ──────────────────────────────────────────────────────────────
     trainer.save_model(args.output)
