@@ -1,216 +1,122 @@
 # HotpotQA Live Multi-Hop Agent
 
-A live inference multi-hop QA agent built on **LangGraph** and **Qwen2.5-3B-Instruct**,
-evaluated on the HotpotQA benchmark. The agent classifies, decomposes, retrieves,
-and answers every question entirely at inference time — no pre-computed artifacts.
+Live multi-hop QA agent using LangGraph + Qwen2.5-3B-Instruct, evaluated on HotpotQA. All reasoning happens at inference time — no pre-computed artifacts.
 
-## Versions
+## Dataset
 
-### v1 — Agent + MiniLM + Gradio UI
-Core agentic pipeline with multi-hop decomposition, GRPO answer synthesis, and
-a local Gradio demo UI with real-time reasoning steps.
-
-- **EM=0.504**, F1=0.584, ctx_recall=0.794 (500 questions, `all-MiniLM-L6-v2`)
-- Outperforms simple RAG at the same model size by +4.6pp EM
-- Milestones: LangGraph pipeline, GRPO adapter, Wikipedia fallback, Gradio UI
-
-### v2 — BGE embedding upgrade
-Swapped retrieval embedding from `all-MiniLM-L6-v2` to `BAAI/bge-base-en-v1.5`,
-a model trained specifically for asymmetric QA retrieval.
-
-- **EM=0.574**, F1=0.660, ctx_recall=0.887 (500 questions, `BAAI/bge-base-en-v1.5`)
-- +7.0pp EM and +9.3pp ctx_recall over v1 — retrieval was the primary bottleneck
-- Note: the upper/lower bound baselines (14B, 32B) were evaluated with MiniLM
-  embeddings and are not directly comparable to the v2 number
-
-> Full experiment results, design decisions, and future plans: [Analysis.md](Analysis.md)
-
----
-
-## What is HotpotQA?
-
-HotpotQA requires reasoning over two Wikipedia passages to answer a question.
-Two question types:
-
-- **Bridge** — find an intermediate entity, then use it to answer the original question.
-  > *"What nationality is the actress who starred in Pretty Woman?"*
-  > Step 1: Who starred in Pretty Woman? → Julia Roberts
-  > Step 2: What nationality is Julia Roberts? → American
-
+HotpotQA distractor split. Two question types:
+- **Bridge** — find an intermediate entity, then answer the original question.
 - **Comparison** — compare two entities on a shared property.
-  > *"Were Scott Derrickson and Ed Wood of the same nationality?"*
-  > Both American → yes
+
+Eval set: `data/grpo_val.jsonl` — 500 questions (409 bridge / 91 comparison).
 
 ---
 
 ## Architecture
 
-### Dual-role model
+**Dual-role model:** Single `PeftModel` (Qwen2.5-3B-Instruct + GRPO LoRA adapter)
+- `model.disable_adapter()` → base model for reasoning (classify, decompose, rewrite)
+- adapter active → GRPO model for final answer synthesis
 
-A single `PeftModel` serves two roles via a context manager:
+**LangGraph pipeline:**
+```
+Bridge:     classify → decompose → retrieve_hop1 → answer_hop1
+                     → formulate_hop2 → retrieve_hop2 → answer_final → verify
 
-```python
-# Reasoning (classify, decompose, rewrite) — base model, no adapter bias
-with model.disable_adapter():
-    output = model.generate(...)
+Comparison: classify → rewrite → retrieve_comparison → answer_final → verify
 
-# Answer synthesis — GRPO adapter active
-output = model.generate(...)
+Retry:      verify fails → fallback retrieval → web search → end (capped at retry_count=2)
 ```
 
-The base model is better at open-ended reasoning. The GRPO adapter is trained
-to produce short, precise answer phrases. Using one model halves memory usage.
-
-### LangGraph pipeline
-
-**Bridge path:**
-```
-classify → decompose → retrieve_hop1 → answer_hop1
-         → formulate_hop2 → retrieve_hop2 → answer_final → verify
-```
-
-**Comparison path:**
-```
-classify → rewrite → retrieve_comparison → answer_final → verify
-```
-
-**Shared retry loop (both paths):**
-```
-verify fails → local retry (retry_count=0)
-             → web search  (retry_count=1)
-             → end         (retry_count≥2)
-```
-
-If named entities from the question are absent from the corpus
-(`uncovered_entities`), the agent skips local retry and goes straight to
-Wikipedia web search.
-
-### Retriever
-
-FAISS dense index with `BAAI/bge-base-en-v1.5` embeddings. Each paragraph is
-encoded as `"<title>\n<text>"` and indexed with `IndexFlatIP` (cosine similarity).
-BGE uses a query-time prefix for asymmetric QA retrieval.
+**Retriever:** FAISS + `BAAI/bge-base-en-v1.5`, TOP_K=5, cosine similarity.
 
 ---
 
 ## Project Structure
 
 ```
-hotpotqa-agent/
 ├── config.py               Paths, model names, thresholds
 ├── src/
 │   ├── models.py           Load PeftModel + tokenizer
-│   ├── reasoner.py         All LLM reasoning calls (classify, decompose, rewrite)
-│   ├── retriever.py        FAISS dense retriever with save/load
-│   ├── graph.py            LangGraph StateGraph pipeline
+│   ├── reasoner.py         LLM reasoning calls (classify, decompose, rewrite)
+│   ├── retriever.py        FAISS dense retriever
+│   ├── graph.py            LangGraph pipeline
 │   └── evaluator.py        EM, F1, context recall, faithfulness
+├── training/               SFT + GRPO training scripts (01–05)
 ├── data/
-│   ├── grpo_val.jsonl      500-question HotpotQA evaluation set
-│   ├── corpus.jsonl        Paragraph corpus (title + text)
-│   └── faiss.index         Saved FAISS index
-├── upperbound/
-│   ├── eval_upperbound.py  Evaluate large models (14B/32B) as RAG-only baseline
-│   └── README.md           Hardware guide for GPU eval
-├── serve.py                Local demo UI (Gradio) with real-time reasoning steps
-├── run_agent.py            CLI demo: single question
-├── run_eval.py             Batch evaluation over grpo_val.jsonl
-├── debug_agent.py          Step-by-step trace of a single question
-└── analyze_results.py      Failure analysis on eval results
+│   ├── grpo_val.jsonl      500-question eval set
+│   ├── corpus.jsonl        Paragraph corpus
+│   └── faiss.index         FAISS index
+├── run_agent.py            Single question CLI
+├── run_eval.py             Batch evaluation
+├── serve.py                Gradio demo UI
+└── debug_agent.py          Step-by-step trace
 ```
 
 ---
 
-## Quickstart
-
-### Setup
+## Setup
 
 ```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Set adapter in config.py
+GRPO_ADAPTER_REPO = "Norm11/qwen2.5-3b-grpo-hotpotqa"
 ```
 
-Set your adapter path in `config.py`:
-```python
-GRPO_ADAPTER_REPO = "your-hf-username/your-adapter-repo"  # or local path
-```
-
-### Local demo UI
-
-Start a Gradio web app at `http://localhost:7860` (branch local-ui) with real-time reasoning steps,
-context passages, and keyword highlighting:
+## Run
 
 ```bash
-python serve.py                # builds FAISS index on first run
-python serve.py --load-index   # reuse saved index (faster start)
-python serve.py --port 8080    # custom port
-```
-
-The UI shows each agent step as it happens (classify → decompose → retrieve →
-answer → verify), highlights query keywords in retrieved passages, and labels
-whether context came from the inner vector database or Wikipedia web search.
-
-### Run a single question
-
-```bash
+# Single question
 python run_agent.py --question "Were Scott Derrickson and Ed Wood of the same nationality?"
+
+# Full eval (builds FAISS index)
+python run_eval.py --output results/eval.json
+
+# Full eval (reuse saved index)
+python run_eval.py --load-index --output results/eval.json
+
+# Quick smoke test (20 questions)
+python run_eval.py --n 20 --load-index
+
+# Gradio UI
+python serve.py --load-index
+
+# Step-by-step debug
+python debug_agent.py --question "..."
 ```
 
-### Run full evaluation (500 questions)
+## Training (GPU, A100 80GB)
 
 ```bash
-python run_eval.py            # builds FAISS index and runs eval
-python run_eval.py --n 50     # quick smoke test (first 50 questions)
-python run_eval.py --load-index  # reuse saved index
-```
-
-Results saved to `results/eval_live.json`.
-
-### Debug a single question (step-by-step trace)
-
-```bash
-python debug_agent.py --question "What is the nationality of the director of Schindler's List?"
-```
-
-### Upper/lower bound evaluation (GPU server)
-
-```bash
-# Lower bound — base 3B + simple RAG
-python upperbound/eval_upperbound.py --model Qwen/Qwen2.5-3B-Instruct
-
-# Upper bound — large model + simple RAG (requires A100)
-python upperbound/eval_upperbound.py --model Qwen/Qwen2.5-32B-Instruct
-
-# With GRPO adapter loaded (isolates training effect)
-python upperbound/eval_upperbound.py \
-  --model Qwen/Qwen2.5-3B-Instruct \
-  --adapter your-hf-username/your-adapter-repo
+source ~/venv_train/bin/activate
+python training/01_prepare_dataset.py
+python training/02_generate_sft_data.py
+python training/03_train_sft.py
+python training/04_merge_adapter.py
+torchrun --nproc_per_node=4 training/05_train_grpo.py --epochs 2 --max-samples 30000
 ```
 
 ---
 
-## Results Summary
+## Best Result
 
-**v1 — MiniLM embeddings** (upper/lower bounds use same embedding for fair comparison)
+**Adapter:** `Norm11/qwen2.5-3b-grpo-hotpotqa` | **Embedding:** `BAAI/bge-base-en-v1.5`
 
 | System | EM | F1 | ctx_recall |
 |---|---|---|---|
 | 3B Base + RAG (lower bound) | 0.458 | 0.541 | 0.748 |
-| 3B GRPO + RAG only | 0.468 | 0.552 | 0.748 |
-| **3B GRPO + Agent (v1)** | **0.504** | **0.584** | **0.794** |
+| 3B GRPO RAG-only | 0.468 | 0.552 | 0.748 |
+| **3B GRPO + Agent (ours)** | **0.574** | **0.660** | **0.887** |
 | 14B Base + RAG | 0.544 | 0.649 | 0.748 |
 | 32B Base + RAG | 0.554 | 0.656 | 0.748 |
 
-The v1 agent closes most of the gap to 32B RAG with a 3B model. GRPO training
-adds +1pp EM; the multi-hop agent design adds +3.6pp.
-
-**v2 — BGE embeddings** (embedding upgrade, upper/lower bounds not re-run)
-
-| System | EM | F1 | ctx_recall |
+| Type | EM | F1 | n |
 |---|---|---|---|
-| **3B GRPO + Agent (v2)** | **0.574** | **0.660** | **0.887** |
+| bridge | 0.570 | 0.657 | 409 |
+| comparison | 0.593 | 0.643 | 91 |
 
-+7.0pp EM and +9.3pp ctx_recall over v1. The BGE model was trained for
-asymmetric QA retrieval (short query → long passage), which matches this task
-exactly. Retrieval was the primary bottleneck in v1.
+A 3B GRPO-tuned model with multi-hop decomposition outperforms 32B simple RAG. Agent design contributes +3.6pp EM; GRPO training adds +1.0pp.
 
-See [Analysis.md](Analysis.md) for full run-by-run results, ablation studies,
-design decisions, and the future improvement plan.
+See [Analysis.md](Analysis.md) for full experiment history and engineering notes.

@@ -15,7 +15,7 @@ EVAL_PATH   = os.path.join(DATA_DIR, "grpo_val.jsonl")
 # ---------------------------------------------------------------------------
 MODEL_NAME        = "Qwen/Qwen2.5-3B-Instruct"
 # GRPO_ADAPTER_REPO = os.path.join(BASE_DIR, "model", "grpo_rag")
-GRPO_ADAPTER_REPO = "Norm11/qwen2.5-3b-grpo-hotpotqa" 
+GRPO_ADAPTER_REPO = "Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3/grpo_adapter"
 
 # ---------------------------------------------------------------------------
 # Generation

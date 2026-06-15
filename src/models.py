@@ -80,7 +80,14 @@ def load_model_and_tokenizer(
             torch_dtype=torch.float16,
         ).to(device)
 
-    model = PeftModel.from_pretrained(base, adapter_repo)
+    # Support "org/repo/subfolder" format for HF repos with adapter in a subdirectory
+    parts = adapter_repo.split("/")
+    if not adapter_repo.startswith("/") and len(parts) >= 3:
+        repo_id  = "/".join(parts[:2])
+        subfolder = "/".join(parts[2:])
+        model = PeftModel.from_pretrained(base, repo_id, subfolder=subfolder)
+    else:
+        model = PeftModel.from_pretrained(base, adapter_repo)
     model.eval()
 
     print("Model ready.")
