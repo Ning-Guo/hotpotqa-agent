@@ -80,12 +80,38 @@ python run_eval.py --load-index --output results/eval.json
 # Quick smoke test (20 questions)
 python run_eval.py --n 20 --load-index
 
-# Gradio UI
-python serve.py --load-index
-
 # Step-by-step debug
 python debug_agent.py --question "..."
 ```
+
+## Local Demo UI
+
+Gradio web app with real-time reasoning steps, retrieved passages, and keyword highlighting.
+
+```bash
+python serve.py                # first run — builds FAISS index
+python serve.py --load-index   # subsequent runs — reuse saved index
+python serve.py --port 8080    # custom port (default: 7860)
+```
+
+Open `http://localhost:7860`. The UI shows each agent step as it runs (classify → decompose → retrieve → answer → verify), highlights query keywords in retrieved passages, and labels whether context came from the local vector store or Wikipedia web search.
+
+<!-- screenshot -->
+
+## Agent Graph
+
+Visualise the LangGraph pipeline without loading model weights:
+
+```bash
+python show_graph.py
+```
+
+Outputs:
+- ASCII diagram in terminal
+- `results/graph.md` — Mermaid source (paste into https://mermaid.live for an interactive render)
+- `results/graph.png` — PNG export (requires network)
+
+<!-- graph image -->
 
 ## Training (GPU, A100 80GB)
 
