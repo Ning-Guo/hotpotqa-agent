@@ -56,6 +56,8 @@ def main():
                         help="Evaluate only first N questions (for quick testing)")
     parser.add_argument("--load-index", action="store_true",
                         help="Load pre-built FAISS index from config.INDEX_PATH")
+    parser.add_argument("--bm25",      action="store_true",
+                        help="Use BM25+dense RRF hybrid retrieval (requires rank-bm25)")
     parser.add_argument("--output",    default=os.path.join(RESULTS_DIR, "eval_live.json"))
     args = parser.parse_args()
 
@@ -72,10 +74,11 @@ def main():
 
     # ── Load / build retriever ────────────────────────────────────────────
     if args.load_index:
-        retriever = Retriever.load(config.INDEX_PATH, config.CORPUS_PATH, config.EMBEDDING_MODEL)
+        retriever = Retriever.load(config.INDEX_PATH, config.CORPUS_PATH, config.EMBEDDING_MODEL,
+                                   use_bm25=args.bm25)
     else:
         corpus    = build_corpus(eval_items)
-        retriever = Retriever(corpus, config.EMBEDDING_MODEL)
+        retriever = Retriever(corpus, config.EMBEDDING_MODEL, use_bm25=args.bm25)
         retriever.save(config.INDEX_PATH, config.CORPUS_PATH)
 
     # ── Build graph ───────────────────────────────────────────────────────
