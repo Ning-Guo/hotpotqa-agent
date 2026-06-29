@@ -24,8 +24,10 @@ import json
 import os
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, ROOT)
+ROOT     = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, THIS_DIR)
+sys.path.insert(1, ROOT)
 
 import torch
 from datasets import Dataset

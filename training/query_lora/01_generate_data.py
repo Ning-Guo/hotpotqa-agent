@@ -35,8 +35,10 @@ import sys
 
 os.environ.setdefault("VLLM_WORKER_MULTIPROC_METHOD", "spawn")
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, ROOT)
+ROOT     = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, THIS_DIR)  # training/query_lora/config.py takes priority
+sys.path.insert(1, ROOT)
 
 import torch
 from tqdm import tqdm
