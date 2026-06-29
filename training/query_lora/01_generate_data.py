@@ -171,11 +171,56 @@ class PromptBuilder:
 # Data loading
 # ---------------------------------------------------------------------------
 
+def _normalize_item(item: dict) -> dict:
+    """
+    Normalize a HotpotQA item to a consistent dict format.
+
+    HuggingFace format (hotpotqa/hotpot_qa, distractor config):
+      context  = {"title": [...], "sentences": [[...], ...]}
+      supporting_facts = {"title": [...], "sent_id": [...]}
+
+    Original JSON format (hotpot_train_v1.1.json):
+      context  = [[title, [sent, ...]], ...]
+      supporting_facts = {"title": [...], "sent_id": [...]}
+
+    We normalise context to the list-of-[title, sents] form used by
+    the corpus builder below.
+    """
+    ctx = item.get("context", [])
+    if isinstance(ctx, dict):
+        # HuggingFace arrow format → convert to list-of-pairs
+        titles = ctx.get("title", [])
+        sents  = ctx.get("sentences", [])
+        item = dict(item)
+        item["context"] = [[t, s] for t, s in zip(titles, sents)]
+    return item
+
+
 def load_hotpot_train(path: str, n_bridge: int, n_comparison: int, seed: int = 42):
-    """Load and sample HotpotQA train split."""
-    print(f"Loading HotpotQA train data from {path}...")
-    with open(path) as f:
-        data = json.load(f)
+    """
+    Load and sample HotpotQA train split.
+
+    Tries local file first; falls back to HuggingFace datasets library if
+    the file does not exist (requires: pip install datasets).
+    """
+    if os.path.exists(path):
+        print(f"Loading HotpotQA train data from {path}...")
+        with open(path) as f:
+            data = json.load(f)
+        data = [_normalize_item(d) for d in data]
+    else:
+        print(f"Local file not found: {path}")
+        print("Falling back to HuggingFace datasets (hotpotqa/hotpot_qa, distractor)...")
+        try:
+            from datasets import load_dataset
+        except ImportError:
+            raise ImportError(
+                "datasets library not installed. Run: pip install datasets\n"
+                f"Or download the data manually and place it at: {path}"
+            )
+        hf_data = load_dataset("hotpotqa/hotpot_qa", "distractor", split="train",
+                               trust_remote_code=True)
+        data = [_normalize_item(dict(d)) for d in hf_data]
 
     bridge     = [d for d in data if d.get("type") == "bridge"]
     comparison = [d for d in data if d.get("type") == "comparison"]
