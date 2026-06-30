@@ -26,3 +26,4 @@ model/
 # training data https://huggingface.co/datasets/Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset/tree/main/data
 training/checkpoints
 training/data 
+training/query_lora/checkpoints/query_lora
