@@ -303,13 +303,21 @@ def student_generate_hop1(model, tokenizer, messages: list, max_tokens: int = 48
 # ---------------------------------------------------------------------------
 
 def ctx_recall_ok(generated_query: str, retriever: Retriever,
-                  gold_titles: list, top_k: int) -> bool:
-    """Return True if FAISS retrieval with this query finds all gold passages."""
+                  gold_titles: list, top_k: int,
+                  threshold: float = None) -> bool:
+    """
+    Return True if FAISS retrieval with this query meets the recall threshold.
+
+    For bridge sub_q1/sub_q2: threshold=0.5 (finds at least 1 of 2 gold passages).
+    For comparison union recall: threshold=1.0 (handled separately in generate_comparison_data).
+    """
     if not gold_titles:
         return False
+    if threshold is None:
+        threshold = cfg.MIN_CTX_RECALL
     retrieved = retriever.retrieve_with_meta(generated_query, top_k=top_k)
     recall = supporting_fact_recall(retrieved, gold_titles)
-    return recall >= cfg.MIN_CTX_RECALL
+    return recall >= threshold
 
 
 def hop2_contains_entity(sub_q2: str, hop1_answer: str) -> bool:
@@ -368,7 +376,7 @@ def generate_bridge_data(
     valid_items, valid_sub_q1, valid_passages, valid_msg_idx = [], [], [], []
     for i, (item, sub_q1) in enumerate(tqdm(zip(items, sub_q1_list), total=len(items))):
         gold_titles = get_gold_titles(item)
-        if ctx_recall_ok(sub_q1, retriever, gold_titles, cfg.TOP_K):
+        if ctx_recall_ok(sub_q1, retriever, gold_titles, cfg.TOP_K, threshold=0.5):
             passages = retriever.retrieve(sub_q1, top_k=cfg.TOP_K)
             valid_items.append(item)
             valid_sub_q1.append(sub_q1)
@@ -411,7 +419,7 @@ def generate_bridge_data(
 
         # sub_q2 quality: ctx_recall + entity check (B2 filter)
         sub_q2_ok = (
-            ctx_recall_ok(sub_q2, retriever, gold_titles, cfg.TOP_K)
+            ctx_recall_ok(sub_q2, retriever, gold_titles, cfg.TOP_K, threshold=0.5)
             and hop2_contains_entity(sub_q2, hop1_answer)
         )
         if not sub_q2_ok:
