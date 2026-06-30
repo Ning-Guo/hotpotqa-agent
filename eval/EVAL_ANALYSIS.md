@@ -213,6 +213,59 @@ Exp3 pred: "The Society for Nutrition Education and Behavior"  ← 与问题毫�
 
 ---
 
+## Exp4：Query LoRA 实验结果
+
+### 实验设计
+
+在 Exp3 的基础上新增一个 Query LoRA adapter，专门用于 sub_q 生成步骤（decompose、formulate_hop2、rewrite_comparison），GRPO adapter 保持不变，用于 answer_final。
+
+**训练数据生成**（`training/query_lora/01_generate_data.py`）：
+- 从 HotpotQA train split 采样 12000 bridge + 3000 comparison 题
+- 32B teacher（vLLM 批量推理）生成 sub_q1 和 sub_q2 标注
+- 3B student 生成 hop1_answer（匹配推理时的分布）
+- 质量过滤：sub_q1/sub_q2 ctx_recall ≥ 0.5，sub_q2 必须包含 hop1_answer 实体
+
+**最终数据量**：train 22,548 / val 1,186，task 分布：sub_q1:10832, sub_q2:8894, comparison_rewrite:2822
+
+**训练配置**（`training/query_lora/02_train_query_lora.py`）：
+- LoRA rank=16, alpha=32，目标模块：q/k/v/o/gate/up/down_proj
+- SFTTrainer + DataCollatorForCompletionOnlyLM（仅对 assistant 回复计算 loss）
+- 3 epochs，lr=2e-4，最终 eval loss=0.2317
+
+**推理**：在 agent 每次 sub_q 生成前 `set_adapter("query")`，生成后恢复 `set_adapter("grpo")`
+
+### 结果
+
+| 指标 | Exp3 Baseline | Exp4 Query LoRA | Delta |
+|---|---|---|---|
+| Exact Match | 0.540 | **0.550** | +1.0pp |
+| Token F1 | 0.625 | **0.639** | +1.4pp |
+| Context Recall | 0.902 | **0.931** | +2.9pp |
+| Ans Coverage | 0.914 | **0.944** | +3.0pp |
+
+| 题型 | Bridge EM | Comparison EM |
+|---|---|---|
+| Exp3 | 0.533 | 0.571 |
+| Exp4 | **0.545** | **0.571** |
+
+### 中间评估（sub_q 质量）
+
+| 指标 | Base 3B | Query LoRA | Delta |
+|---|---|---|---|
+| sub_q1 ctx_recall | 0.243 | 0.240 | -0.003 |
+| sub_q2 ctx_recall | 0.228 | 0.238 | +0.010 |
+| sub_q2 entity rate | 0.775 | **0.915** | **+0.140** |
+
+sub_q2 entity rate 提升 14pp 是最直接的信号，说明 Query LoRA 显著改善了 B2 类问题（sub_q2 没有代入 hop1_answer）。这一改善直接传导到端到端的 ctx_recall 提升（+2.9pp）。
+
+### 结论
+
+- Query LoRA 在所有关键指标上均优于 Exp3 baseline，验证了通过 32B 知识蒸馏改善 sub_q 生成的方案有效
+- ctx_recall 从 0.902 提升至 0.931，说明检索质量的改善是 EM/F1 提升的直接原因
+- 训练目标（sub_q2 entity rate）与最终 E2E 指标正相关，实验链路完整
+
+---
+
 ## 改进方向
 
 ### 针对 Category A + B（87%）— 32B 蒸馏 SFT
