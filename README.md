@@ -1,22 +1,37 @@
-# HotpotQA Live Multi-Hop Agent
+# HotpotQA Multi-Hop Agent
 
-Live multi-hop QA agent using LangGraph + Qwen2.5-3B-Instruct, evaluated on HotpotQA. All reasoning happens at inference time — no pre-computed artifacts.
+A multi-hop question answering agent built with LangGraph + Qwen2.5-3B-Instruct, trained with GRPO and distilled with a Query LoRA adapter, evaluated on HotpotQA distractor split.
 
-## Dataset
+All reasoning happens at inference time — no pre-computed chain-of-thought.
 
-HotpotQA distractor split. Two question types:
-- **Bridge** — find an intermediate entity, then answer the original question.
-- **Comparison** — compare two entities on a shared property.
+---
 
-Eval set: `data/grpo_val.jsonl` — 500 questions (409 bridge / 91 comparison).
+## Results
+
+Four controlled experiments on the same 500-question eval set (`data/grpo_val.jsonl`):
+
+| Experiment | Model | Retrieval | EM | F1 | ctx_recall |
+|---|---|---|---|---|---|
+| Exp1: Upper Bound | 32B + Golden passages | None (oracle) | 0.788 | 0.884 | 1.000 |
+| Exp2: 32B Agent | 32B + Agent | FAISS TOP_K=5 | 0.640 | 0.709 | 0.955 |
+| Exp3: 3B GRPO Agent | 3B + GRPO + Agent | FAISS TOP_K=5 | 0.540 | 0.625 | 0.902 |
+| **Exp4: + Query LoRA** | **3B + GRPO + Query LoRA + Agent** | **FAISS TOP_K=5** | **0.550** | **0.639** | **0.931** |
+
+**Key findings:**
+- A 3B GRPO-tuned model with multi-hop agent design reaches within 9pp EM of a 32B model
+- Query LoRA distillation (32B teacher → 3B student) improves context recall by +2.9pp and sub-query entity grounding by +14pp
+- The main gap between 3B and 32B is sub-query decomposition quality, not model capacity for answering
+
+See [`eval/EVAL_ANALYSIS.md`](eval/EVAL_ANALYSIS.md) for full experiment breakdown and failure analysis.
 
 ---
 
 ## Architecture
 
-**Dual-role model:** Single `PeftModel` (Qwen2.5-3B-Instruct + GRPO LoRA adapter)
-- `model.disable_adapter()` → base model for reasoning (classify, decompose, rewrite)
-- adapter active → GRPO model for final answer synthesis
+**Dual-role model:** A single `PeftModel` (Qwen2.5-3B-Instruct) with two LoRA adapters:
+- `set_adapter("grpo")` → fine-tuned for final answer synthesis
+- `set_adapter("query")` → fine-tuned for sub-query generation (Query LoRA)
+- `disable_adapter()` → base model for classify / answer_hop1
 
 **LangGraph pipeline:**
 ```
@@ -25,32 +40,46 @@ Bridge:     classify → decompose → retrieve_hop1 → answer_hop1
 
 Comparison: classify → rewrite → retrieve_comparison → answer_final → verify
 
-Retry:      verify fails → fallback retrieval → web search → end (capped at retry_count=2)
+Retry:      verify fails → fallback retrieval → web search → end
 ```
 
 **Retriever:** FAISS + `BAAI/bge-base-en-v1.5`, TOP_K=5, cosine similarity.
+
+![Agent Graph](results/graph.png)
 
 ---
 
 ## Project Structure
 
 ```
-├── config.py               Paths, model names, thresholds
 ├── src/
-│   ├── models.py           Load PeftModel + tokenizer
-│   ├── reasoner.py         LLM reasoning calls (classify, decompose, rewrite)
-│   ├── retriever.py        FAISS dense retriever
-│   ├── graph.py            LangGraph pipeline
-│   └── evaluator.py        EM, F1, context recall, faithfulness
-├── training/               SFT + GRPO training scripts (01–05)
-├── data/
-│   ├── grpo_val.jsonl      500-question eval set
-│   ├── corpus.jsonl        Paragraph corpus
-│   └── faiss.index         FAISS index
-├── run_agent.py            Single question CLI
-├── run_eval.py             Batch evaluation
-├── serve.py                Gradio demo UI
-└── debug_agent.py          Step-by-step trace
+│   ├── graph.py            LangGraph pipeline (bridge + comparison + verify/retry)
+│   ├── reasoner.py         LLM calls: classify, decompose, rewrite, answer
+│   ├── retriever.py        FAISS dense retriever (BGE embeddings)
+│   ├── evaluator.py        EM, F1, context recall, faithfulness metrics
+│   └── models.py           Load PeftModel with GRPO + Query LoRA adapters
+├── training/
+│   ├── 01_prepare_dataset.py     HotpotQA → SFT/GRPO splits
+│   ├── 02_generate_sft_data.py   32B teacher traces for SFT
+│   ├── 03_train_sft.py           SFT warm-up
+│   ├── 04_merge_adapter.py       Merge SFT adapter into base
+│   ├── 05_train_grpo.py          GRPO fine-tuning (reward = 0.5×EM + 0.5×F1)
+│   └── query_lora/               Query LoRA distillation pipeline
+│       ├── 01_generate_data.py   32B teacher annotates sub_q1/sub_q2 (22K samples)
+│       ├── 02_train_query_lora.py  SFT with completion-only loss
+│       ├── 03_eval_subq_quality.py Sub-query quality diagnostic
+│       └── 04_eval_e2e.py        End-to-end eval with dual-adapter inference
+├── eval/
+│   ├── exp1_upperbound.py        32B + golden passages (vLLM batch)
+│   ├── exp2_32b_agent.py         32B + RAG + full agent
+│   ├── exp3_3b_grpo_agent.py     3B GRPO + RAG + agent
+│   └── EVAL_ANALYSIS.md          Full experiment analysis + failure taxonomy
+├── results/                      JSON result files for all experiments
+├── config.py                     Paths, model names, thresholds
+├── run_agent.py                  Single question CLI
+├── run_eval.py                   Batch evaluation
+├── serve.py                      Gradio demo UI
+└── debug_agent.py                Step-by-step agent trace
 ```
 
 ---
@@ -58,12 +87,16 @@ Retry:      verify fails → fallback retrieval → web search → end (capped a
 ## Setup
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Set adapter in config.py
-GRPO_ADAPTER_REPO = "Norm11/qwen2.5-3b-grpo-hotpotqa"
 ```
+
+Models are loaded from HuggingFace automatically:
+- Base: `Qwen/Qwen2.5-3B-Instruct`
+- GRPO adapter: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3/grpo_adapter`
+- Query LoRA: `Norm11/qwen2.5-3b-query-lora` *(uploaded separately)*
+- Embedding: `BAAI/bge-base-en-v1.5`
+
+---
 
 ## Run
 
@@ -71,52 +104,26 @@ GRPO_ADAPTER_REPO = "Norm11/qwen2.5-3b-grpo-hotpotqa"
 # Single question
 python run_agent.py --question "Were Scott Derrickson and Ed Wood of the same nationality?"
 
-# Full eval (builds FAISS index)
-python run_eval.py --output results/eval.json
-
-# Full eval (reuse saved index)
+# Batch eval (500 questions, reuse saved index)
 python run_eval.py --load-index --output results/eval.json
-
-# Quick smoke test (20 questions)
-python run_eval.py --n 20 --load-index
 
 # Step-by-step debug
 python debug_agent.py --question "..."
 ```
 
-## Local Demo UI
-
-Gradio web app with real-time reasoning steps, retrieved passages, and keyword highlighting.
-
+**Local demo UI** (Gradio):
 ```bash
-python serve.py                # first run — builds FAISS index
-python serve.py --load-index   # subsequent runs — reuse saved index
-python serve.py --port 8080    # custom port (default: 7860)
+python serve.py --load-index
+# Open http://localhost:7860
 ```
+Shows each agent step in real time: classify → decompose → retrieve → answer → verify, with keyword highlighting on retrieved passages.
 
-Open `http://localhost:7860`. The UI shows each agent step as it runs (classify → decompose → retrieve → answer → verify), highlights query keywords in retrieved passages, and labels whether context came from the local vector store or Wikipedia web search.
+---
 
-<!-- screenshot -->
+## Training (GPU required, A100 80GB)
 
-## Agent Graph
-
-Visualise the LangGraph pipeline without loading model weights:
-
+**GRPO training pipeline:**
 ```bash
-python show_graph.py
-```
-
-Outputs:
-- ASCII diagram in terminal
-- `results/graph.md` — Mermaid source (paste into https://mermaid.live for an interactive render)
-- `results/graph.png` — PNG export (requires network)
-
-<!-- graph image -->
-
-## Training (GPU, A100 80GB)
-
-```bash
-source ~/venv_train/bin/activate
 python training/01_prepare_dataset.py
 python training/02_generate_sft_data.py
 python training/03_train_sft.py
@@ -124,25 +131,23 @@ python training/04_merge_adapter.py
 torchrun --nproc_per_node=4 training/05_train_grpo.py --epochs 2 --max-samples 30000
 ```
 
----
+**Query LoRA distillation:**
+```bash
+# Generate 22K training samples (32B teacher via vLLM)
+python training/query_lora/01_generate_data.py
 
-## Best Result
+# Train LoRA adapter (~3 hours, 1× A100)
+python training/query_lora/02_train_query_lora.py
 
-**Adapter:** `Norm11/qwen2.5-3b-grpo-hotpotqa` | **Embedding:** `BAAI/bge-base-en-v1.5`
+# Evaluate sub-query quality improvement
+python training/query_lora/03_eval_subq_quality.py \
+    --adapter training/query_lora/checkpoints/query_lora/final --load-index
 
-| System | EM | F1 | ctx_recall |
-|---|---|---|---|
-| 3B Base + RAG (lower bound) | 0.458 | 0.541 | 0.748 |
-| 3B GRPO RAG-only | 0.468 | 0.552 | 0.748 |
-| **3B GRPO + Agent (ours)** | **0.574** | **0.660** | **0.887** |
-| 14B Base + RAG | 0.544 | 0.649 | 0.748 |
-| 32B Base + RAG | 0.554 | 0.656 | 0.748 |
+# End-to-end eval vs Exp3 baseline
+python training/query_lora/04_eval_e2e.py \
+    --query-adapter training/query_lora/checkpoints/query_lora/final
+```
 
-| Type | EM | F1 | n |
-|---|---|---|---|
-| bridge | 0.570 | 0.657 | 409 |
-| comparison | 0.593 | 0.643 | 91 |
-
-A 3B GRPO-tuned model with multi-hop decomposition outperforms 32B simple RAG. Agent design contributes +3.6pp EM; GRPO training adds +1.0pp.
-
-See [Analysis.md](Analysis.md) for full experiment history and engineering notes.
+Trained adapters and datasets are available on HuggingFace:
+- GRPO adapter: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3`
+- Training data: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset`
