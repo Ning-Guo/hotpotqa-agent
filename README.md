@@ -133,17 +133,10 @@ torchrun --nproc_per_node=4 training/05_train_grpo.py --epochs 2 --max-samples 3
 
 **Query LoRA distillation:**
 ```bash
-# Generate 22K training samples (32B teacher via vLLM)
 python training/query_lora/01_generate_data.py
-
-# Train LoRA adapter (~3 hours, 1× A100)
 python training/query_lora/02_train_query_lora.py
-
-# Evaluate sub-query quality improvement
 python training/query_lora/03_eval_subq_quality.py \
     --adapter training/query_lora/checkpoints/query_lora/final --load-index
-
-# End-to-end eval vs Exp3 baseline
 python training/query_lora/04_eval_e2e.py \
     --query-adapter training/query_lora/checkpoints/query_lora/final
 ```
@@ -151,3 +144,6 @@ python training/query_lora/04_eval_e2e.py \
 Trained adapters and datasets are available on HuggingFace:
 - GRPO adapter: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3`
 - Training data: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset`
+
+- Query lora adaptor: `Norm11/qwen2.5-3b-querylora-hotpotqa`
+- Query lora training data: `Norm11/qwen2.5-3b-querylora-hotpotqa-dataset`
