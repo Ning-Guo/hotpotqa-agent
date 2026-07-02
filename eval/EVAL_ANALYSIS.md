@@ -2,22 +2,26 @@
 
 ## 实验设计
 
-为了验证项目结论的说服力，设计了三组对照实验，在同一 500 题评测集（`data/grpo_val.jsonl`）上运行，使用相同的 FAISS 索引和 BGE embedding。
+五组对照实验在同一 500 题评测集（`data/grpo_val.jsonl`）上运行，使用相同的 FAISS 索引和 BGE embedding。
 
 | 实验 | 模型 | 检索 | Pipeline |
 |---|---|---|---|
-| Exp1 | Qwen2.5-32B-Instruct | Golden passages（直接用 supporting facts，无 FAISS） | 单轮 QA |
+| Exp0 | Qwen2.5-3B base（无 adapter） | FAISS TOP_K=5，直接用原始问题检索 | 单轮 QA（无 agent） |
+| Exp1 | Qwen2.5-32B-Instruct | Golden passages（oracle，无 FAISS） | 单轮 QA |
 | Exp2 | Qwen2.5-32B-Instruct | FAISS TOP_K=5 | 完整 LangGraph Agent |
 | Exp3 | Qwen2.5-3B + GRPO adapter | FAISS TOP_K=5 | 完整 LangGraph Agent |
+| Exp4 | Qwen2.5-3B + GRPO + Query LoRA | FAISS TOP_K=5 | 完整 LangGraph Agent |
 
-**Exp1** 是联合上界：完美检索 + 最大模型，代表系统的理论天花板。
-**Exp2** 是大模型 baseline：相同 agent 架构，不做微调。
-**Exp3** 是本项目的主要结果。
+**Exp0** 是下界：最简 RAG，无任何推理结构，揭示 agent 分解步骤的净收益。
+**Exp1** 是上界：完美检索 + 最大模型，代表系统的理论天花板。
+**Exp4** 是本项目的最终结果。
 
-脚本位于 `eval/` 目录，不改动原有代码：
+脚本位于 `eval/` 目录：
+- `eval/exp0_3b_naive_rag.py` — 3B base，单跳检索，无 agent
 - `eval/exp1_upperbound.py` — vLLM 批量推理，golden passages
-- `eval/exp2_32b_agent.py` — HF transformers + PlainModelWrapper（no-op disable_adapter）
+- `eval/exp2_32b_agent.py` — HF transformers + PlainModelWrapper
 - `eval/exp3_3b_grpo_agent.py` — 复用 src.models.load_model_and_tokenizer
+- `eval/training/query_lora/04_eval_e2e.py` — 双 adapter 推理
 
 ---
 
@@ -25,22 +29,27 @@
 
 | 实验 | EM | F1 | ctx_recall | ans_coverage | faithfulness |
 |---|---|---|---|---|---|
+| Exp0: 3B base + Naive RAG（下界） | 0.568 | 0.657 | 0.907 | 0.868 | 0.908 |
 | Exp1: 32B + Golden（上界） | 0.788 | 0.884 | 1.000 | 0.976 | 0.921 |
 | Exp2: 32B + RAG + Agent | 0.640 | 0.709 | 0.955 | 0.956 | 0.805 |
 | Exp3: 3B GRPO + RAG + Agent | 0.540 | 0.625 | 0.902 | 0.914 | 0.885 |
+| Exp4: 3B GRPO + Query LoRA + Agent | 0.550 | 0.639 | 0.931 | 0.944 | — |
 
 ### 按题型
 
 | 实验 | Bridge EM | Comparison EM |
 |---|---|---|
+| Exp0: 3B base + Naive RAG | 0.560 | 0.604 |
 | Exp1: 32B + Golden | 0.802 | 0.725 |
 | Exp2: 32B + Agent | 0.724 | **0.264** |
 | Exp3: 3B GRPO + Agent | 0.533 | 0.571 |
+| Exp4: 3B GRPO + Query LoRA | 0.545 | 0.571 |
 
 ### 按难度
 
 | 实验 | Easy | Medium | Hard |
 |---|---|---|---|
+| Exp0 | 0.586 | 0.593 | 0.461 |
 | Exp1 | 0.697 | 0.865 | 0.618 |
 | Exp2 | 0.616 | 0.696 | 0.472 |
 | Exp3 | 0.566 | 0.574 | 0.393 |
@@ -49,23 +58,35 @@
 
 ## 核心发现
 
-### 1. 检索不是唯一瓶颈
+### 1. Naive RAG 下界出乎意料地高（Exp0 EM=0.568 > Exp3 EM=0.540）
 
-Exp2 的 ctx_recall=0.955（已接近完美），但 EM 仍比 Exp1 低 14.8pp。说明即使检索近乎完美，agent pipeline 本身（hop 分解错误、hop1 答案传播错误等）仍会引入显著损耗。单纯提高 TOP_K 效果有限，query 质量才是核心瓶颈。
+最重要也最出乎意料的发现：**3B base 模型 + 单跳 RAG（无任何 agent 结构）反而比 3B GRPO + 完整多跳 Agent 效果更好。**
 
-### 2. 3B GRPO 与 32B Agent 的差距只有 10pp
+根本原因有两点：
 
-Exp3 EM=0.540，Exp2 EM=0.640，差距 10pp。参数量相差 10 倍，GRPO 微调 + agent 设计基本弥补了模型规模的劣势。
+**① HotpotQA distractor 设置下，直接检索召回率已经很高**
 
-### 3. Exp2 Comparison 题严重异常（EM=0.264）
+ctx_recall 对比：Exp0=0.907，Exp3=0.902。用原始问题直接检索与多跳分解检索几乎持平，因为 HotpotQA 的问题本身包含两个 hop 的实体关键词，FAISS 语义匹配直接就能找到两个 gold passage，多跳分解的检索增益极小。
 
-32B base 模型在 Comparison 题上表现比 3B GRPO（0.571）差得多，甚至低于随机猜测（0.5）。
+**② 多跳 agent 引入的错误大于收益**
 
-**根本原因**：Comparison 答案为 yes/no，pipeline 的 faithfulness verifier 对 yes/no 做了特殊处理（检查实体覆盖率）。32B base 模型没有经过 GRPO 微调，answer 格式不稳定，有时输出冗长句子而非干净的 yes/no，verifier 判定失败 → 触发 web search → 用不相关段落替换原本正确的检索结果，答案变差。这是 agent pipeline 对模型输出格式的隐式依赖，而非 32B 模型能力不足（Exp1 中 32B Comparison EM=0.725）。
+多跳 pipeline 有多个级联失败点：sub_q1 写偏 → hop1 答错 → sub_q2 不代入实体 → 最终答案错。每一步的错误都会传播到下一步。而 naive RAG 只有"检索 + 一次生成"，失败点少，鲁棒性反而更高。
 
-### 4. ctx_recall 差异印证 agent 的检索价值
+**这一发现揭示了 agent 设计的根本矛盾**：多跳结构在理论上能处理更复杂的推理，但在实践中，每增加一个中间步骤就增加一个错误来源。只有当中间步骤的准确率足够高时，多跳才能带来净收益。
 
-Exp2（32B）ctx_recall=0.955，Exp3（3B）ctx_recall=0.902。32B 生成的 sub-query 质量更高，召回 gold 段落的能力更强。但最终答案质量差距只有 10pp，说明 GRPO 微调帮助 3B 模型更好地利用了已有上下文，一定程度上弥补了检索质量的差距。
+### 2. Query LoRA 是目前唯一有效改进
+
+Exp4（+Query LoRA）相比 Exp3 的提升：EM +1pp，F1 +1.4pp，ctx_recall +2.9pp。更关键的是 sub_q2 entity rate +14pp，说明 Query LoRA 显著减少了 B 类错误（sub_q2 没有代入 hop1_answer）。
+
+但即使加了 Query LoRA（Exp4 EM=0.550），仍低于 naive RAG baseline（Exp0 EM=0.568）。这说明 Query LoRA 改善了分解质量，但还不足以让多跳 pipeline 整体超越单跳。
+
+### 3. 检索不是唯一瓶颈，分解质量才是
+
+Exp2（32B Agent）ctx_recall=0.955 远高于 Exp3（3B Agent）0.902，但 EM 差距只有 10pp。而 Exp0 ctx_recall=0.907 与 Exp3 相近，EM 却高了 2.8pp。这说明提升检索对最终答案的边际收益有限，**分解步骤的准确率才是决定多跳 pipeline 效果的关键**。
+
+### 4. Exp2 Comparison 题严重异常（EM=0.264）
+
+32B base 模型 Comparison EM 仅 0.264，低于随机猜测（0.5）。根本原因：32B 未经 GRPO 微调，输出格式不稳定（输出冗长句子而非 yes/no）→ faithfulness verifier 判定失败 → 触发 web search → 覆盖了正确的检索结果。这是 agent pipeline 对模型输出格式的隐式依赖，而非 32B 能力不足（Exp1 中 Comparison EM=0.725）。
 
 ---
 
@@ -268,18 +289,36 @@ sub_q2 entity rate 提升 14pp 是最直接的信号，说明 Query LoRA 显著�
 
 ## 改进方向
 
-### 针对 Category A + B（87%）— 32B 蒸馏 SFT
+Exp0 的发现（naive RAG > multi-hop agent）重新定义了改进优先级：**核心问题不是检索，而是分解步骤的准确率不够高**。要让多跳 agent 超越单跳 RAG，分解准确率必须达到让级联错误率低于单跳的损耗。
 
-用 32B 模型对 `decompose_bridge`（生成 sub_q1）、`formulate_hop2`（生成 sub_q2）、`rewrite_comparison` 三步生成高质量标注数据，SFT 3B 模型的 query 改写能力。
+### 方向1：提升分解准确率（最高优先级）
 
-**关键约束**：
-- 给 32B 的 prompt 必须与 `src/reasoner.py` 里的模板完全一致，避免分布偏移
-- 生成时使用 FAISS 检索结果（而非 golden passages）作为输入，与推理环境对齐
-- 目标：让 3B 学会"每一跳只问一个干净的问题，sub_q2 必须把 hop1_answer 代入"
+Query LoRA（已实现）是正确方向，但还不够。进一步改进：
 
-可新增一个独立的 Query LoRA adapter，通过 PEFT 多 adapter 切换使用，不动现有 GRPO adapter。
+- **更多蒸馏数据**：当前 22K 样本，扩大到 50K+ 可能带来更明显提升
+- **Iterative refinement**：如果 hop1_answer 置信度低（输出过长、包含不确定词），让模型重新生成 sub_q1 而不是继续传播错误
+- **Chain-of-thought 监督**：在 sub_q1 生成时加入显式的推理过程标注，而不只是直接输出 sub_q
 
-### 针对 Category C（13%）— 生成质量
+### 方向2：自适应路由（跳过不必要的分解）
 
-- **冗长输出**：GRPO 奖励加 brevity 惩罚，或 answer prompt 强化"用短语回答，不要写完整句子"
-- **幻觉**：提高 faithfulness verifier 阈值，或在 GRPO 训练时加入更多检索失败案例
+并非所有题目都需要两跳推理。如果直接检索的 top-1 段落置信度足够高，可以直接回答而不走多跳 pipeline。
+
+```
+直接检索 → 置信度评估 → 高置信度: 直接答 | 低置信度: 走多跳
+```
+
+这本质上是把 naive RAG 的优势（简单题目直接答）和 agent 的优势（复杂题目分解推理）结合起来。
+
+### 方向3：端到端 GRPO 奖励重新设计
+
+当前 GRPO 的 reward = 0.5×EM + 0.5×F1，只对最终答案打分，不惩罚中间步骤的错误。可以加入：
+
+- **中间步骤奖励**：sub_q1 检索到 gold passage 给正奖励，没检索到给负奖励
+- **分解一致性奖励**：sub_q2 包含 hop1_answer 实体给正奖励
+
+这让模型在 GRPO 训练时就学到"分解步骤要准确"，而不只是"最终答案要准确"。
+
+### 方向4：Category C 生成质量（次要）
+
+- **冗长输出**：answer prompt 强化"用短语回答，不要写完整句子"
+- **幻觉**：提高 faithfulness verifier 阈值，或 GRPO 加入更多检索失败案例
