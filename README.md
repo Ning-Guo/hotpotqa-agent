@@ -1,6 +1,6 @@
-# HotpotQA Live Multi-Hop Agent
+# HotpotQA Multi-Hop QA Agent
 
-Live multi-hop QA agent using LangGraph + Qwen2.5-3B-Instruct, evaluated on HotpotQA. All reasoning happens at inference time — no pre-computed artifacts.
+Multi-hop QA system on HotpotQA using LangGraph + Qwen2.5-3B-Instruct. All reasoning happens at inference time — no pre-computed artifacts.
 
 ## Dataset
 
@@ -43,6 +43,7 @@ Retry:      verify fails → fallback retrieval → web search → end (capped a
 │   ├── graph.py            LangGraph pipeline
 │   └── evaluator.py        EM, F1, context recall, faithfulness
 ├── training/               SFT + GRPO training scripts (01–05)
+├── eval/                   Controlled ablation experiments (Exp0–Exp6)
 ├── data/
 │   ├── grpo_val.jsonl      500-question eval set
 │   ├── corpus.jsonl        Paragraph corpus
@@ -58,12 +59,12 @@ Retry:      verify fails → fallback retrieval → web search → end (capped a
 ## Setup
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Set adapter in config.py
-GRPO_ADAPTER_REPO = "Norm11/qwen2.5-3b-grpo-hotpotqa"
 ```
+
+Adapters on HuggingFace:
+- GRPO: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3/grpo_adapter`
+- Query LoRA: `Norm11/qwen2.5-3b-querylora-hotpotqa`
 
 ## Run
 
@@ -117,32 +118,61 @@ Outputs:
 
 ```bash
 source ~/venv_train/bin/activate
+
+# SFT + GRPO
 python training/01_prepare_dataset.py
 python training/02_generate_sft_data.py
 python training/03_train_sft.py
 python training/04_merge_adapter.py
 torchrun --nproc_per_node=4 training/05_train_grpo.py --epochs 2 --max-samples 30000
+
+# Query LoRA (sub-question distillation from 32B teacher)
+python training/query_lora/01_generate_data.py --load-index
+python training/query_lora/02_train_query_lora.py
+python training/query_lora/03_eval_subq_quality.py --load-index
+python training/query_lora/04_eval_e2e.py --load-index
 ```
 
 ---
 
-## Best Result
+## Results
 
-**Adapter:** `Norm11/qwen2.5-3b-grpo-hotpotqa` | **Embedding:** `BAAI/bge-base-en-v1.5`
+The project went through two distinct phases, each revealing a key insight about what actually drives performance.
+
+### Phase 1 — MiniLM Embedding (`all-MiniLM-L6-v2`)
+
+Context recall ≈ 0.748. With a weaker retriever, multi-hop decomposition provides substantial gains.
 
 | System | EM | F1 | ctx_recall |
 |---|---|---|---|
-| 3B Base + RAG (lower bound) | 0.458 | 0.541 | 0.748 |
+| 3B Base + RAG | 0.458 | 0.541 | 0.748 |
 | 3B GRPO RAG-only | 0.468 | 0.552 | 0.748 |
-| **3B GRPO + Agent (ours)** | **0.574** | **0.660** | **0.887** |
+| **3B GRPO + Agent** | **0.574** | **0.660** | **0.887** |
 | 14B Base + RAG | 0.544 | 0.649 | 0.748 |
 | 32B Base + RAG | 0.554 | 0.656 | 0.748 |
 
-| Type | EM | F1 | n |
+**Finding:** Multi-hop agent (+10.6pp over naive RAG) and GRPO training (+1.0pp) together let a 3B model outperform 32B naive RAG by 2.0pp. The agent's decomposition was genuinely useful because retrieval was the bottleneck.
+
+---
+
+### Phase 2 — BGE Embedding (`BAAI/bge-base-en-v1.5`)
+
+Context recall ≈ 0.907 (+15.9pp). Stronger retrieval changes the picture entirely.
+
+| Experiment | EM | F1 | ctx_recall |
 |---|---|---|---|
-| bridge | 0.570 | 0.657 | 409 |
-| comparison | 0.593 | 0.643 | 91 |
+| Exp0: 3B base + Naive RAG | 0.568 | 0.657 | 0.907 |
+| Exp3: 3B GRPO + Agent | 0.540 | 0.625 | 0.902 |
+| Exp4: 3B GRPO + Query LoRA + Agent | 0.550 | 0.639 | 0.931 |
+| Exp5: Adaptive routing (comparison→RAG, bridge→agent) | 0.544 | 0.640 | 0.901 |
+| **Exp6: 3B GRPO + Naive RAG** | **0.586** | **0.665** | **0.907** |
 
-A 3B GRPO-tuned model with multi-hop decomposition outperforms 32B simple RAG. Agent design contributes +3.6pp EM; GRPO training adds +1.0pp.
+**Finding:** BGE retrieval alone lifted the naive RAG baseline to 0.568, already above the multi-hop agent (0.540). The optimal combination is GRPO answer synthesis + single-hop retrieval — no decomposition needed.
 
-See [Analysis.md](Analysis.md) for full experiment history and engineering notes.
+**Contribution breakdown (BGE era):**
+- GRPO adapter: **+1.8pp** (Exp0 → Exp6)
+- Multi-hop pipeline: **−4.6pp** (Exp6 → Exp3)
+
+**Core insight:** The multi-hop agent was solving a retrieval problem. Once BGE made direct retrieval reliable (ctx_recall 0.748 → 0.907), the pipeline's error propagation became the dominant source of failures rather than missing context.
+
+See [eval/EVAL_ANALYSIS.md](eval/EVAL_ANALYSIS.md) for full experiment details and failure analysis.
