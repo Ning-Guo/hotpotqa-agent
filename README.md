@@ -1,26 +1,48 @@
-# HotpotQA Multi-Hop Agent
+# HotpotQA Multi-Hop QA Agent
 
-A multi-hop question answering agent built with LangGraph + Qwen2.5-3B-Instruct, trained with GRPO and distilled with a Query LoRA adapter, evaluated on HotpotQA distractor split.
-
-All reasoning happens at inference time — no pre-computed chain-of-thought.
+A multi-hop question answering agent built with LangGraph + Qwen2.5-3B-Instruct, trained with GRPO and distilled with a Query LoRA adapter, evaluated on HotpotQA distractor split. All reasoning happens at inference time — no pre-computed chain-of-thought.
 
 ---
 
 ## Results
 
-Four controlled experiments on the same 500-question eval set (`data/grpo_val.jsonl`):
+The project went through two distinct phases, each revealing a key insight about what actually drives performance.
 
-| Experiment | Model | Retrieval | EM | F1 | ctx_recall |
-|---|---|---|---|---|---|
-| Exp1: Upper Bound | 32B + Golden passages | None (oracle) | 0.788 | 0.884 | 1.000 |
-| Exp2: 32B Agent | 32B + Agent | FAISS TOP_K=5 | 0.640 | 0.709 | 0.955 |
-| Exp3: 3B GRPO Agent | 3B + GRPO + Agent | FAISS TOP_K=5 | 0.540 | 0.625 | 0.902 |
-| **Exp4: + Query LoRA** | **3B + GRPO + Query LoRA + Agent** | **FAISS TOP_K=5** | **0.550** | **0.639** | **0.931** |
+### Phase 1 — MiniLM Embedding (`all-MiniLM-L6-v2`)
 
-**Key findings:**
-- A 3B GRPO-tuned model with multi-hop agent design reaches within 9pp EM of a 32B model
-- Query LoRA distillation (32B teacher → 3B student) improves context recall by +2.9pp and sub-query entity grounding by +14pp
-- The main gap between 3B and 32B is sub-query decomposition quality, not model capacity for answering
+Context recall ≈ 0.748. With a weaker retriever, multi-hop decomposition provides substantial gains.
+
+| System | EM | F1 | ctx_recall |
+|---|---|---|---|
+| 3B Base + RAG | 0.458 | 0.541 | 0.748 |
+| 3B GRPO RAG-only | 0.468 | 0.552 | 0.748 |
+| **3B GRPO + Agent** | **0.574** | **0.660** | **0.887** |
+| 14B Base + RAG | 0.544 | 0.649 | 0.748 |
+| 32B Base + RAG | 0.554 | 0.656 | 0.748 |
+
+**Finding:** Multi-hop agent (+10.6pp over naive RAG) and GRPO training (+1.0pp) together let a 3B model outperform 32B naive RAG by 2.0pp. The agent's decomposition was genuinely useful because retrieval was the bottleneck.
+
+---
+
+### Phase 2 — BGE Embedding (`BAAI/bge-base-en-v1.5`)
+
+Context recall ≈ 0.907 (+15.9pp). Stronger retrieval changes the picture entirely.
+
+| Experiment | EM | F1 | ctx_recall |
+|---|---|---|---|
+| Exp0: 3B base + Naive RAG | 0.568 | 0.657 | 0.907 |
+| Exp3: 3B GRPO + Agent | 0.540 | 0.625 | 0.902 |
+| Exp4: 3B GRPO + Query LoRA + Agent | 0.550 | 0.639 | 0.931 |
+| Exp5: Adaptive routing (comparison→RAG, bridge→agent) | 0.544 | 0.640 | 0.901 |
+| **Exp6: 3B GRPO + Naive RAG** | **0.586** | **0.665** | **0.907** |
+
+**Finding:** BGE retrieval alone lifted the naive RAG baseline to 0.568, already above the multi-hop agent (0.540). The optimal combination is GRPO answer synthesis + single-hop retrieval — no decomposition needed.
+
+**Contribution breakdown (BGE era):**
+- GRPO adapter: **+1.8pp** (Exp0 → Exp6)
+- Multi-hop pipeline: **−4.6pp** (Exp6 → Exp3)
+
+**Core insight:** The multi-hop agent was solving a retrieval problem. Once BGE made direct retrieval reliable (ctx_recall 0.748 → 0.907), the pipeline's error propagation became the dominant source of failures rather than missing context.
 
 See [`eval/EVAL_ANALYSIS.md`](eval/EVAL_ANALYSIS.md) for full experiment breakdown and failure analysis.
 
@@ -70,11 +92,18 @@ Retry:      verify fails → fallback retrieval → web search → end
 │       ├── 03_eval_subq_quality.py Sub-query quality diagnostic
 │       └── 04_eval_e2e.py        End-to-end eval with dual-adapter inference
 ├── eval/
+│   ├── exp0_3b_naive_rag.py      3B base + single-hop RAG
 │   ├── exp1_upperbound.py        32B + golden passages (vLLM batch)
 │   ├── exp2_32b_agent.py         32B + RAG + full agent
 │   ├── exp3_3b_grpo_agent.py     3B GRPO + RAG + agent
+│   ├── exp5_adaptive_routing.py  Adaptive routing (comparison→RAG, bridge→agent)
+│   ├── exp6_grpo_naive_rag.py    3B GRPO + single-hop RAG (best result)
 │   └── EVAL_ANALYSIS.md          Full experiment analysis + failure taxonomy
 ├── results/                      JSON result files for all experiments
+├── data/
+│   ├── grpo_val.jsonl            500-question eval set
+│   ├── corpus.jsonl              Paragraph corpus
+│   └── faiss.index               FAISS index
 ├── config.py                     Paths, model names, thresholds
 ├── run_agent.py                  Single question CLI
 ├── run_eval.py                   Batch evaluation
@@ -93,7 +122,7 @@ pip install -r requirements.txt
 Models are loaded from HuggingFace automatically:
 - Base: `Qwen/Qwen2.5-3B-Instruct`
 - GRPO adapter: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3/grpo_adapter`
-- Query LoRA: `Norm11/qwen2.5-3b-query-lora` *(uploaded separately)*
+- Query LoRA: `Norm11/qwen2.5-3b-querylora-hotpotqa`
 - Embedding: `BAAI/bge-base-en-v1.5`
 
 ---
@@ -133,17 +162,14 @@ torchrun --nproc_per_node=4 training/05_train_grpo.py --epochs 2 --max-samples 3
 
 **Query LoRA distillation:**
 ```bash
-python training/query_lora/01_generate_data.py
+python training/query_lora/01_generate_data.py --load-index
 python training/query_lora/02_train_query_lora.py
-python training/query_lora/03_eval_subq_quality.py \
-    --adapter training/query_lora/checkpoints/query_lora/final --load-index
-python training/query_lora/04_eval_e2e.py \
-    --query-adapter training/query_lora/checkpoints/query_lora/final
+python training/query_lora/03_eval_subq_quality.py --load-index
+python training/query_lora/04_eval_e2e.py --load-index
 ```
 
-Trained adapters and datasets are available on HuggingFace:
+Trained adapters and datasets on HuggingFace:
 - GRPO adapter: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3`
-- Training data: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset`
-
-- Query lora adaptor: `Norm11/qwen2.5-3b-querylora-hotpotqa`
-- Query lora training data: `Norm11/qwen2.5-3b-querylora-hotpotqa-dataset`
+- GRPO training data: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset`
+- Query LoRA adapter: `Norm11/qwen2.5-3b-querylora-hotpotqa`
+- Query LoRA training data: `Norm11/qwen2.5-3b-querylora-hotpotqa-dataset`
