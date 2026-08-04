@@ -35,7 +35,8 @@ sys.path.insert(0, ROOT)
 import torch
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from utils import load_jsonl, build_corpus, get_gold_titles, print_summary
+from utils import load_jsonl, build_corpus, get_gold_titles, print_summary, \
+                   resolve_index_path, embedding_tag
 
 import config
 from src.retriever import Retriever
@@ -89,19 +90,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model",      default=config.MODEL_NAME,
                         help="Base model (no adapter loaded)")
+    parser.add_argument("--embedding",  default=config.EMBEDDING_MODEL,
+                        help="SentenceTransformer embedding model for FAISS retrieval")
     parser.add_argument("--eval",       default=config.EVAL_PATH)
     parser.add_argument("--top-k",      type=int, default=config.TOP_K)
     parser.add_argument("--n",          type=int, default=None,
                         help="Evaluate only first N questions")
     parser.add_argument("--load-index", action="store_true",
-                        help="Reuse saved FAISS index from config.INDEX_PATH")
+                        help="Reuse saved FAISS index (path derived from --embedding)")
     parser.add_argument("--output",     default=None)
     args = parser.parse_args()
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
     if args.output is None:
         n_tag = f"_n{args.n}" if args.n else "_n500"
-        args.output = os.path.join(RESULTS_DIR, f"exp0_3b_naive_rag{n_tag}.json")
+        emb_tag = embedding_tag(args.embedding)
+        args.output = os.path.join(RESULTS_DIR, f"exp0_3b_naive_rag{emb_tag}{n_tag}.json")
 
     # ── Load eval data ────────────────────────────────────────────────────
     items = load_jsonl(args.eval)
@@ -110,14 +114,15 @@ def main():
     print(f"Loaded {len(items)} questions from {args.eval}")
 
     # ── Load retriever ────────────────────────────────────────────────────
+    index_path = resolve_index_path(args.embedding)
     if args.load_index:
         retriever = Retriever.load(
-            config.INDEX_PATH, config.CORPUS_PATH, config.EMBEDDING_MODEL
+            index_path, config.CORPUS_PATH, args.embedding
         )
     else:
         corpus = build_corpus(items)
-        retriever = Retriever(corpus, config.EMBEDDING_MODEL)
-        retriever.save(config.INDEX_PATH, config.CORPUS_PATH)
+        retriever = Retriever(corpus, args.embedding)
+        retriever.save(index_path, config.CORPUS_PATH)
 
     # ── Load base model (NO adapter) ──────────────────────────────────────
     print(f"Loading base model: {args.model}  (no adapter)")

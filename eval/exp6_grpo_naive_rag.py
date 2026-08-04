@@ -30,7 +30,8 @@ sys.path.insert(0, ROOT)
 
 import torch
 from tqdm import tqdm
-from utils import load_jsonl, build_corpus, get_gold_titles, print_summary
+from utils import load_jsonl, build_corpus, get_gold_titles, print_summary, \
+                   resolve_index_path, embedding_tag
 
 import config
 from src.models import load_model_and_tokenizer
@@ -77,6 +78,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model",      default=config.MODEL_NAME)
     parser.add_argument("--adapter",    default=config.GRPO_ADAPTER_REPO)
+    parser.add_argument("--embedding",  default=config.EMBEDDING_MODEL,
+                        help="SentenceTransformer embedding model for FAISS retrieval")
     parser.add_argument("--eval",       default=config.EVAL_PATH)
     parser.add_argument("--top-k",      type=int, default=config.TOP_K)
     parser.add_argument("--n",          type=int, default=None)
@@ -87,7 +90,8 @@ def main():
     os.makedirs(RESULTS_DIR, exist_ok=True)
     if args.output is None:
         n_tag = f"_n{args.n}" if args.n else "_n500"
-        args.output = os.path.join(RESULTS_DIR, f"exp6_grpo_naive_rag{n_tag}.json")
+        emb_tag = embedding_tag(args.embedding)
+        args.output = os.path.join(RESULTS_DIR, f"exp6_grpo_naive_rag{emb_tag}{n_tag}.json")
 
     # ── Load data ──────────────────────────────────────────────────────────
     items = load_jsonl(args.eval)
@@ -99,14 +103,15 @@ def main():
     model, tokenizer, device = load_model_and_tokenizer(args.model, args.adapter)
 
     # ── Load retriever ─────────────────────────────────────────────────────
+    index_path = resolve_index_path(args.embedding)
     if args.load_index:
         retriever = Retriever.load(
-            config.INDEX_PATH, config.CORPUS_PATH, config.EMBEDDING_MODEL
+            index_path, config.CORPUS_PATH, args.embedding
         )
     else:
         corpus = build_corpus(items)
-        retriever = Retriever(corpus, config.EMBEDDING_MODEL)
-        retriever.save(config.INDEX_PATH, config.CORPUS_PATH)
+        retriever = Retriever(corpus, args.embedding)
+        retriever.save(index_path, config.CORPUS_PATH)
 
     # ── Eval loop ──────────────────────────────────────────────────────────
     results = []

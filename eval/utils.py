@@ -47,6 +47,32 @@ def get_gold_titles(item: dict) -> list:
     return list(set(sf.get("title", []))) if isinstance(sf, dict) else []
 
 
+def resolve_index_path(embedding_model: str) -> str:
+    """Derive FAISS index path from embedding model name.
+
+    BGE (default) maps to config.INDEX_PATH for backward compatibility.
+    Any other embedding gets its own file, e.g. faiss_all_minilm_l6_v2.index.
+    """
+    import config
+    if embedding_model == config.EMBEDDING_MODEL:
+        return config.INDEX_PATH
+    slug = embedding_model.split("/")[-1].lower().replace("-", "_").replace(".", "_")
+    return os.path.join(config.DATA_DIR, f"faiss_{slug}.index")
+
+
+def embedding_tag(embedding_model: str) -> str:
+    """Return a filename tag for non-default embeddings.
+
+    Returns empty string for the default BGE model so existing filenames are
+    unchanged.  For other models returns e.g. '_all_minilm_l6_v2'.
+    """
+    import config
+    if embedding_model == config.EMBEDDING_MODEL:
+        return ""
+    slug = embedding_model.split("/")[-1].lower().replace("-", "_").replace(".", "_")
+    return f"_{slug}"
+
+
 # ---------------------------------------------------------------------------
 # PlainModelWrapper
 # ---------------------------------------------------------------------------
