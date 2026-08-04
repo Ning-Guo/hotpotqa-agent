@@ -10,17 +10,15 @@ The project went through two distinct phases, each revealing a key insight about
 
 ### Phase 1 — MiniLM Embedding (`all-MiniLM-L6-v2`)
 
-Context recall ≈ 0.748. With a weaker retriever, multi-hop decomposition provides substantial gains.
+Context recall ≈ 0.748. With a weaker retriever, multi-hop decomposition provides meaningful gains.
 
 | System | EM | F1 | ctx_recall |
 |---|---|---|---|
-| 3B Base + RAG | 0.458 | 0.541 | 0.748 |
-| 3B GRPO RAG-only | 0.468 | 0.552 | 0.748 |
-| **3B GRPO + Agent** | **0.574** | **0.660** | **0.887** |
-| 14B Base + RAG | 0.544 | 0.649 | 0.748 |
-| 32B Base + RAG | 0.554 | 0.656 | 0.748 |
+| 3B Base + Naive RAG | 0.438 | 0.539 | 0.748 |
+| 3B GRPO + Naive RAG | 0.456 | 0.541 | 0.748 |
+| **3B GRPO + Agent** | **0.480** | **0.567** | **0.804** |
 
-**Finding:** Multi-hop agent (+10.6pp over naive RAG) and GRPO training (+1.0pp) together let a 3B model outperform 32B naive RAG by 2.0pp. The agent's decomposition was genuinely useful because retrieval was the bottleneck.
+**Finding:** Multi-hop decomposition lifts ctx_recall from 0.748 → 0.804, driving +4.2pp EM over naive RAG. The agent's decomposition was genuinely useful because retrieval was the bottleneck. GRPO contributes a stable +1.8pp on top.
 
 ---
 
@@ -30,21 +28,23 @@ Context recall ≈ 0.907 (+15.9pp). Stronger retrieval changes the picture entir
 
 | Experiment | EM | F1 | ctx_recall |
 |---|---|---|---|
-| Exp0: 3B base + Naive RAG | 0.568 | 0.657 | 0.907 |
-| Exp3: 3B GRPO + Agent | 0.540 | 0.625 | 0.902 |
+| Exp0: 3B base + Naive RAG | 0.572 | 0.659 | 0.907 |
+| Exp3: 3B GRPO + Agent | 0.538 | 0.625 | 0.901 |
 | Exp4: 3B GRPO + Query LoRA + Agent | 0.550 | 0.639 | 0.931 |
-| Exp5: Adaptive routing (comparison→RAG, bridge→agent) | 0.544 | 0.640 | 0.901 |
-| **Exp6: 3B GRPO + Naive RAG** | **0.586** | **0.665** | **0.907** |
+| Exp5: Adaptive routing (comparison→RAG, bridge→agent) | 0.538 | 0.633 | 0.908 |
+| **Exp6: 3B GRPO + Naive RAG** | **0.592** | **0.670** | **0.907** |
+| Exp2: 32B + RAG + Agent | 0.644 | 0.714 | 0.949 |
+| Exp1: 32B + Golden Passages (upper bound) | 0.786 | 0.884 | 1.000 |
 
-**Finding:** BGE retrieval alone lifted the naive RAG baseline to 0.568, already above the multi-hop agent (0.540). The optimal combination is GRPO answer synthesis + single-hop retrieval — no decomposition needed.
+**Finding:** BGE retrieval alone lifted the naive RAG baseline to 0.572, already above the multi-hop agent (0.538). The optimal combination is GRPO answer synthesis + single-hop retrieval — no decomposition needed.
 
 **Contribution breakdown (BGE era):**
-- GRPO adapter: **+1.8pp** (Exp0 → Exp6)
-- Multi-hop pipeline: **−4.6pp** (Exp6 → Exp3)
+- GRPO adapter: **+2.0pp** (Exp0 → Exp6)
+- Multi-hop pipeline: **−5.4pp** (Exp6 → Exp3)
 
 **Core insight:** The multi-hop agent was solving a retrieval problem. Once BGE made direct retrieval reliable (ctx_recall 0.748 → 0.907), the pipeline's error propagation became the dominant source of failures rather than missing context.
 
-See [`eval/EVAL_ANALYSIS.md`](eval/EVAL_ANALYSIS.md) for full experiment breakdown and failure analysis.
+See [`eval/EVAL_ANALYSIS.md`](eval/EVAL_ANALYSIS.md) for full experiment breakdown, case analysis, and failure taxonomy.
 
 ---
 
@@ -92,18 +92,18 @@ Retry:      verify fails → fallback retrieval → web search → end
 │       ├── 03_eval_subq_quality.py Sub-query quality diagnostic
 │       └── 04_eval_e2e.py        End-to-end eval with dual-adapter inference
 ├── eval/
-│   ├── exp0_3b_naive_rag.py      3B base + single-hop RAG
+│   ├── exp0_3b_naive_rag.py      3B base + single-hop RAG (lower bound)
 │   ├── exp1_upperbound.py        32B + golden passages (vLLM batch)
 │   ├── exp2_32b_agent.py         32B + RAG + full agent
 │   ├── exp3_3b_grpo_agent.py     3B GRPO + RAG + agent
 │   ├── exp5_adaptive_routing.py  Adaptive routing (comparison→RAG, bridge→agent)
 │   ├── exp6_grpo_naive_rag.py    3B GRPO + single-hop RAG (best result)
-│   └── EVAL_ANALYSIS.md          Full experiment analysis + failure taxonomy
+│   └── EVAL_ANALYSIS.md          Full experiment analysis + case study + failure taxonomy
 ├── results/                      JSON result files for all experiments
 ├── data/
 │   ├── grpo_val.jsonl            500-question eval set
 │   ├── corpus.jsonl              Paragraph corpus
-│   └── faiss.index               FAISS index
+│   └── faiss.index               FAISS index (BGE)
 ├── config.py                     Paths, model names, thresholds
 ├── run_agent.py                  Single question CLI
 ├── run_eval.py                   Batch evaluation
@@ -122,7 +122,7 @@ pip install -r requirements.txt
 Models are loaded from HuggingFace automatically:
 - Base: `Qwen/Qwen2.5-3B-Instruct`
 - GRPO adapter: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3/grpo_adapter`
-- Query LoRA: `Norm11/qwen2.5-3b-querylora-hotpotqa`
+- Query LoRA: `Norm11/qwen2.5-3b-querylora-hotpotqa/final`
 - Embedding: `BAAI/bge-base-en-v1.5`
 
 ---
