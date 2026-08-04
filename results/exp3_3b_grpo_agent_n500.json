@@ -1,7 +1,8 @@
 {
   "config": {
     "model": "Qwen/Qwen2.5-3B-Instruct",
-    "adapter": "./model/adapter/grpo_adapter",
+    "adapter": "Norm11/qwen2.5-3b-sft-grpo-hotpotqa_v3/grpo_adapter",
+    "embedding": "BAAI/bge-base-en-v1.5",
     "eval": "/root/hotpotqa-agent/data/grpo_val.jsonl",
     "top_k": 5,
     "n": null,
@@ -9,41 +10,41 @@
     "output": "/root/hotpotqa-agent/results/exp3_3b_grpo_agent_n500.json"
   },
   "summary": {
-    "em": 0.54,
-    "f1": 0.6252,
-    "ctx_recall": 0.902,
+    "em": 0.538,
+    "f1": 0.6251,
+    "ctx_recall": 0.901,
     "ctx_precision": null,
     "ans_coverage": 0.914,
-    "faithfulness": 0.8848,
+    "faithfulness": 0.8886,
     "entailment": null,
     "contradiction": null,
     "outcomes": null,
     "n": 500,
     "by_type": {
       "bridge": {
-        "em": 0.533,
-        "f1": 0.6259,
+        "em": 0.5306,
+        "f1": 0.6243,
         "count": 409
       },
       "comparison": {
         "em": 0.5714,
-        "f1": 0.6218,
+        "f1": 0.6287,
         "count": 91
       }
     },
     "by_level": {
       "easy": {
         "em": 0.5657,
-        "f1": 0.6623,
+        "f1": 0.6492,
         "count": 99
       },
       "hard": {
         "em": 0.3933,
-        "f1": 0.5127,
+        "f1": 0.5268,
         "count": 89
       },
       "medium": {
-        "em": 0.5737,
+        "em": 0.5705,
         "f1": 0.6455,
         "count": 312
       }
@@ -115,12 +116,12 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who developed and produced the Samsung Galaxy Note 4?",
+      "sub_q1": "Which organization developed and produced Samsung Galaxy Note 4?",
       "hop1_answer": "Samsung Electronics",
-      "sub_q2": "Which organization developed and produced Samsung Galaxy Note 4?",
+      "sub_q2": "What organization developed and produced Samsung Galaxy Note 4?",
       "queries_used": [
-        "Who developed and produced the Samsung Galaxy Note 4?",
-        "Which organization developed and produced Samsung Galaxy Note 4?"
+        "Which organization developed and produced Samsung Galaxy Note 4?",
+        "What organization developed and produced Samsung Galaxy Note 4?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -250,26 +251,26 @@
       "id": "5a7ca3205542990527d554ed",
       "question": "Who is older out of John Waite and Jeff Scott Soto?",
       "gold": "John Charles Waite",
-      "prediction": "Jeff Scott Soto",
+      "prediction": "John Waite",
       "type": "comparison",
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who is John Waite?",
-      "hop1_answer": "John Waite is an English musician who was the lead vocalist for The Babys and Bad English. In 1984, his single \"Missing You\" became a No. 1 hit on the US Billboard Hot 10",
-      "sub_q2": "Who is the lead vocalist for The Babys and Bad English?",
+      "sub_q1": "Who are John Waite and Jeff Scott Soto?",
+      "hop1_answer": "John Waite is an English musician who was the lead vocalist for The Babys and Bad English. Jeff Scott Soto is an American rock singer of Puerto Rican descent, best known for his work with Yngwie Malmsteen, Journey",
+      "sub_q2": "Who is older, John Waite or Jeff Scott Soto?",
       "queries_used": [
-        "Who is John Waite?",
-        "Who is the lead vocalist for The Babys and Bad English?"
+        "Who are John Waite and Jeff Scott Soto?",
+        "Who is older, John Waite or Jeff Scott Soto?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.0,
-      "ctx_recall": 0.5,
+      "f1": 0.8,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
-      "faithfulness": 0.3333333333333333,
+      "faithfulness": 1.0,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -453,10 +454,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Which region has the national anthem Hoyamal?",
       "hop1_answer": "United Arab Emirates",
-      "sub_q2": "Which is the largest and most populous city in the region with the national anthem Hoyamal in the United Arab Emirates?",
+      "sub_q2": "Which is the largest and most populous city in the United Arab Emirates?",
       "queries_used": [
         "Which region has the national anthem Hoyamal?",
-        "Which is the largest and most populous city in the region with the national anthem Hoyamal in the United Arab Emirates?"
+        "Which is the largest and most populous city in the United Arab Emirates?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -530,22 +531,22 @@
       "id": "5a8b79285542997f31a41d3f",
       "question": "Janet Kennedy is best known as the mistress of the King of Scotland who is generally regarded as the most successful of the Stewart monarchs of Scotland, but whose reign ended where?",
       "gold": "Battle of Flodden",
-      "prediction": "Battle of Flodden",
+      "prediction": "disastrous defeat at the Battle of Flodden",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who is the King of Scotland mentioned in the context?",
-      "hop1_answer": "James IV",
-      "sub_q2": "What reign did James IV end?",
+      "sub_q1": "Who is Janet Kennedy best known as the mistress of?",
+      "hop1_answer": "King James IV of Scotland",
+      "sub_q2": "What reign did King James IV of Scotland end?",
       "queries_used": [
-        "Who is the King of Scotland mentioned in the context?",
-        "What reign did James IV end?"
+        "Who is Janet Kennedy best known as the mistress of?",
+        "What reign did King James IV of Scotland end?"
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 1,
-      "f1": 1.0,
+      "em": 0,
+      "f1": 0.6666666666666666,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -586,7 +587,7 @@
       "id": "5a7e30045542997cc2c4752f",
       "question": "Miniature Fox Terrier and English Water Spaniel, are breed of which animal?",
       "gold": "dog",
-      "prediction": "dog",
+      "prediction": "Dog",
       "type": "comparison",
       "level": "easy",
       "qtype_inferred": "bridge",
@@ -845,10 +846,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who starred in The Spirit of St. Louis?",
       "hop1_answer": "James Stewart",
-      "sub_q2": "What major contract player did James Stewart work for?",
+      "sub_q2": "What studio contracted James Stewart?",
       "queries_used": [
         "Who starred in The Spirit of St. Louis?",
-        "What major contract player did James Stewart work for?"
+        "What studio contracted James Stewart?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1153,10 +1154,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who did Francis Xavier Cretzmeyer, Jr. often come in second to?",
       "hop1_answer": "Jesse Owens",
-      "sub_q2": "What four-time Olympic gold medalist did Francis Xavier Cretzmeyer, Jr. often come in second to, and what is Jesse Owens' occupation?",
+      "sub_q2": "What four-time Olympic gold medalist did Jesse Owens often come in second to?",
       "queries_used": [
         "Who did Francis Xavier Cretzmeyer, Jr. often come in second to?",
-        "What four-time Olympic gold medalist did Francis Xavier Cretzmeyer, Jr. often come in second to, and what is Jesse Owens' occupation?"
+        "What four-time Olympic gold medalist did Jesse Owens often come in second to?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1235,18 +1236,18 @@
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Which genus is within the Asteraceae family?",
-      "hop1_answer": "Taraxacum, Leontopodium, Anaphalis, Simsia",
-      "sub_q2": "Which genus of plants is within the Asteraceae family: Taraxacum, Leontopodium, Anaphalis, or Simsia?",
+      "sub_q1": "Which genus of plants is within the Asteraceae family?",
+      "hop1_answer": "Taraxacum, Anaphalis, Simsia, Leontopodium, Tithonia",
+      "sub_q2": "Which genus of plants is within the Asteraceae family, Taraxacum or Anaphalis?",
       "queries_used": [
-        "Which genus is within the Asteraceae family?",
-        "Which genus of plants is within the Asteraceae family: Taraxacum, Leontopodium, Anaphalis, or Simsia?"
+        "Which genus of plants is within the Asteraceae family?",
+        "Which genus of plants is within the Asteraceae family, Taraxacum or Anaphalis?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 0.5,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -1291,11 +1292,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What mobile network created by the merger of which two companies started the No Issue advertisement campaign?",
+      "sub_q1": "What mobile network created the No Issue campaign?",
       "hop1_answer": "Jazz Pakistan",
       "sub_q2": "What mobile network is Jazz Pakistan a part of?",
       "queries_used": [
-        "What mobile network created by the merger of which two companies started the No Issue advertisement campaign?",
+        "What mobile network created the No Issue campaign?",
         "What mobile network is Jazz Pakistan a part of?"
       ],
       "verified": true,
@@ -1398,25 +1399,25 @@
       "id": "5ae09f2655429924de1b7118",
       "question": "What is the first film of the person who also directed a film about a supermarket?",
       "gold": "\"Sisters on the Road\"",
-      "prediction": "Cart (film)",
+      "prediction": "Cart",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What film did the person who also directed a film about a supermarket direct first?",
       "hop1_answer": "Cart",
-      "sub_q2": "What is the first film of the person who also directed a supermarket?",
+      "sub_q2": "What is the first film of the person who also directed a film about a supermarket, Cart?",
       "queries_used": [
         "What film did the person who also directed a film about a supermarket direct first?",
-        "What is the first film of the person who also directed a supermarket?"
+        "What is the first film of the person who also directed a film about a supermarket, Cart?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
       "f1": 0.0,
-      "ctx_recall": 0.5,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
-      "ans_coverage": 0,
+      "ans_coverage": 1,
       "faithfulness": 1.0,
       "entailment": null,
       "contradiction": null,
@@ -1488,11 +1489,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who had a recurring role on the TV show \"7th Heaven\"?",
-      "hop1_answer": "Ashlee Simpson",
-      "sub_q2": "Which performer from the Dance on Sunset music series had a recurring role on the TV show \"7th Heaven\"?",
+      "hop1_answer": "Chaz Lamar Shepherd, Beverly Garland",
+      "sub_q2": "Which performer from the Dance on Sunset music series had a recurring role on the TV show \"7th Heaven\"? (Hint: One of the performers is Chaz Lamar Shepherd, Beverly Garland.)",
       "queries_used": [
         "Who had a recurring role on the TV show \"7th Heaven\"?",
-        "Which performer from the Dance on Sunset music series had a recurring role on the TV show \"7th Heaven\"?"
+        "Which performer from the Dance on Sunset music series had a recurring role on the TV show \"7th Heaven\"? (Hint: One of the performers is Chaz Lamar Shepherd, Beverly Garland.)"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1517,10 +1518,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is Piers Dutton connected to through Norton Priory?",
       "hop1_answer": "Piers Dutton is connected to Norton Priory through his involvement in the Dissolution of the Monasteries, where he was involved in the closing of the abbey.",
-      "sub_q2": "What role did Piers Dutton have in the Dissolution of the Monasteries that involved the closing of Norton Priory?",
+      "sub_q2": "What role did Piers Dutton have in the Dissolution of the Monasteries that connected him to Norton Priory?",
       "queries_used": [
         "Who is Piers Dutton connected to through Norton Priory?",
-        "What role did Piers Dutton have in the Dissolution of the Monasteries that involved the closing of Norton Priory?"
+        "What role did Piers Dutton have in the Dissolution of the Monasteries that connected him to Norton Priory?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1713,10 +1714,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is the name of the artist S.M. Ganapathi creates symmetrical-drive structures with?",
       "hop1_answer": "Hindu temple architecture",
-      "sub_q2": "What type of symmetrical-drive structure with perfectly geometric shapes does Hindu temple architecture create?",
+      "sub_q2": "What type of symmetrical-drive structure with perfectly geometric shapes does S.M. Ganapathi create in Hindu temple architecture?",
       "queries_used": [
         "What is the name of the artist S.M. Ganapathi creates symmetrical-drive structures with?",
-        "What type of symmetrical-drive structure with perfectly geometric shapes does Hindu temple architecture create?"
+        "What type of symmetrical-drive structure with perfectly geometric shapes does S.M. Ganapathi create in Hindu temple architecture?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1818,7 +1819,7 @@
       "id": "5a7cbae3554299452d57b9cd",
       "question": "In what year was the coach of the NFL team that plays their home games at MetLife Stadium born?",
       "gold": "1977",
-      "prediction": "2014",
+      "prediction": "2017",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -1907,11 +1908,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What city does Belmont Park, the major Thoroughbred horse-racing facility located in Elmont, New York, just outside its city limits?",
+      "sub_q1": "What city does Belmont Park, the major Thoroughbred horse-racing facility located in Elmont, New York, lie just outside its city limits?",
       "hop1_answer": "New York",
       "sub_q2": "What city does Elmont, New York, just outside its city limits, belong to?",
       "queries_used": [
-        "What city does Belmont Park, the major Thoroughbred horse-racing facility located in Elmont, New York, just outside its city limits?",
+        "What city does Belmont Park, the major Thoroughbred horse-racing facility located in Elmont, New York, lie just outside its city limits?",
         "What city does Elmont, New York, just outside its city limits, belong to?"
       ],
       "verified": true,
@@ -2019,11 +2020,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who was the band that recorded Uptown Rulers: The Meters live on the Queen Mary?",
+      "sub_q1": "Who was the band that recorded \"Uptown Rulers: The Meters\" on a ship?",
       "hop1_answer": "The Meters",
       "sub_q2": "What company built the Queen Mary on which Uptown Rulers: The Meters was recorded?",
       "queries_used": [
-        "Who was the band that recorded Uptown Rulers: The Meters live on the Queen Mary?",
+        "Who was the band that recorded \"Uptown Rulers: The Meters\" on a ship?",
         "What company built the Queen Mary on which Uptown Rulers: The Meters was recorded?"
       ],
       "verified": true,
@@ -2103,11 +2104,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What earthquake damaged the Hotel Metropole severely in 1989?",
+      "sub_q1": "What earthquake occurred in Northern California on October 17, 1989?",
       "hop1_answer": "1989 Loma Prieta earthquake",
       "sub_q2": "What was the name of the earthquake that severely damaged the Hotel Metropole on October 17, 1989?",
       "queries_used": [
-        "What earthquake damaged the Hotel Metropole severely in 1989?",
+        "What earthquake occurred in Northern California on October 17, 1989?",
         "What was the name of the earthquake that severely damaged the Hotel Metropole on October 17, 1989?"
       ],
       "verified": true,
@@ -2299,12 +2300,12 @@
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who was a member of Ernie and the Automatics that also appeared in a band with John Thomas Hashian?",
-      "hop1_answer": "Barry Goudreau",
-      "sub_q2": "Which other member of Ernie and the Automatics did Barry Goudreau appear in a band with?",
+      "sub_q1": "Who appeared in a band with John Thomas Hashian?",
+      "hop1_answer": "Boston",
+      "sub_q2": "Which other member of Boston appeared in a band with John Thomas Hashian?",
       "queries_used": [
-        "Who was a member of Ernie and the Automatics that also appeared in a band with John Thomas Hashian?",
-        "Which other member of Ernie and the Automatics did Barry Goudreau appear in a band with?"
+        "Who appeared in a band with John Thomas Hashian?",
+        "Which other member of Boston appeared in a band with John Thomas Hashian?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -2322,17 +2323,17 @@
       "id": "5abdbdcc5542993f32c2a041",
       "question": "What is the name of the American entertainer that was born as Joseph Gottlieb and featured in the film based on the real life U.S. Army Delta Force unit?",
       "gold": "Joey Bishop",
-      "prediction": "Liam Neeson",
+      "prediction": "Jerry Lewis",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is the name of the American entertainer featured in the film based on the real life U.S. Army Delta Force unit?",
       "hop1_answer": "Chuck Norris",
-      "sub_q2": "What is the occupation of Chuck Norris?",
+      "sub_q2": "What is the name of the American entertainer Chuck Norris?",
       "queries_used": [
         "What is the name of the American entertainer featured in the film based on the real life U.S. Army Delta Force unit?",
-        "What is the occupation of Chuck Norris?"
+        "What is the name of the American entertainer Chuck Norris?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -2462,25 +2463,25 @@
       "id": "5ae4b79b5542996836b02d09",
       "question": "Lynda Bird Johnson Robb has an elder brother who died in 2013, and he was ambassador to which European country?",
       "gold": "Belgium",
-      "prediction": "Ronald de Boer",
+      "prediction": "John Eisenhower",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who was the elder brother of Lynda Bird Johnson Robb?",
-      "hop1_answer": "Jamie Murray",
-      "sub_q2": "What European country was Jamie Murray, Lynda Bird Johnson Robb's elder brother, ambassador to?",
+      "sub_q1": "Who was the elder brother of Lynda Bird Johnson Robb that died in 2013?",
+      "hop1_answer": "John Eisenhower",
+      "sub_q2": "What European country was John Eisenhower, the elder brother of Lynda Bird Johnson Robb, ambassador to?",
       "queries_used": [
-        "Who was the elder brother of Lynda Bird Johnson Robb?",
-        "What European country was Jamie Murray, Lynda Bird Johnson Robb's elder brother, ambassador to?"
+        "Who was the elder brother of Lynda Bird Johnson Robb that died in 2013?",
+        "What European country was John Eisenhower, the elder brother of Lynda Bird Johnson Robb, ambassador to?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
       "f1": 0.0,
-      "ctx_recall": 0.5,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
-      "ans_coverage": 0,
+      "ans_coverage": 1,
       "faithfulness": 1.0,
       "entailment": null,
       "contradiction": null,
@@ -2553,10 +2554,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What American company manufactures ice cream, frozen yogurt, and sorbet in South Burlington?",
       "hop1_answer": "Ben & Jerry's",
-      "sub_q2": "What is in South Burlington that is an American company that manufactures ice cream, frozen yogurt, and sorbet? (Replace the indirect reference with the hop-1 answer)",
+      "sub_q2": "What is in South Burlington that is an American company that manufactures ice cream, frozen yogurt, and sorbet? (Replace \"Ben & Jerry's\" with the answer from hop-1)",
       "queries_used": [
         "What American company manufactures ice cream, frozen yogurt, and sorbet in South Burlington?",
-        "What is in South Burlington that is an American company that manufactures ice cream, frozen yogurt, and sorbet? (Replace the indirect reference with the hop-1 answer)"
+        "What is in South Burlington that is an American company that manufactures ice cream, frozen yogurt, and sorbet? (Replace \"Ben & Jerry's\" with the answer from hop-1)"
       ],
       "verified": true,
       "retry_count": 0,
@@ -2581,10 +2582,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What country is the Shark Tank investor that Cinnaholic rejected from originally?",
       "hop1_answer": "United States",
-      "sub_q2": "What country is the United States originally from?",
+      "sub_q2": "What country is the investor originally from who is originally from the United States?",
       "queries_used": [
         "What country is the Shark Tank investor that Cinnaholic rejected from originally?",
-        "What country is the United States originally from?"
+        "What country is the investor originally from who is originally from the United States?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -3640,7 +3641,7 @@
       "id": "5ab5b1245542992aa134a38d",
       "question": "Gerard Brantsen was one of the Dutch signatories to the treaty ending a war that began in what year?",
       "gold": "1780",
-      "prediction": "1780",
+      "prediction": "1648",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
@@ -3656,11 +3657,11 @@
       ],
       "verified": false,
       "retry_count": 2,
-      "em": 1,
-      "f1": 1.0,
-      "ctx_recall": 1.0,
+      "em": 0,
+      "f1": 0.0,
+      "ctx_recall": 0.0,
       "ctx_precision": null,
-      "ans_coverage": 1,
+      "ans_coverage": 0,
       "faithfulness": 0.0,
       "entailment": null,
       "contradiction": null,
@@ -3675,11 +3676,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who is the cricket player born in the year Tha Pataudi trophy is named after?",
+      "sub_q1": "Who is the cricket player the Tha Pataudi trophy is named after?",
       "hop1_answer": "Iftikhar Ali Khan Pataudi",
       "sub_q2": "What year was Iftikhar Ali Khan Pataudi born?",
       "queries_used": [
-        "Who is the cricket player born in the year Tha Pataudi trophy is named after?",
+        "Who is the cricket player the Tha Pataudi trophy is named after?",
         "What year was Iftikhar Ali Khan Pataudi born?"
       ],
       "verified": true,
@@ -4207,12 +4208,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What year did Nikolaus Harnoncourt conduct a concert in 2001 and 2003?",
-      "hop1_answer": "2001 and 2003",
-      "sub_q2": "In what country did Nikolaus Harnoncourt conduct a concert?",
+      "sub_q1": "Who conducted a concert in 2001 and 2003?",
+      "hop1_answer": "Nikolaus Harnoncourt",
+      "sub_q2": "In what country did Nikolaus Harnoncourt conduct a concert in 2001 and 2003?",
       "queries_used": [
-        "What year did Nikolaus Harnoncourt conduct a concert in 2001 and 2003?",
-        "In what country did Nikolaus Harnoncourt conduct a concert?"
+        "Who conducted a concert in 2001 and 2003?",
+        "In what country did Nikolaus Harnoncourt conduct a concert in 2001 and 2003?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -4657,10 +4658,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "On what date was Tiffany Valentine-Ray announced to sign for the \"Cult of Chucky\"?",
       "hop1_answer": "January 5, 2017",
-      "sub_q2": "On what date was the American supernatural slasher film \"Cult of Chucky\" released?",
+      "sub_q2": "In which year was the \"Cult of Chucky\" film released?",
       "queries_used": [
         "On what date was Tiffany Valentine-Ray announced to sign for the \"Cult of Chucky\"?",
-        "On what date was the American supernatural slasher film \"Cult of Chucky\" released?"
+        "In which year was the \"Cult of Chucky\" film released?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -4734,7 +4735,7 @@
       "id": "5a8b42fe55429949d91db518",
       "question": "What country of origin does Bill Squires and Alberto Salazar have in common?",
       "gold": "American",
-      "prediction": "yes",
+      "prediction": "no",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "comparison",
@@ -4986,22 +4987,22 @@
       "id": "5a81313a554299260e20a270",
       "question": "S\u014dry\u016b (\u84bc\u9f8d , S\u014dry\u016b , meaning \"Blue (or Green) Dragon\") was an aircraft carrier built for the Imperial Japanese Navy (IJN) during the mid-1930s, During the first months of the Pacific War, supported the conquest of the Dutch East Indies, by forces from the Empire of Japan in the early days of the Pacific Campaign of World War II, this titled event is ?",
       "gold": "Dutch East Indies Campaign",
-      "prediction": "Japanese conquest of the Dutch East Indies",
+      "prediction": "Battle of the Java Sea",
       "type": "bridge",
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What event did the support of the Dutch East Indies by forces from the Empire of Japan represent during the first months of the Pacific War?",
-      "hop1_answer": "The support of the Dutch East Indies by forces from the Empire of Japan during the first months of the Pacific War represented the conquest of the Dutch East Indies (present-day Indonesia).",
-      "sub_q2": "What was the title event of the support of the Dutch East Indies by forces from the Empire of Japan during the first months of the Pacific War?",
+      "sub_q1": "What was the title event during the first months of the Pacific War, supported by S\u014dry\u016b?",
+      "hop1_answer": "Attack on Pearl Harbor",
+      "sub_q2": "During the first months of the Pacific War, what event did S\u014dry\u016b support that led to the conquest of the Dutch East Indies?",
       "queries_used": [
-        "What event did the support of the Dutch East Indies by forces from the Empire of Japan represent during the first months of the Pacific War?",
-        "What was the title event of the support of the Dutch East Indies by forces from the Empire of Japan during the first months of the Pacific War?"
+        "What was the title event during the first months of the Pacific War, supported by S\u014dry\u016b?",
+        "During the first months of the Pacific War, what event did S\u014dry\u016b support that led to the conquest of the Dutch East Indies?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.6,
+      "f1": 0.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -5103,11 +5104,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "web_search",
-      "sub_q1": "What city state existed between which years did Danziger Echo publish?",
+      "sub_q1": "What city-state existed between which years did Danziger Echo publish?",
       "hop1_answer": "1920-1939",
       "sub_q2": "What city-state existed between 1920 and 1939?",
       "queries_used": [
-        "What city state existed between which years did Danziger Echo publish?",
+        "What city-state existed between which years did Danziger Echo publish?",
         "What city-state existed between 1920 and 1939?",
         "[fallback] Danziger Echo was a newspaper that was published in the city state that existed between which years?",
         "[wiki] Danziger Echo was a newspaper that was published in the city state that existed between which years?"
@@ -5161,11 +5162,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What company published the House of Mystery comic book series?",
+      "sub_q1": "What company published the horror, fantasy, and mystery anthology comic book magazine series \"House of Mystery\"?",
       "hop1_answer": "DC Comics",
       "sub_q2": "What company published several horror, fantasy, and mystery anthology comic book magazine series named \"House of Mystery\"?",
       "queries_used": [
-        "What company published the House of Mystery comic book series?",
+        "What company published the horror, fantasy, and mystery anthology comic book magazine series \"House of Mystery\"?",
         "What company published several horror, fantasy, and mystery anthology comic book magazine series named \"House of Mystery\"?"
       ],
       "verified": true,
@@ -5218,11 +5219,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who developed the Xiamoi Redmi 1S?",
-      "hop1_answer": "Xiaomi",
-      "sub_q2": "Where is Xiaomi headquartered?",
+      "hop1_answer": "Xiaomi Inc.",
+      "sub_q2": "Where is Xiaomi Inc. headquartered?",
       "queries_used": [
         "Who developed the Xiamoi Redmi 1S?",
-        "Where is Xiaomi headquartered?"
+        "Where is Xiaomi Inc. headquartered?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5331,11 +5332,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who released the album on April 10, 2006?",
+      "sub_q1": "Who released the album \"SOS\" on April 10, 2006?",
       "hop1_answer": "Def Jam Recordings",
       "sub_q2": "Who sang the song \"SOS\" on the album released by Def Jam Recordings on April 10, 2006?",
       "queries_used": [
-        "Who released the album on April 10, 2006?",
+        "Who released the album \"SOS\" on April 10, 2006?",
         "Who sang the song \"SOS\" on the album released by Def Jam Recordings on April 10, 2006?"
       ],
       "verified": true,
@@ -5417,10 +5418,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What Florida AFC East Division team was Mark Dixon an offensive guard for?",
       "hop1_answer": "Miami Dolphins",
-      "sub_q2": "What AFC East Division team did Mark Dixon play for, which is the Miami Dolphins?",
+      "sub_q2": "What AFC East Division team did Mark Dixon play offensive guard for?",
       "queries_used": [
         "What Florida AFC East Division team was Mark Dixon an offensive guard for?",
-        "What AFC East Division team did Mark Dixon play for, which is the Miami Dolphins?"
+        "What AFC East Division team did Mark Dixon play offensive guard for?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5466,7 +5467,7 @@
       "id": "5ae1fffa554299234fd04386",
       "question": "Who founded the dian English-language weekly magazine which Manu Joseph was  the former editor of",
       "gold": "Sandipan Deb",
-      "prediction": "OPEN",
+      "prediction": "Sandipan Deb",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -5480,8 +5481,8 @@
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 0,
-      "f1": 0.0,
+      "em": 1,
+      "f1": 1.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -5640,11 +5641,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What desert do the Mozabite people live in?",
-      "hop1_answer": "Tumbez Desert",
-      "sub_q2": "What is the area of the Tumbez Desert?",
+      "hop1_answer": "Mo\u00e7\u00e2medes Desert",
+      "sub_q2": "What is the area of the Mo\u00e7\u00e2medes Desert?",
       "queries_used": [
         "What desert do the Mozabite people live in?",
-        "What is the area of the Tumbez Desert?"
+        "What is the area of the Mo\u00e7\u00e2medes Desert?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5807,12 +5808,12 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the name of the accelerated drop tower dark ride that the 1997 made-for-TV supernatural thriller Tower of Terror is based on?",
-      "hop1_answer": "The Twilight Zone Tower of Terror",
-      "sub_q2": "What accelerated drop tower dark ride is The Twilight Zone Tower of Terror based on?",
+      "sub_q1": "What accelerated drop tower dark ride is Tower of Terror based on?",
+      "hop1_answer": "The Twilight Zone",
+      "sub_q2": "What accelerated drop tower dark ride is The Twilight Zone based on?",
       "queries_used": [
-        "What is the name of the accelerated drop tower dark ride that the 1997 made-for-TV supernatural thriller Tower of Terror is based on?",
-        "What accelerated drop tower dark ride is The Twilight Zone Tower of Terror based on?"
+        "What accelerated drop tower dark ride is Tower of Terror based on?",
+        "What accelerated drop tower dark ride is The Twilight Zone based on?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -6031,11 +6032,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "When did Third Eye Blind release Semi-Charmed Life and How's It Going to Be?",
+      "sub_q1": "In what year did Third Eye Blind release \"Semi-Charmed Life\" and \"How's It Going to Be\"?",
       "hop1_answer": "1997",
       "sub_q2": "In what year did Third Eye Blind release their two chart-topping songs, Semi-Charmed Life and How's It Going to Be?",
       "queries_used": [
-        "When did Third Eye Blind release Semi-Charmed Life and How's It Going to Be?",
+        "In what year did Third Eye Blind release \"Semi-Charmed Life\" and \"How's It Going to Be\"?",
         "In what year did Third Eye Blind release their two chart-topping songs, Semi-Charmed Life and How's It Going to Be?"
       ],
       "verified": true,
@@ -6089,10 +6090,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who did the Brewers trade Lorenzo Cain to?",
       "hop1_answer": "Kansas City",
-      "sub_q2": "What team does the pitcher currently play for who was traded from Kansas City to Milwaukee for Lorenzo Cain?",
+      "sub_q2": "What team does the pitcher currently play for?",
       "queries_used": [
         "Who did the Brewers trade Lorenzo Cain to?",
-        "What team does the pitcher currently play for who was traded from Kansas City to Milwaukee for Lorenzo Cain?"
+        "What team does the pitcher currently play for?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -6222,25 +6223,25 @@
       "id": "5ab297be554299545a2cf9c0",
       "question": "Heatstroke stars an actress who has written how many non-fiction books?",
       "gold": "five",
-      "prediction": "5",
+      "prediction": "12",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "web_search",
       "sub_q1": "Who starred in Heatstroke?",
       "hop1_answer": "D. B. Sweeney and Danica McKellar.",
-      "sub_q2": "What is the occupation of D. B. Sweeney and Danica McKellar?",
+      "sub_q2": "How many non-fiction books has Danica McKellar written?",
       "queries_used": [
         "Who starred in Heatstroke?",
-        "What is the occupation of D. B. Sweeney and Danica McKellar?",
-        "[wiki] Heatstroke stars an actress who has written how many non-fiction books?",
+        "How many non-fiction books has Danica McKellar written?",
+        "[fallback] Heatstroke stars an actress who has written how many non-fiction books?",
         "[wiki] Heatstroke stars an actress who has written how many non-fiction books?"
       ],
       "verified": false,
       "retry_count": 2,
       "em": 0,
       "f1": 0.0,
-      "ctx_recall": 1.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 0.0,
@@ -6791,10 +6792,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is the name of the Australian abstract artist Aelita Andre?",
       "hop1_answer": "Aelita Andre",
-      "sub_q2": "What type of art did Aelita Andre engage in?",
+      "sub_q2": "What type of art did Aelita Andre engage in, best known for its visual artworks and writings?",
       "queries_used": [
         "What is the name of the Australian abstract artist Aelita Andre?",
-        "What type of art did Aelita Andre engage in?"
+        "What type of art did Aelita Andre engage in, best known for its visual artworks and writings?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -6812,22 +6813,22 @@
       "id": "5ae7e63055429952e35ea9d5",
       "question": "What companies were acquired by the man that Charlie Bryan lead strike against in 1989?",
       "gold": "Continental Airlines, Eastern Air Lines, Frontier Airlines, New York Air and People Express Airlines",
-      "prediction": "Eastern Air Lines and Frank Lorenzo",
+      "prediction": "Eastern Air Lines",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who led a strike against the company in 1989?",
+      "sub_q1": "Who led a strike against the man in 1989?",
       "hop1_answer": "Charlie Bryan",
       "sub_q2": "What companies were acquired by Charlie Bryan in 1989?",
       "queries_used": [
-        "Who led a strike against the company in 1989?",
+        "Who led a strike against the man in 1989?",
         "What companies were acquired by Charlie Bryan in 1989?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.4,
+      "f1": 0.35294117647058826,
       "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 0,
@@ -6873,11 +6874,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "When did Natalie Gregory appear in the movie that was a two-part made-for-television film adapted from a Lewis Carroll book and was also a Disney movie?",
-      "hop1_answer": "December 9, 1985",
+      "sub_q1": "When did the movie based on a Lewis Carroll book and produced by Disney featuring Natalie Gregory as Kathy in \"Spot Marks the X\" air?",
+      "hop1_answer": "1986",
       "sub_q2": "When did Natalie Gregory, who played Kathy in Spot Marks the X, appear in the movie that was a two-part made-for-television film adapted from a Lewis Carroll book and was also a Disney movie?",
       "queries_used": [
-        "When did Natalie Gregory appear in the movie that was a two-part made-for-television film adapted from a Lewis Carroll book and was also a Disney movie?",
+        "When did the movie based on a Lewis Carroll book and produced by Disney featuring Natalie Gregory as Kathy in \"Spot Marks the X\" air?",
         "When did Natalie Gregory, who played Kathy in Spot Marks the X, appear in the movie that was a two-part made-for-television film adapted from a Lewis Carroll book and was also a Disney movie?"
       ],
       "verified": true,
@@ -7232,22 +7233,22 @@
       "id": "5a7e724355429949594199be",
       "question": "first movie exhibited in the Ottoman Empire was translated from French into English as what?",
       "gold": "The Arrival of a Train at La Ciotat Station",
-      "prediction": "The first movie exhibited in the Ottoman Empire, \"L'Arriv\u00e9e d'un train en gare de La Ciotat\", was translated into English as \"The Arrival of a Train at La Ciotat Station\".",
+      "prediction": "The Arrival of a Train at La Ciotat",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What was the title of the first movie exhibited in the Ottoman Empire?",
-      "hop1_answer": "Ayastefanos'taki Rus Abidesinin Y\u0131k\u0131l\u0131\u015f\u0131",
-      "sub_q2": "What is the translation of Ayastefanos'teki Rus Abidesinin Y\u0131k\u0131l\u0131\u015f\u0131 in English?",
+      "hop1_answer": "The Arrival of a Train at La Ciotat",
+      "sub_q2": "What was the title of the movie translated from French into English as The Arrival of a Train at La Ciotat?",
       "queries_used": [
         "What was the title of the first movie exhibited in the Ottoman Empire?",
-        "What is the translation of Ayastefanos'teki Rus Abidesinin Y\u0131k\u0131l\u0131\u015f\u0131 in English?"
+        "What was the title of the movie translated from French into English as The Arrival of a Train at La Ciotat?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.42424242424242425,
+      "f1": 0.923076923076923,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -7270,7 +7271,7 @@
       "sub_q2": null,
       "queries_used": [
         "What is the name of the American former professional freestyle motocross competitor, motorcycle racer and current off-road truck racer with whom Pink had a split for the song \"Funhouse\"?",
-        "Which American singer-songwriter released the album \"Funhouse\" that includes the song \"Funhouse\"?"
+        "What is the title of Pink's fifth studio album?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7323,10 +7324,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "In what year was William Davis Ticknor the president and chairman of the board?",
       "hop1_answer": "1938",
-      "sub_q2": "In what year was the corporation created that was led by the president and chairman of the board, who was William Davis Ticknor?",
+      "sub_q2": "In what year was the corporation created that was led by the person who was the president and chairman of the board in 1938?",
       "queries_used": [
         "In what year was William Davis Ticknor the president and chairman of the board?",
-        "In what year was the corporation created that was led by the president and chairman of the board, who was William Davis Ticknor?"
+        "In what year was the corporation created that was led by the person who was the president and chairman of the board in 1938?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7348,19 +7349,20 @@
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
-      "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the name of the Connecticut Agricultural College?",
-      "hop1_answer": "Connecticut Aggies",
-      "sub_q2": "When was Connecticut Aggies founded?",
+      "retrieval_mode": "fallback",
+      "sub_q1": "What college is referred to as Connecticut Agricultural College?",
+      "hop1_answer": "University of Connecticut",
+      "sub_q2": "When was the University of Connecticut founded?",
       "queries_used": [
-        "What is the name of the Connecticut Agricultural College?",
-        "When was Connecticut Aggies founded?"
+        "What college is referred to as Connecticut Agricultural College?",
+        "When was the University of Connecticut founded?",
+        "[fallback] When was the Connecticuit Agricutural College founded?"
       ],
       "verified": true,
-      "retry_count": 0,
+      "retry_count": 1,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 1.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -7372,7 +7374,7 @@
       "id": "5a830bc655429940e5e1a94e",
       "question": "Where did the 2014 film by the director of The Overnight premier?",
       "gold": "South by Southwest",
-      "prediction": "The 2014 film by the director of The Overnight (which is not provided in the given passages) did not premiere in any of the locations mentioned in the passages.",
+      "prediction": "The 2014 film by the director of The Overnight did not premiere in any of the provided passages. The passages do not mention a film called \"The Overnight\" or its director.",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -7387,11 +7389,11 @@
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.07692307692307691,
+      "f1": 0.07407407407407407,
       "ctx_recall": 0.0,
       "ctx_precision": null,
       "ans_coverage": 0,
-      "faithfulness": 0.391304347826087,
+      "faithfulness": 0.3333333333333333,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -7433,12 +7435,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who was the American singer-songwriter Nick Brophy worked with?",
-      "hop1_answer": "Jason Aldean, the Rolling Stones, Avril Lavigne, Hootie & the Blowfish, Kenny Chesney, Carly Simon, Taylor Swift, Garbage, Everclear",
-      "sub_q2": "What American singer-songwriter known for arrative songs about her personal life did Nick Brophy work with?",
+      "sub_q1": "Who was the American singer-songwriter known for arrative songs about her personal life that Nick Brophy worked with?",
+      "hop1_answer": "Taylor Swift",
+      "sub_q2": "What type of music does Taylor Swift primarily perform?",
       "queries_used": [
-        "Who was the American singer-songwriter Nick Brophy worked with?",
-        "What American singer-songwriter known for arrative songs about her personal life did Nick Brophy work with?"
+        "Who was the American singer-songwriter known for arrative songs about her personal life that Nick Brophy worked with?",
+        "What type of music does Taylor Swift primarily perform?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7547,10 +7549,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What campaign aimed at reducing police violence launched its website?",
       "hop1_answer": "Campaign Zero",
-      "sub_q2": "Which year did the Campaign Zero launch its website?",
+      "sub_q2": "Which year did Campaign Zero launch its website?",
       "queries_used": [
         "What campaign aimed at reducing police violence launched its website?",
-        "Which year did the Campaign Zero launch its website?"
+        "Which year did Campaign Zero launch its website?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7764,26 +7766,26 @@
       "id": "5a901f7055429933b8a2047f",
       "question": "What is one obvious aspect of Dave Peters career that makes it more flexible than that of Dave Knudson?",
       "gold": "guitarist for the band Throwdown, and, as of 2002, the vocalist for Throwdown",
-      "prediction": "Flexibility in band membership and vocal roles.",
+      "prediction": "Dave Peters' career involves multiple roles including musician, singer-songwriter, and drummer, making it more flexible compared to Dave Knudson's career which is not specified in the given passages.",
       "type": "comparison",
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is Dave Peters' profession?",
+      "sub_q1": "What is Dave Peters' career field?",
       "hop1_answer": "Musician",
-      "sub_q2": "What is one obvious aspect of Dave Peters' career that makes it more flexible than that of Dave Knudson?",
+      "sub_q2": "What is the occupation of Dave Peters?",
       "queries_used": [
-        "What is Dave Peters' profession?",
-        "What is one obvious aspect of Dave Peters' career that makes it more flexible than that of Dave Knudson?"
+        "What is Dave Peters' career field?",
+        "What is the occupation of Dave Peters?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.2222222222222222,
-      "ctx_recall": 1.0,
+      "f1": 0.05263157894736842,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
-      "faithfulness": 0.42857142857142855,
+      "faithfulness": 0.4444444444444444,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -7853,18 +7855,18 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who has represented England in the under-17 team controlled by the Football Association?",
+      "sub_q1": "What under-17 team has Max Lowe represented?",
       "hop1_answer": "England national under-17 football team",
       "sub_q2": "What under-17 team controlled by the Football Association is the England national under-17 football team?",
       "queries_used": [
-        "Who has represented England in the under-17 team controlled by the Football Association?",
+        "What under-17 team has Max Lowe represented?",
         "What under-17 team controlled by the Football Association is the England national under-17 football team?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 0.5,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -8184,22 +8186,22 @@
       "id": "5add0f575542992ae4cec440",
       "question": "WHat is the name of this English actor and director born in 1961, who starred in Arbitrage with Richard Gere?",
       "gold": "Tim Roth",
-      "prediction": "Jinx Titanic",
+      "prediction": "Tim Roth",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who starred in Arbitrage with Richard Gere?",
-      "hop1_answer": "Brit Marling",
-      "sub_q2": "What is the occupation of Brit Marling?",
+      "hop1_answer": "Susan Sarandon, Tim Roth, and Brit Marling",
+      "sub_q2": "What is the occupation of Susan Sarandon?",
       "queries_used": [
         "Who starred in Arbitrage with Richard Gere?",
-        "What is the occupation of Brit Marling?"
+        "What is the occupation of Susan Sarandon?"
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 0,
-      "f1": 0.0,
+      "em": 1,
+      "f1": 1.0,
       "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -8331,10 +8333,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What United States Supreme Court case ruled on the constitutionality of teaching creationism?",
       "hop1_answer": "Edwards v. Aguillard",
-      "sub_q2": "In which United States Supreme Court case concerning the constitutionality of teaching creationism stated that creationism is an inherently religious concept and that advocating it as correct or accurate in public-school curricula violates the Establishment Clause of the First Amendment?",
+      "sub_q2": "In which United States Supreme Court case concerning the constitutionality of teaching creationism stated that Creationism is an inherently religious concept and that advocating it as correct or accurate in public-school curricula violates the Establishment Clause of the First Amendment?",
       "queries_used": [
         "What United States Supreme Court case ruled on the constitutionality of teaching creationism?",
-        "In which United States Supreme Court case concerning the constitutionality of teaching creationism stated that creationism is an inherently religious concept and that advocating it as correct or accurate in public-school curricula violates the Establishment Clause of the First Amendment?"
+        "In which United States Supreme Court case concerning the constitutionality of teaching creationism stated that Creationism is an inherently religious concept and that advocating it as correct or accurate in public-school curricula violates the Establishment Clause of the First Amendment?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8359,10 +8361,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What Danish-American actor starred in the 2012 film On the Road?",
       "hop1_answer": "Viggo Mortensen",
-      "sub_q2": "On the Road is a 2012 adventure drama film starring a Danish-American actor who made his film debut in what 1985 thriller? Hop-1 answer: Viggo Mortensen\nSub-q2: What",
+      "sub_q2": "On the Road is a 2012 adventure drama film starring a Danish-American actor who made his film debut in what 1985 thriller? The Danish-American actor is Viggo Mortensen.",
       "queries_used": [
         "What Danish-American actor starred in the 2012 film On the Road?",
-        "On the Road is a 2012 adventure drama film starring a Danish-American actor who made his film debut in what 1985 thriller? Hop-1 answer: Viggo Mortensen\nSub-q2: What"
+        "On the Road is a 2012 adventure drama film starring a Danish-American actor who made his film debut in what 1985 thriller? The Danish-American actor is Viggo Mortensen."
       ],
       "verified": true,
       "retry_count": 0,
@@ -8417,8 +8419,8 @@
       "hop1_answer": null,
       "sub_q2": null,
       "queries_used": [
-        "What is the premiere date of La dame blanche?",
-        "What is the premiere date of Il prigioniero?"
+        "What is La dame blanche about?",
+        "What is Il prigioniero about?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8611,10 +8613,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who starred in the movie about the world heavyweight boxing champion from 1935 to 1937?",
       "hop1_answer": "James J. Braddock",
-      "sub_q2": "Which movie starring Russell Crowe was about the world heavyweight boxing champion James J. Braddock from 1935 to 1937?",
+      "sub_q2": "Which movie starring Russell Crow played the role of James J. Braddock?",
       "queries_used": [
         "Who starred in the movie about the world heavyweight boxing champion from 1935 to 1937?",
-        "Which movie starring Russell Crowe was about the world heavyweight boxing champion James J. Braddock from 1935 to 1937?"
+        "Which movie starring Russell Crow played the role of James J. Braddock?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8660,22 +8662,22 @@
       "id": "5ab3d811554299233954ffc9",
       "question": "Who build the transportation commonly used on Melbourne's traditional main street?",
       "gold": "Melbourne & Metropolitan Tramways Board",
-      "prediction": "Knight & Kerr",
+      "prediction": "Melbourne & Metropolitan Tramways Board",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What transportation is commonly used on Melbourne's traditional main street?",
-      "hop1_answer": "Boutiques and high-end retailers",
-      "sub_q2": "Who built the transportation commonly used on Melbourne's traditional main street, given that it was built by Boutiques and high-end retailers?",
+      "sub_q1": "Who built the transportation commonly used on Melbourne's traditional main street?",
+      "hop1_answer": "Melbourne & Metropolitan Tramways Board",
+      "sub_q2": "Who built the transportation commonly used on Melbourne's traditional main street, the Melbourne & Metropolitan Tramways Board?",
       "queries_used": [
-        "What transportation is commonly used on Melbourne's traditional main street?",
-        "Who built the transportation commonly used on Melbourne's traditional main street, given that it was built by Boutiques and high-end retailers?"
+        "Who built the transportation commonly used on Melbourne's traditional main street?",
+        "Who built the transportation commonly used on Melbourne's traditional main street, the Melbourne & Metropolitan Tramways Board?"
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 0,
-      "f1": 0.0,
+      "em": 1,
+      "f1": 1.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -8723,10 +8725,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "In what year was \"Mad Girl's Love Song\" written?",
       "hop1_answer": "1951",
-      "sub_q2": "In what year was Sylvia Plath's poem \"Mad Girl's Love Song\" written?",
+      "sub_q2": "In which year was Sylvia Plath's poem \"Mad Girl's Love Song\" written?",
       "queries_used": [
         "In what year was \"Mad Girl's Love Song\" written?",
-        "In what year was Sylvia Plath's poem \"Mad Girl's Love Song\" written?"
+        "In which year was Sylvia Plath's poem \"Mad Girl's Love Song\" written?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8777,11 +8779,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What city of South Australia belongs to Division of Wakefield?",
+      "sub_q1": "Which city of South Australia belongs to Division of Wakefield?",
       "hop1_answer": "Adelaide",
       "sub_q2": "Which main highway taking traffic to the north of Adelaide passes through the city of South Australia that belongs to Division of Wakefield?",
       "queries_used": [
-        "What city of South Australia belongs to Division of Wakefield?",
+        "Which city of South Australia belongs to Division of Wakefield?",
         "Which main highway taking traffic to the north of Adelaide passes through the city of South Australia that belongs to Division of Wakefield?"
       ],
       "verified": true,
@@ -8896,7 +8898,7 @@
       "sub_q2": null,
       "queries_used": [
         "What were the key contributions of A.C.N. Nambiar to Indian independence movement?",
-        "What were the key contributions of Subhas Chandra Bose to Indian independence movement?"
+        "What were the key roles played by Subhas Chandra Bose in the Indian independence movement?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -9033,10 +9035,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What prehistoric animated adventure film did Walt Disney Pictures produce in 2000?",
       "hop1_answer": "Dinosaur",
-      "sub_q2": "What prehistoric animated adventure film did Walt Disney Pictures produce in 2000, led by the editor who worked on Aladdin and Pocahontas, and whose name is Dinosaur?",
+      "sub_q2": "What prehistoric animated adventure film did Walt Disney Pictures produce in 2000, led by the editor who worked on Aladdin and Pocahontas, and what is the occupation of the spouse of Barack Obama? (Hop",
       "queries_used": [
         "What prehistoric animated adventure film did Walt Disney Pictures produce in 2000?",
-        "What prehistoric animated adventure film did Walt Disney Pictures produce in 2000, led by the editor who worked on Aladdin and Pocahontas, and whose name is Dinosaur?"
+        "What prehistoric animated adventure film did Walt Disney Pictures produce in 2000, led by the editor who worked on Aladdin and Pocahontas, and what is the occupation of the spouse of Barack Obama? (Hop"
       ],
       "verified": true,
       "retry_count": 0,
@@ -9278,7 +9280,7 @@
       "id": "5ae0425f55429924de1b707e",
       "question": "In what month was the woman who published Comedy 23/6 born?",
       "gold": "July",
-      "prediction": "June",
+      "prediction": "November",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -9341,10 +9343,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What year did Letterkenny debut?",
       "hop1_answer": "2016",
-      "sub_q2": "What year did the Canadian television sitcom Letterkenny debut?",
+      "sub_q2": "What year did the show Letterkenny debut?",
       "queries_used": [
         "What year did Letterkenny debut?",
-        "What year did the Canadian television sitcom Letterkenny debut?"
+        "What year did the show Letterkenny debut?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -9395,11 +9397,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who created the American adult stop-motion animated television show that originally aired on Adult Swim from December 13, 2005 to December 18, 2008?",
+      "sub_q1": "Who is the creator of the American adult stop-motion animated television show that originally aired on Adult Swim from December 13, 2005 to December 18, 2008?",
       "hop1_answer": "Dino Stamatopoulos",
       "sub_q2": "What American adult stop-motion animated television show did Dino Stamatopoulos create, which originally aired on Adult Swim from December 13, 2005 to December 18, 2008?",
       "queries_used": [
-        "Who created the American adult stop-motion animated television show that originally aired on Adult Swim from December 13, 2005 to December 18, 2008?",
+        "Who is the creator of the American adult stop-motion animated television show that originally aired on Adult Swim from December 13, 2005 to December 18, 2008?",
         "What American adult stop-motion animated television show did Dino Stamatopoulos create, which originally aired on Adult Swim from December 13, 2005 to December 18, 2008?"
       ],
       "verified": true,
@@ -9703,11 +9705,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What university has its origins as a specific college and has Anniversary Park at its south end?",
+      "sub_q1": "What university does Anniversary Park south end locate at?",
       "hop1_answer": "George Washington University",
       "sub_q2": "What college was George Washington University originally founded as?",
       "queries_used": [
-        "What university has its origins as a specific college and has Anniversary Park at its south end?",
+        "What university does Anniversary Park south end locate at?",
         "What college was George Washington University originally founded as?"
       ],
       "verified": true,
@@ -10125,10 +10127,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Which charity event did the author of \"How to Win at the Sport of Business\" participate in at Intel Extreme Masters Season X \u2013 San Jose?",
       "hop1_answer": "The Cybersmile Foundation",
-      "sub_q2": "Which game did The Cybersmile Foundation participate in at Intel Extreme Masters Season X \u2013 San Jose?",
+      "sub_q2": "Which charity did The Cybersmile Foundation organize a game for at Intel Extreme Masters Season X \u2013 San Jose?",
       "queries_used": [
         "Which charity event did the author of \"How to Win at the Sport of Business\" participate in at Intel Extreme Masters Season X \u2013 San Jose?",
-        "Which game did The Cybersmile Foundation participate in at Intel Extreme Masters Season X \u2013 San Jose?"
+        "Which charity did The Cybersmile Foundation organize a game for at Intel Extreme Masters Season X \u2013 San Jose?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -10179,12 +10181,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the \"Maschinengewehr\" 30 most notable for?",
-      "hop1_answer": "The \"Maschinengewehr\" 30 is most notable for being the design pattern that led to the development of the MG 34 and MG 42, making it one of the major ancestors of many machine guns in",
-      "sub_q2": "What type of weapon are the MG 34 and MG 42 major ancestors of?",
+      "sub_q1": "What is the \"Maschinengewehr\" 30 most notable for leading to?",
+      "hop1_answer": "The \"Maschinengewehr\" 30 is most notable for leading to the design of the MG 34 and MG 42, and thus is one of the major ancestors of many weapons in service that would later find",
+      "sub_q2": "What are the major ancestors of many weapons in service that the MG 34 and MG 42 are considered major ancestors of?",
       "queries_used": [
-        "What is the \"Maschinengewehr\" 30 most notable for?",
-        "What type of weapon are the MG 34 and MG 42 major ancestors of?"
+        "What is the \"Maschinengewehr\" 30 most notable for leading to?",
+        "What are the major ancestors of many weapons in service that the MG 34 and MG 42 are considered major ancestors of?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -10230,7 +10232,7 @@
       "id": "5abfb2b95542990832d3a1b9",
       "question": "Redcon-1 includes the co-producer who produced the American Hong Kong action comedy film released in what year?",
       "gold": "2003",
-      "prediction": "2002",
+      "prediction": "1989",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -10377,16 +10379,16 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is Eschrichtius robustus commonly known as?",
       "hop1_answer": "Gray whale",
-      "sub_q2": "What is the scientific name for the Gray whale?",
+      "sub_q2": "What is the common name for Eschrichtius robustus that led to Bender \"Ben\" Johnson Jr. being the chairman of the Makah during the first successful hunt?",
       "queries_used": [
         "What is Eschrichtius robustus commonly known as?",
-        "What is the scientific name for the Gray whale?"
+        "What is the common name for Eschrichtius robustus that led to Bender \"Ben\" Johnson Jr. being the chairman of the Makah during the first successful hunt?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 0.5,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -10797,16 +10799,16 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What Asian country did Company Viu debut in?",
       "hop1_answer": "Hong Kong",
-      "sub_q2": "Company Viu debuted in which Asian country?",
+      "sub_q2": "What Asian country did Company Viu debut in, which is operated by PCCW?",
       "queries_used": [
         "What Asian country did Company Viu debut in?",
-        "Company Viu debuted in which Asian country?"
+        "What Asian country did Company Viu debut in, which is operated by PCCW?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 0.5,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -10881,11 +10883,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What River does Nubanusit Brook pass into?",
+      "sub_q1": "What river does Nubanusit Brook pass into?",
       "hop1_answer": "Contoocook River",
       "sub_q2": "What direction does Water flow after passing via Nubanusit Brook into the Contoocook River?",
       "queries_used": [
-        "What River does Nubanusit Brook pass into?",
+        "What river does Nubanusit Brook pass into?",
         "What direction does Water flow after passing via Nubanusit Brook into the Contoocook River?"
       ],
       "verified": true,
@@ -10993,12 +10995,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the legal relationship of O'Hooley & Tidow in the United Kingdom?",
-      "hop1_answer": "Undisclosed",
-      "sub_q2": "What exceptions are there to O'Hooley & Tidow's legal relationship in the United Kingdom?",
+      "sub_q1": "What is the relationship of O'Hooley & Tidow?",
+      "hop1_answer": "Spouse and band members",
+      "sub_q2": "What exceptions are there for O'Hooley & Tidow's legal relationship in the United Kingdom?",
       "queries_used": [
-        "What is the legal relationship of O'Hooley & Tidow in the United Kingdom?",
-        "What exceptions are there to O'Hooley & Tidow's legal relationship in the United Kingdom?"
+        "What is the relationship of O'Hooley & Tidow?",
+        "What exceptions are there for O'Hooley & Tidow's legal relationship in the United Kingdom?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -11072,22 +11074,22 @@
       "id": "5a7fd80b5542994857a767fd",
       "question": "The massif that contains the Riesending cave borders Berchtesgaden, Germany and what Austrian city?",
       "gold": "Salzburg",
-      "prediction": "Salzburg",
+      "prediction": "St. Johann im Pongau",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What Austrian city borders Berchtesgaden, Germany?",
       "hop1_answer": "Salzburg",
-      "sub_q2": "What Austrian city does the massif containing the Riesending cave border besides Berchtesgaden, Germany?",
+      "sub_q2": "What Austrian city does the massif containing the Riesending cave border besides Berchtesgaden?",
       "queries_used": [
         "What Austrian city borders Berchtesgaden, Germany?",
-        "What Austrian city does the massif containing the Riesending cave border besides Berchtesgaden, Germany?"
+        "What Austrian city does the massif containing the Riesending cave border besides Berchtesgaden?"
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 1,
-      "f1": 1.0,
+      "em": 0,
+      "f1": 0.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -11221,8 +11223,8 @@
       "hop1_answer": null,
       "sub_q2": null,
       "queries_used": [
-        "What country does Rolf de Heer come from?",
-        "What country does Ralph Smart come from?"
+        "What country is Rolf de Heer from?",
+        "What country is Ralph Smart from?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -11231,7 +11233,7 @@
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
-      "faithfulness": 0.0,
+      "faithfulness": 1.0,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -11274,7 +11276,7 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who did Cedric Kushner manage?",
-      "hop1_answer": "Hasim Rahman, Shannon Briggs, Oleg Maskaev, Chris Byrd, Corrie Sanders, Ike Ibeabuchi, and David Tua.",
+      "hop1_answer": "Boxers he promoted and/or managed included Hasim Rahman, Shannon Briggs, Oleg Maskaev, Chris Byrd, Corrie Sanders, Ike Ibeabuchi and David Tua.",
       "sub_q2": "Which South African professional boxer did Cedric Kushner manage?",
       "queries_used": [
         "Who did Cedric Kushner manage?",
@@ -11722,11 +11724,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is the player of Birmingham Bears T20 Cricket Club born on 27 September 1981?",
-      "hop1_answer": "No information about a player born on 27 September 1981 is provided in the given passages.",
-      "sub_q2": "What is the occupation of the player born on 27 September 1981 who plays for Birmingham Bears T20 Cricket Club?",
+      "hop1_answer": "No player born on 27 September 1981 is mentioned in the given passages.",
+      "sub_q2": "Which Birmingham Bears T20 Cricket Club player is born on 27 September 1981?",
       "queries_used": [
         "Who is the player of Birmingham Bears T20 Cricket Club born on 27 September 1981?",
-        "What is the occupation of the player born on 27 September 1981 who plays for Birmingham Bears T20 Cricket Club?"
+        "Which Birmingham Bears T20 Cricket Club player is born on 27 September 1981?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -11828,22 +11830,22 @@
       "id": "5ab5e02d5542997d4ad1f21a",
       "question": "When was the Irish physicist died from who's name the Bell's theorem was named?",
       "gold": "1 October 1990",
-      "prediction": "John Stewart Bell",
+      "prediction": "28 June 1990",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "When was the Irish physicist who developed Bell's theorem died?",
+      "sub_q1": "When was the Irish physicist who had his name associated with Bell's theorem died?",
       "hop1_answer": "1 October 1990",
       "sub_q2": "When was John Stewart Bell died?",
       "queries_used": [
-        "When was the Irish physicist who developed Bell's theorem died?",
+        "When was the Irish physicist who had his name associated with Bell's theorem died?",
         "When was John Stewart Bell died?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.0,
+      "f1": 0.3333333333333333,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -11974,7 +11976,7 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who was Mark Hampton?",
-      "hop1_answer": "Mark Hampton was an artist born in Indianapolis who showed early inclinations towards design and was influenced by architects like Le Corbusier, Frank Lloyd Wright, and Philip Johnson.",
+      "hop1_answer": "Mark Hampton was an artist born in Indianapolis who showed early inclinations towards design and was influenced by architects like Le Corbusier, Frank Lloyd Wright, and Phillip Johnson.",
       "sub_q2": "Which architects influenced Mark Hampton, according to the given information?",
       "queries_used": [
         "Who was Mark Hampton?",
@@ -12141,12 +12143,12 @@
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who wrote more works using different names, Annie Proulx or Ren\u00e9 Crevel?",
-      "hop1_answer": "Annie Proulx",
-      "sub_q2": "Which names did Annie Proulx use to write?",
+      "sub_q1": "Who wrote Annie Proulx and Ren\u00e9 Crevel?",
+      "hop1_answer": "Annie Proulx, Ren\u00e9 Crevel",
+      "sub_q2": "Which writer used more names to write, Ren\u00e9 Crevel or Annie Proulx?",
       "queries_used": [
-        "Who wrote more works using different names, Annie Proulx or Ren\u00e9 Crevel?",
-        "Which names did Annie Proulx use to write?"
+        "Who wrote Annie Proulx and Ren\u00e9 Crevel?",
+        "Which writer used more names to write, Ren\u00e9 Crevel or Annie Proulx?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12337,11 +12339,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What cuisine is rakfisk a part of?",
+      "sub_q1": "What type of cuisine is rakfisk traditionally part of?",
       "hop1_answer": "Norwegian cuisine",
       "sub_q2": "What cuisine is titled Norwegian cuisine?",
       "queries_used": [
-        "What cuisine is rakfisk a part of?",
+        "What type of cuisine is rakfisk traditionally part of?",
         "What cuisine is titled Norwegian cuisine?"
       ],
       "verified": true,
@@ -12449,18 +12451,18 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What British political party did Frederick Lambton, 4th Earl of Durham, join?",
+      "sub_q1": "What British political party did the faction that broke away from the Liberal Party form?",
       "hop1_answer": "Liberal Unionist Party",
       "sub_q2": "In what year did a faction break away from the Liberal Party to form the Liberal Unionist Party?",
       "queries_used": [
-        "What British political party did Frederick Lambton, 4th Earl of Durham, join?",
+        "What British political party did the faction that broke away from the Liberal Party form?",
         "In what year did a faction break away from the Liberal Party to form the Liberal Unionist Party?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 1.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -12528,17 +12530,17 @@
       "id": "5ab5dba3554299494045f086",
       "question": "Who directed the 1979 American drama film that starred the actress who won the Golden Globe Award for Best Supporting Actress for \"Psycho\"?",
       "gold": "Verona",
-      "prediction": "Alfred Hitchcock directed the 1960 American drama film \"Psycho,\" but since the question asks about a 1979 film, there seems to be a mismatch. However, if we consider the actress who won the Golden Globe Award for Best Supporting Actress in 1979 for \"",
+      "prediction": "Alfred Hitchcock directed the 1960 American drama film \"Psycho,\" but since the question asks about a 1979 film, there seems to be a mismatch. However, if we consider the actress who won the Golden Globe Award for Best Supporting Actress in 1979, it",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who directed the 1979 American drama film?",
       "hop1_answer": "Stephen Verona directed the 1979 American drama film Boardwalk.",
-      "sub_q2": "Who directed the 1979 American drama film that starred Michelle Pfeiffer?",
+      "sub_q2": "Who directed the 1979 American drama film that starred Michelle Obama?",
       "queries_used": [
         "Who directed the 1979 American drama film?",
-        "Who directed the 1979 American drama film that starred Michelle Pfeiffer?"
+        "Who directed the 1979 American drama film that starred Michelle Obama?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12612,27 +12614,26 @@
       "id": "5abdff205542993f32c2a081",
       "question": "What is the population of the country where the Chetyrekh River is located?",
       "gold": "144 million",
-      "prediction": "The population information provided does not specify the exact country where the Chetyrekh River is located. The passage only states that it is in Krasnoyarsk Krai, Russia, but does not provide the population of that specific region or country.",
+      "prediction": "Not enough information provided to determine the population of the country where the Chetyrekh River is located.",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
-      "retrieval_mode": "fallback",
+      "retrieval_mode": "bridge_decompose",
       "sub_q1": "What country does the Chetyrekh River locate in?",
       "hop1_answer": "Russia",
       "sub_q2": "What is the population of Russia?",
       "queries_used": [
         "What country does the Chetyrekh River locate in?",
-        "What is the population of Russia?",
-        "[fallback] What is the population of the country where the Chetyrekh River is located?"
+        "What is the population of Russia?"
       ],
       "verified": true,
-      "retry_count": 1,
+      "retry_count": 0,
       "em": 0,
       "f1": 0.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
-      "faithfulness": 0.5,
+      "faithfulness": 0.7142857142857143,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -12703,11 +12704,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is Vijayakrishnan?",
-      "hop1_answer": "Vijayakrishnan is a well-known film critic, film director, and writer in India, born in 1952 in Thiruvananthapuram, Kerala, who has received multiple awards for his work in",
-      "sub_q2": "Who was born first, Vijayakrishnan or Subhash Ghai, given that Vijayakrishnan was born in 1952 in Thiruvananthapuram, Kerala?",
+      "hop1_answer": "Vijayakrishnan is a well-known film critic, film director, and writer in India, recognized for his contributions to film history and criticism.",
+      "sub_q2": "Who was born first, Vijayakrishnan or Subhash Ghai?",
       "queries_used": [
         "Who is Vijayakrishnan?",
-        "Who was born first, Vijayakrishnan or Subhash Ghai, given that Vijayakrishnan was born in 1952 in Thiruvananthapuram, Kerala?"
+        "Who was born first, Vijayakrishnan or Subhash Ghai?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12926,12 +12927,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What year did the band form that put out the EP, Ashes from Hell?",
-      "hop1_answer": "2006",
-      "sub_q2": "What band originally formed in 1983 put out the EP, Ashes from Hell?",
+      "sub_q1": "What year did the band originally form that put out the EP, Ashes from Hell?",
+      "hop1_answer": "1983",
+      "sub_q2": "What band put out the EP Ashes from Hell?",
       "queries_used": [
-        "What year did the band form that put out the EP, Ashes from Hell?",
-        "What band originally formed in 1983 put out the EP, Ashes from Hell?"
+        "What year did the band originally form that put out the EP, Ashes from Hell?",
+        "What band put out the EP Ashes from Hell?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -13290,11 +13291,11 @@
       "level": "hard",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What college do the Cornhuskers play basketball for?",
+      "sub_q1": "What U.S. college do the Cornhuskers play basketball for?",
       "hop1_answer": "University of Nebraska\u2013Lincoln",
       "sub_q2": "At which U.S. college does the University of Nebraska\u2013Lincoln play basketball in the Pinnacle Bank Arena?",
       "queries_used": [
-        "What college do the Cornhuskers play basketball for?",
+        "What U.S. college do the Cornhuskers play basketball for?",
         "At which U.S. college does the University of Nebraska\u2013Lincoln play basketball in the Pinnacle Bank Arena?"
       ],
       "verified": true,
@@ -13402,11 +13403,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the name of the 2017 American monster film that is a reboot of the \"King Kong\" franchise?",
+      "sub_q1": "What is the name of the 2017 American monster film that is a reboot of the \"King Kong\" franchise and serves as the second film in the MonsterVerse franchise?",
       "hop1_answer": "Kong: Skull Island",
       "sub_q2": "What American media company franchise is Kong: Skull Island based on?",
       "queries_used": [
-        "What is the name of the 2017 American monster film that is a reboot of the \"King Kong\" franchise?",
+        "What is the name of the 2017 American monster film that is a reboot of the \"King Kong\" franchise and serves as the second film in the MonsterVerse franchise?",
         "What American media company franchise is Kong: Skull Island based on?"
       ],
       "verified": true,
@@ -13432,10 +13433,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is Roger Daltrey?",
       "hop1_answer": "Roger Daltrey is an English singer and actor who gained prominence as the founder and lead singer of the rock band The Who, releasing multiple hit singles in the 1960s, 1970s, and",
-      "sub_q2": "Who is older, Roger Daltrey or Brian May? (Brian May is the guitarist of the rock band Queen)",
+      "sub_q2": "Who is older, Roger Daltrey or Brian May? (Hint: Roger Daltrey is an English singer and actor.)",
       "queries_used": [
         "Who is Roger Daltrey?",
-        "Who is older, Roger Daltrey or Brian May? (Brian May is the guitarist of the rock band Queen)"
+        "Who is older, Roger Daltrey or Brian May? (Hint: Roger Daltrey is an English singer and actor.)"
       ],
       "verified": true,
       "retry_count": 0,
@@ -13593,26 +13594,26 @@
       "id": "5a7e99245542994959419a21",
       "question": "What did the woman win before her work with the owns ,who gained national fame by appearing on the nationally broadcast CBS/syndicated television series \"Hee Haw\", and also featured the first festival  in Rhinelander, in Oneida County, Wisconsin, United States?",
       "gold": "Ladies' Division National Fiddling Championship",
-      "prediction": "Jana Jae won the Ladies' Division National Fiddling Championship before her work with Buck Owens.",
+      "prediction": "Dete Meserve",
       "type": "bridge",
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What did the woman win before appearing on \"Hee Haw\"?",
-      "hop1_answer": "Lupita Jones",
-      "sub_q2": "What did Lupita Jones win before her work with the owners of Hee Haw?",
+      "sub_q1": "What did the woman win before her work with the owns?",
+      "hop1_answer": "Miss USA 1995",
+      "sub_q2": "What did Miss USA 1995 win before her work with the Obamas?",
       "queries_used": [
-        "What did the woman win before appearing on \"Hee Haw\"?",
-        "What did Lupita Jones win before her work with the owners of Hee Haw?"
+        "What did the woman win before her work with the owns?",
+        "What did Miss USA 1995 win before her work with the Obamas?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.5263157894736842,
-      "ctx_recall": 0.5,
+      "f1": 0.0,
+      "ctx_recall": 0.0,
       "ctx_precision": null,
-      "ans_coverage": 1,
-      "faithfulness": 0.9285714285714286,
+      "ans_coverage": 0,
+      "faithfulness": 1.0,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -13906,11 +13907,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "In what year did the British politician born on September 1, 1931 begin his political career?",
-      "hop1_answer": "1931",
+      "sub_q1": "In what year did the British politician born on September 1, 1931 begin founding Black Muslim groups in New York?",
+      "hop1_answer": "1967",
       "sub_q2": "In what year did Elijah Muhammad begin founding Black Muslim groups in New York?",
       "queries_used": [
-        "In what year did the British politician born on September 1, 1931 begin his political career?",
+        "In what year did the British politician born on September 1, 1931 begin founding Black Muslim groups in New York?",
         "In what year did Elijah Muhammad begin founding Black Muslim groups in New York?"
       ],
       "verified": true,
@@ -13929,23 +13930,23 @@
       "id": "5ac2c8fe554299657fa29056",
       "question": "\"Queen of Soul: The Atlantic Recordings\" is an 86-track, four-disc box set detailing the Atlantic career of a singer born in this year?",
       "gold": "1942",
-      "prediction": "1942",
+      "prediction": "1967",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What year was the singer born?",
       "hop1_answer": "1942\n\n1943\n\n1944\n\n1989\n\n1943",
-      "sub_q2": "What year was Aretha Franklin born?",
+      "sub_q2": "What year is the singer born?",
       "queries_used": [
         "What year was the singer born?",
-        "What year was Aretha Franklin born?"
+        "What year is the singer born?"
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 1,
-      "f1": 1.0,
-      "ctx_recall": 1.0,
+      "em": 0,
+      "f1": 0.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -14013,17 +14014,17 @@
       "id": "5a7a909655429927d897becd",
       "question": "Who is the director of the film where voicing characters was done by James Franco?",
       "gold": "Mark Osborne",
-      "prediction": "Tom McGrath",
+      "prediction": "Monte Hellman",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who directed the film where James Franco voiced characters?",
-      "hop1_answer": "Tom McGrath directed the film Megamind.",
-      "sub_q2": "Who is the director of the film Megamind?",
+      "hop1_answer": "Tom McGrath directed the film where James Franco voiced characters in \"Megamind\".",
+      "sub_q2": "Who is the director of the film \"Megamind\"?",
       "queries_used": [
         "Who directed the film where James Franco voiced characters?",
-        "Who is the director of the film Megamind?"
+        "Who is the director of the film \"Megamind\"?"
       ],
       "verified": true,
       "retry_count": 0,

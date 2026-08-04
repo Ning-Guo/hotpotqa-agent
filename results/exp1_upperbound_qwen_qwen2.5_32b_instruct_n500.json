@@ -7,12 +7,12 @@
     "output": "/root/hotpotqa-agent/results/exp1_upperbound_qwen_qwen2.5_32b_instruct_n500.json"
   },
   "summary": {
-    "em": 0.788,
-    "f1": 0.8839,
+    "em": 0.786,
+    "f1": 0.8836,
     "ctx_recall": 1.0,
     "ctx_precision": null,
     "ans_coverage": 0.976,
-    "faithfulness": 0.9211,
+    "faithfulness": 0.9206,
     "entailment": null,
     "contradiction": null,
     "outcomes": null,
@@ -20,29 +20,29 @@
     "by_type": {
       "bridge": {
         "em": 0.802,
-        "f1": 0.8954,
+        "f1": 0.8955,
         "count": 409
       },
       "comparison": {
-        "em": 0.7253,
-        "f1": 0.8321,
+        "em": 0.7143,
+        "f1": 0.8299,
         "count": 91
       }
     },
     "by_level": {
       "easy": {
-        "em": 0.697,
-        "f1": 0.8109,
+        "em": 0.6869,
+        "f1": 0.8075,
         "count": 99
       },
       "hard": {
-        "em": 0.618,
-        "f1": 0.8029,
+        "em": 0.6067,
+        "f1": 0.7991,
         "count": 89
       },
       "medium": {
-        "em": 0.8654,
-        "f1": 0.9302,
+        "em": 0.8686,
+        "f1": 0.9318,
         "count": 312
       }
     }
@@ -2211,11 +2211,11 @@
       "id": "5ae664955542992ae0d1631b",
       "question": "Cincinnati Bearcats baseball, the varsity intercollegiate team representing the University of Cincinnati in the sport of college baseball, includes notable alumnus Sandy Koufax, who played what posiiton?",
       "gold": "pitcher",
-      "prediction": "pitcher",
+      "prediction": "left-handed pitcher",
       "type": "bridge",
       "level": "easy",
-      "em": 1,
-      "f1": 1.0,
+      "em": 0,
+      "f1": 0.6666666666666666,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -3503,15 +3503,15 @@
       "id": "5abeddf35542990832d3a107",
       "question": "What sports club is located in the federal capital of Argentina?",
       "gold": "Club Atl\u00e9tico Estudiantil Porte\u00f1o",
-      "prediction": "The passage does not provide information about a sports club located in the federal capital of Argentina. However, it mentions Estudiantil Porte\u00f1o, which is located in Ramos Mej\u00eda, not the federal capital. Therefore, based solely on the given information, there is no direct answer to the question.",
+      "prediction": "Not specified in the passages.",
       "type": "bridge",
       "level": "hard",
       "em": 0,
-      "f1": 0.13333333333333333,
+      "f1": 0.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
-      "faithfulness": 0.5121951219512195,
+      "faithfulness": 0.25,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -3792,7 +3792,7 @@
       "id": "5ab297be554299545a2cf9c0",
       "question": "Heatstroke stars an actress who has written how many non-fiction books?",
       "gold": "five",
-      "prediction": "Five",
+      "prediction": "five",
       "type": "bridge",
       "level": "medium",
       "em": 1,
@@ -4846,11 +4846,11 @@
       "id": "5ac081345542992a796ded2d",
       "question": "Which of the original Assassin to \"The Assassins\" was best known as one half of the tag team?",
       "gold": "Jody Hamilton",
-      "prediction": "Joseph Hamilton",
+      "prediction": "Jody Hamilton",
       "type": "bridge",
       "level": "medium",
-      "em": 0,
-      "f1": 0.5,
+      "em": 1,
+      "f1": 1.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -6699,11 +6699,11 @@
       "id": "5a72346355429971e9dc9352",
       "question": "Fun and Fancy Free and The Hunchback of Notre Dame were both works from what popular animation and film company?",
       "gold": "Walt Disney",
-      "prediction": "Walt Disney",
+      "prediction": "Walt Disney Pictures",
       "type": "comparison",
       "level": "hard",
-      "em": 1,
-      "f1": 1.0,
+      "em": 0,
+      "f1": 0.8,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,

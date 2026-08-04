@@ -8,20 +8,20 @@
     "output": "/root/hotpotqa-agent/results/exp2_32b_agent_qwen_qwen2.5_32b_instruct_n500.json"
   },
   "summary": {
-    "em": 0.64,
-    "f1": 0.7089,
-    "ctx_recall": 0.955,
+    "em": 0.644,
+    "f1": 0.7136,
+    "ctx_recall": 0.949,
     "ctx_precision": null,
-    "ans_coverage": 0.956,
-    "faithfulness": 0.8051,
+    "ans_coverage": 0.954,
+    "faithfulness": 0.8055,
     "entailment": null,
     "contradiction": null,
     "outcomes": null,
     "n": 500,
     "by_type": {
       "bridge": {
-        "em": 0.7237,
-        "f1": 0.8079,
+        "em": 0.7286,
+        "f1": 0.8137,
         "count": 409
       },
       "comparison": {
@@ -38,12 +38,12 @@
       },
       "hard": {
         "em": 0.4719,
-        "f1": 0.5959,
+        "f1": 0.5922,
         "count": 89
       },
       "medium": {
-        "em": 0.6955,
-        "f1": 0.7448,
+        "em": 0.7019,
+        "f1": 0.7535,
         "count": 312
       }
     }
@@ -58,11 +58,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who is the Romanian singer who released the album Party Never Ends?",
+      "sub_q1": "Who is the Romanian singer that released the album Party Never Ends?",
       "hop1_answer": "Inna",
       "sub_q2": "What college did Inna study at?",
       "queries_used": [
-        "Who is the Romanian singer who released the album Party Never Ends?",
+        "Who is the Romanian singer that released the album Party Never Ends?",
         "What college did Inna study at?"
       ],
       "verified": true,
@@ -340,10 +340,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who had a song on Hits 57?",
       "hop1_answer": "Westlife, Blu Cantrell, Daniel Bedingfield",
-      "sub_q2": "Who among Westlake, Blu Cantrell, Daniel Bedingfield was born in 1976 and had a song on Hits 57? \n\nHowever, since the Hop-1 answer provided seems to list multiple names and not",
+      "sub_q2": "Who among Westlake, Blu Cantrell, Daniel Bedingfield was born in 1976 and had a song on Hits 57? \n\nHowever, since the Hop-1 answer provided multiple names and the question seems to",
       "queries_used": [
         "Who had a song on Hits 57?",
-        "Who among Westlake, Blu Cantrell, Daniel Bedingfield was born in 1976 and had a song on Hits 57? \n\nHowever, since the Hop-1 answer provided seems to list multiple names and not"
+        "Who among Westlake, Blu Cantrell, Daniel Bedingfield was born in 1976 and had a song on Hits 57? \n\nHowever, since the Hop-1 answer provided multiple names and the question seems to"
       ],
       "verified": true,
       "retry_count": 0,
@@ -417,7 +417,7 @@
       "id": "5a8a5db15542992d82986f17",
       "question": "What instrument does this musician of Nirvana who was featured in only one Nirvana album play for his current band?",
       "gold": "bass",
-      "prediction": "drums",
+      "prediction": "bass guitar",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -432,7 +432,7 @@
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.0,
+      "f1": 0.6666666666666666,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -508,10 +508,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What American rock band performed the song Diane?",
       "hop1_answer": "H\u00fcsker D\u00fc",
-      "sub_q2": "What American rock band performed the song Diane, which was covered in Black Holes in the Sand?",
+      "sub_q2": "What American rock band performed the original version of Diane, which is featured on the album Black Holes in the Sand as a cover-version?",
       "queries_used": [
         "What American rock band performed the song Diane?",
-        "What American rock band performed the song Diane, which was covered in Black Holes in the Sand?"
+        "What American rock band performed the original version of Diane, which is featured on the album Black Holes in the Sand as a cover-version?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -648,10 +648,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What media organization is Jesse Dylan a member of?",
       "hop1_answer": "TED",
-      "sub_q2": "What media organization which posts talks is Jesse Dylan a member of? \n\nSince the Hop-1 answer \"TED\" directly answers the question without needing a reformulation into a sub-question about an attribute or detail of Jesse Dylan, the output here",
+      "sub_q2": "What media organization which posts talks is Jesse Dylan a member of? \n\nSince the Hop-1 answer \"TED\" directly answers the question, there isn't a need for a second sub-question that replaces an indirect reference. The initial question already",
       "queries_used": [
         "What media organization is Jesse Dylan a member of?",
-        "What media organization which posts talks is Jesse Dylan a member of? \n\nSince the Hop-1 answer \"TED\" directly answers the question without needing a reformulation into a sub-question about an attribute or detail of Jesse Dylan, the output here"
+        "What media organization which posts talks is Jesse Dylan a member of? \n\nSince the Hop-1 answer \"TED\" directly answers the question, there isn't a need for a second sub-question that replaces an indirect reference. The initial question already"
       ],
       "verified": true,
       "retry_count": 0,
@@ -842,11 +842,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who starred in The Spirit of St. Louis?",
+      "sub_q1": "Who starred in the film The Spirit of St. Louis?",
       "hop1_answer": "James Stewart",
       "sub_q2": "What studio had James Stewart as a major contract player?",
       "queries_used": [
-        "Who starred in The Spirit of St. Louis?",
+        "Who starred in the film The Spirit of St. Louis?",
         "What studio had James Stewart as a major contract player?"
       ],
       "verified": true,
@@ -1292,10 +1292,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What mobile network was created by the merger of two companies in Pakistan?",
       "hop1_answer": "Jazz",
-      "sub_q2": "What two companies merged to create Jazz, the mobile network that started the \"No Issue\" Pakistani television advertisement campaign?",
+      "sub_q2": "What two companies merged to create Jazz, the mobile network that started the Pakistani television advertisement campaign \"No issue\"?",
       "queries_used": [
         "What mobile network was created by the merger of two companies in Pakistan?",
-        "What two companies merged to create Jazz, the mobile network that started the \"No Issue\" Pakistani television advertisement campaign?"
+        "What two companies merged to create Jazz, the mobile network that started the Pakistani television advertisement campaign \"No issue\"?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1376,10 +1376,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What exotic bird is mainly featured at Colasanti's Tropical Gardens?",
       "hop1_answer": "Cockatoo",
-      "sub_q2": "What is the main region where the Cockatoo is endemic?",
+      "sub_q2": "In which region is the cockatoo mainly endemic?",
       "queries_used": [
         "What exotic bird is mainly featured at Colasanti's Tropical Gardens?",
-        "What is the main region where the Cockatoo is endemic?"
+        "In which region is the cockatoo mainly endemic?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -1878,18 +1878,18 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who began his career on the Broadway stage as who in \"Priscilla, Queen of the Desert\"? \n\n(Note: The sub-question generated seems to deviate from identifying an intermediate entity related to the main query about Stranger Things. Given the",
+      "sub_q1": "Who began his career on the Broadway stage as who in \"Priscilla, Queen of the Desert\"? \n\n(Note: The sub-question generated here seems to deviate from the instruction to identify an intermediate entity related to the main query about Stranger",
       "hop1_answer": "Gaten Matarazzo as Benjamin",
       "sub_q2": "Who did Gaten Matarazzo play as Benjamin in \"Priscilla, Queen of the Desert\"?",
       "queries_used": [
-        "Who began his career on the Broadway stage as who in \"Priscilla, Queen of the Desert\"? \n\n(Note: The sub-question generated seems to deviate from identifying an intermediate entity related to the main query about Stranger Things. Given the",
+        "Who began his career on the Broadway stage as who in \"Priscilla, Queen of the Desert\"? \n\n(Note: The sub-question generated here seems to deviate from the instruction to identify an intermediate entity related to the main query about Stranger",
         "Who did Gaten Matarazzo play as Benjamin in \"Priscilla, Queen of the Desert\"?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 1.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -2013,23 +2013,23 @@
       "id": "5ae82fbe5542997ec2727752",
       "question": "Uptown Rulers: The Meters live on the Queen Mary was recorded on a ship that was built by whom?",
       "gold": "John Brown & Company",
-      "prediction": "Cunard Line",
+      "prediction": "John Brown & Company",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "On which ship was \"Uptown Rulers: The Meters live\" recorded?",
-      "hop1_answer": "Queen Mary",
+      "sub_q1": "Who built the Queen Mary?",
+      "hop1_answer": "John Brown & Company",
       "sub_q2": "Who built the Queen Mary?",
       "queries_used": [
-        "On which ship was \"Uptown Rulers: The Meters live\" recorded?",
+        "Who built the Queen Mary?",
         "Who built the Queen Mary?"
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 0,
-      "f1": 0.0,
-      "ctx_recall": 1.0,
+      "em": 1,
+      "f1": 1.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -2102,11 +2102,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What earthquake severely damaged the Hotel Metropole in Northern California?",
-      "hop1_answer": "1989 Loma Prieta earthquake",
+      "sub_q1": "What earthquake severely damaged the Hotel Metropole in Northern California on October 17, 1989?",
+      "hop1_answer": "Loma Prieta earthquake",
       "sub_q2": "What named earthquake, that occurred in Northern California on October 17, 1989, severely damaged the Hotel Metropole leading to its demolition?",
       "queries_used": [
-        "What earthquake severely damaged the Hotel Metropole in Northern California?",
+        "What earthquake severely damaged the Hotel Metropole in Northern California on October 17, 1989?",
         "What named earthquake, that occurred in Northern California on October 17, 1989, severely damaged the Hotel Metropole leading to its demolition?"
       ],
       "verified": true,
@@ -2328,10 +2328,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is the name of the American entertainer that was born as Joseph Gottlieb?",
       "hop1_answer": "Joey Bishop",
-      "sub_q2": "What is the name of the American entertainer that Joey Bishop featured in the film based on the real life U.S. Army Delta Force unit? \n\n(Note: The provided hop-1 answer does not seem to correctly match the given question,",
+      "sub_q2": "What is the name of the American entertainer that Joey Bishop featured in the film based on the real life U.S. Army Delta Force unit? \n\n(Note: The provided hop-1 answer does not seem to fit well with the original question",
       "queries_used": [
         "What is the name of the American entertainer that was born as Joseph Gottlieb?",
-        "What is the name of the American entertainer that Joey Bishop featured in the film based on the real life U.S. Army Delta Force unit? \n\n(Note: The provided hop-1 answer does not seem to correctly match the given question,"
+        "What is the name of the American entertainer that Joey Bishop featured in the film based on the real life U.S. Army Delta Force unit? \n\n(Note: The provided hop-1 answer does not seem to fit well with the original question"
       ],
       "verified": true,
       "retry_count": 0,
@@ -3301,7 +3301,7 @@
       "id": "5adc1b1a55429944faac2422",
       "question": "Superheaven and Oceansize, are bands of which shared genre?",
       "gold": "rock",
-      "prediction": "yes",
+      "prediction": "no",
       "type": "comparison",
       "level": "easy",
       "qtype_inferred": "comparison",
@@ -3588,10 +3588,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who appointed Eva Guzman to Place 9 on the Texas Supreme Court?",
       "hop1_answer": "Rick Perry",
-      "sub_q2": "In what president's cabinet did Rick Perry serve?",
+      "sub_q2": "In which president's cabinet did Rick Perry serve?",
       "queries_used": [
         "Who appointed Eva Guzman to Place 9 on the Texas Supreme Court?",
-        "In what president's cabinet did Rick Perry serve?"
+        "In which president's cabinet did Rick Perry serve?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -3614,11 +3614,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What position did Sandy Koufax play?",
-      "hop1_answer": "pitcher",
+      "sub_q1": "Who played for Cincinnati Bearcats baseball and is a notable alum?",
+      "hop1_answer": "Sandy Koufax",
       "sub_q2": "What position did Sandy Koufax play?",
       "queries_used": [
-        "What position did Sandy Koufax play?",
+        "Who played for Cincinnati Bearcats baseball and is a notable alum?",
         "What position did Sandy Koufax play?"
       ],
       "verified": true,
@@ -3637,7 +3637,7 @@
       "id": "5ab5b1245542992aa134a38d",
       "question": "Gerard Brantsen was one of the Dutch signatories to the treaty ending a war that began in what year?",
       "gold": "1780",
-      "prediction": "1780",
+      "prediction": "1939",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
@@ -3653,11 +3653,11 @@
       ],
       "verified": false,
       "retry_count": 2,
-      "em": 1,
-      "f1": 1.0,
-      "ctx_recall": 1.0,
+      "em": 0,
+      "f1": 0.0,
+      "ctx_recall": 0.0,
       "ctx_precision": null,
-      "ans_coverage": 1,
+      "ans_coverage": 0,
       "faithfulness": 0.0,
       "entailment": null,
       "contradiction": null,
@@ -3728,11 +3728,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "At which university did Saifora Niazi acquire her bachelor's degree in Physics?",
+      "sub_q1": "At which university did Saifora Niazi acquire a bachelor's degree in Physics?",
       "hop1_answer": "Kabul University",
       "sub_q2": "In which country is Kabul University located?",
       "queries_used": [
-        "At which university did Saifora Niazi acquire her bachelor's degree in Physics?",
+        "At which university did Saifora Niazi acquire a bachelor's degree in Physics?",
         "In which country is Kabul University located?"
       ],
       "verified": true,
@@ -3926,10 +3926,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is the Dutch player who played defensive midfield for Galatasaray?",
       "hop1_answer": "Nigel de Jong",
-      "sub_q2": "What is Nigel de Jong's position and which Dutch player is he, who played defensive midfield for Galatasaray? \n\nHowever, since the instruction is to output only the sub-question and replace the indirect reference with the hop-1 answer",
+      "sub_q2": "What is Nigel de Jong's position in Galatasaray?",
       "queries_used": [
         "Who is the Dutch player who played defensive midfield for Galatasaray?",
-        "What is Nigel de Jong's position and which Dutch player is he, who played defensive midfield for Galatasaray? \n\nHowever, since the instruction is to output only the sub-question and replace the indirect reference with the hop-1 answer"
+        "What is Nigel de Jong's position in Galatasaray?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -3982,10 +3982,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who stars in The Yellow Birds?",
       "hop1_answer": "Tye Sheridan, Jack Huston, Alden Ehrenreich",
-      "sub_q2": "Which American actor made his feature film debut in Francis Ford Coppola's independent film \"Tetro\" (2009) among Tye Sheridan, Jack Huston, Alden Ehrenreich?",
+      "sub_q2": "What is the American actor who made his feature film debut in Francis Ford Coppola's independent film \"Tetro\" (2009) among Tye Sheridan, Jack Huston, Alden Ehrenreich?",
       "queries_used": [
         "Who stars in The Yellow Birds?",
-        "Which American actor made his feature film debut in Francis Ford Coppola's independent film \"Tetro\" (2009) among Tye Sheridan, Jack Huston, Alden Ehrenreich?"
+        "What is the American actor who made his feature film debut in Francis Ford Coppola's independent film \"Tetro\" (2009) among Tye Sheridan, Jack Huston, Alden Ehrenreich?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -4171,7 +4171,7 @@
       "id": "5a90477d5542995651fb5102",
       "question": "How long did it take to write the album \"Physical Graffiti\"?",
       "gold": "over a period of three years",
-      "prediction": "Not specified",
+      "prediction": "Not provided in the passage.",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
@@ -4189,10 +4189,10 @@
       "retry_count": 2,
       "em": 0,
       "f1": 0.0,
-      "ctx_recall": 1.0,
+      "ctx_recall": 0.0,
       "ctx_precision": null,
-      "ans_coverage": 1,
-      "faithfulness": 0.0,
+      "ans_coverage": 0,
+      "faithfulness": 0.25,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -4677,7 +4677,7 @@
       "id": "5a7792435542995d831811e4",
       "question": "What Category 5 hurricane cause the Sqannanoa River to flood?",
       "gold": "Hurricane Ivan",
-      "prediction": "Hurricanes Frances and Ivan",
+      "prediction": "Hurricane Ivan",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
@@ -4691,8 +4691,8 @@
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 0,
-      "f1": 0.3333333333333333,
+      "em": 1,
+      "f1": 1.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -4964,10 +4964,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What war took place from 1563-1721 during which K\u00f6nigsberg felt vulnerable?",
       "hop1_answer": "Polish\u2013Swedish wars",
-      "sub_q2": "What war of 1563-1721 was the Polish\u2013Swedish wars?",
+      "sub_q2": "During which war of 1563-1721 were the K\u00f6nigsberg fortifications erected due to vulnerability?",
       "queries_used": [
         "What war took place from 1563-1721 during which K\u00f6nigsberg felt vulnerable?",
-        "What war of 1563-1721 was the Polish\u2013Swedish wars?"
+        "During which war of 1563-1721 were the K\u00f6nigsberg fortifications erected due to vulnerability?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5102,11 +5102,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "In which city-state was Danziger Echo published?",
+      "sub_q1": "In which city-state was the Danziger Echo newspaper published?",
       "hop1_answer": "Free City of Danzig",
       "sub_q2": "Between which years did the Free City of Danzig exist?",
       "queries_used": [
-        "In which city-state was Danziger Echo published?",
+        "In which city-state was the Danziger Echo newspaper published?",
         "Between which years did the Free City of Danzig exist?"
       ],
       "verified": true,
@@ -5132,10 +5132,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Which cereal was the animated character originally created to promote before promoting Crispy Critters?",
       "hop1_answer": "Heart of Oats",
-      "sub_q2": "What is the slogan \"The one and only cereal that comes in the shape of animals\" related to for Heart of Oats? \n\nHowever, based on the given information and the structure of the question, a more accurate sub-question would be",
+      "sub_q2": "What is the name of the animated character originally created to promote Heart of Oats?",
       "queries_used": [
         "Which cereal was the animated character originally created to promote before promoting Crispy Critters?",
-        "What is the slogan \"The one and only cereal that comes in the shape of animals\" related to for Heart of Oats? \n\nHowever, based on the given information and the structure of the question, a more accurate sub-question would be"
+        "What is the name of the animated character originally created to promote Heart of Oats?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5160,10 +5160,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Which company published the comic book \"House of Mystery\"?",
       "hop1_answer": "DC Comics",
-      "sub_q2": "What is the name of the publisher of the American comic book \"House of Mystery\" where the 24 issue series Vampire, created by J. M. DeMatteis, appeared between 1981 and 19",
+      "sub_q2": "What is the name of the publisher of the American comic book \"House of Mystery\" where the 24 issue series Vampire appeared?",
       "queries_used": [
         "Which company published the comic book \"House of Mystery\"?",
-        "What is the name of the publisher of the American comic book \"House of Mystery\" where the 24 issue series Vampire, created by J. M. DeMatteis, appeared between 1981 and 19"
+        "What is the name of the publisher of the American comic book \"House of Mystery\" where the 24 issue series Vampire appeared?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5440,10 +5440,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Which bar was beaten by the Club Moderne in 2016?",
       "hop1_answer": "Sip 'n Dip Lounge",
-      "sub_q2": "When was the Sip 'n Dip Dip Lounge opened?",
+      "sub_q2": "When was the Sip 'n Dip Lounge opened?",
       "queries_used": [
         "Which bar was beaten by the Club Moderne in 2016?",
-        "When was the Sip 'n Dip Dip Lounge opened?"
+        "When was the Sip 'n Dip Lounge opened?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5552,10 +5552,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who starred in the film Willow?",
       "hop1_answer": "Warwick Davis, Val Kilmer, Joanne Whalley, Jean Marsh, and Billy Barty",
-      "sub_q2": "What is the occupation of Warwick Davis, and who directed him in the film Willow? \n\n(Note: The provided hop-1 answer seems to list multiple actors from the film Willow rather than directly answering the first hop question about the director. A",
+      "sub_q2": "What is the occupation of Warwick Davis, and who directed him in the film Willow? \n\n(Note: The provided hop-1 answer seems to list multiple actors from the film Willow rather than directly answering the first hop about the director who directed Mark",
       "queries_used": [
         "Who starred in the film Willow?",
-        "What is the occupation of Warwick Davis, and who directed him in the film Willow? \n\n(Note: The provided hop-1 answer seems to list multiple actors from the film Willow rather than directly answering the first hop question about the director. A"
+        "What is the occupation of Warwick Davis, and who directed him in the film Willow? \n\n(Note: The provided hop-1 answer seems to list multiple actors from the film Willow rather than directly answering the first hop about the director who directed Mark"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5776,10 +5776,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is the acclaimed host of the television show mentioned?",
       "hop1_answer": "Ernie Dingo and James Tobin",
-      "sub_q2": "Who established himself as the acclaimed host of television shows and was in an Austrian-West German musical comedy film? \n\nNote: The provided hop-1 answer seems to contain two names (Ernie Dingo and James Tobin) which do not",
+      "sub_q2": "Who established himself as the acclaimed host of television shows and was in an Austrian-West German musical comedy film, between Ernie Dingo and James Tobin? \n\n(Note: The provided hop-1 answer contains two names, which seems inconsistent with",
       "queries_used": [
         "Who is the acclaimed host of the television show mentioned?",
-        "Who established himself as the acclaimed host of television shows and was in an Austrian-West German musical comedy film? \n\nNote: The provided hop-1 answer seems to contain two names (Ernie Dingo and James Tobin) which do not"
+        "Who established himself as the acclaimed host of television shows and was in an Austrian-West German musical comedy film, between Ernie Dingo and James Tobin? \n\n(Note: The provided hop-1 answer contains two names, which seems inconsistent with"
       ],
       "verified": true,
       "retry_count": 0,
@@ -5830,12 +5830,12 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Where was the 668th Aircraft Control and Warning Squadron last stationed?",
+      "sub_q1": "What was the last station of the 668th Aircraft Control and Warning Squadron?",
       "hop1_answer": "Mather Air Force Base, California",
-      "sub_q2": "Where is Mather Air Force Base, California located?",
+      "sub_q2": "Where was the 668th Aircraft Control and Warning Squadron last stationed at Mather Air Force Base, California? \n\nHowever, based on the instruction to replace the indirect reference with the hop-1 answer and output only the sub-question",
       "queries_used": [
-        "Where was the 668th Aircraft Control and Warning Squadron last stationed?",
-        "Where is Mather Air Force Base, California located?"
+        "What was the last station of the 668th Aircraft Control and Warning Squadron?",
+        "Where was the 668th Aircraft Control and Warning Squadron last stationed at Mather Air Force Base, California? \n\nHowever, based on the instruction to replace the indirect reference with the hop-1 answer and output only the sub-question"
       ],
       "verified": true,
       "retry_count": 0,
@@ -6217,7 +6217,7 @@
       "id": "5ab297be554299545a2cf9c0",
       "question": "Heatstroke stars an actress who has written how many non-fiction books?",
       "gold": "five",
-      "prediction": "the originally planned seven volumes as of 2023.  The fifth and most recent novel, \"A Dance with Dragons\", was published in 2011.  The series, which is told from the point of view of multiple characters, chronicles the political machinations and battles for power among several",
+      "prediction": "the originally planned seven volumes as of 2023.  The fifth and most recent novel, \"A Dance with Dragons\", was published in 2011.  The series, which is told from the point of view of multiple characters, chronicles the political machinations and battles among several noble families",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -6236,7 +6236,7 @@
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
-      "faithfulness": 0.6923076923076923,
+      "faithfulness": 0.6666666666666666,
       "entailment": null,
       "contradiction": null,
       "outcome": null
@@ -6329,7 +6329,7 @@
       "id": "5a85e5315542994775f6068d",
       "question": "Who besides Robert Novak was involved in the Plame affair?",
       "gold": "members of the George W. Bush administration",
-      "prediction": "Scooter Libby, Richard Armitage",
+      "prediction": "Scooter Libby, Patrick Fitzgerald, Richard Armitage",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
@@ -6469,7 +6469,7 @@
       "id": "5abfeafa5542997d64295941",
       "question": "Which major awards did the author of the play Seven Guitars receive for his work ? ",
       "gold": "two Pulitzer Prizes",
-      "prediction": "two Pulitzer Prizes for Drama",
+      "prediction": "Two Pulitzer Prizes for Drama",
       "type": "bridge",
       "level": "hard",
       "qtype_inferred": "bridge",
@@ -6586,11 +6586,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Which American Thoroughbred horse race held annually near the end of July at Saratoga Race Course in Saratoga Springs, New York did War Front win in 2006?",
+      "sub_q1": "What American Thoroughbred horse race held annually near the end of July at Saratoga Race Course in Saratoga Springs, New York did War Front win in 2006?",
       "hop1_answer": "Alfred G. Vanderbilt Handicap",
       "sub_q2": "What American Thoroughbred horse race, held annually near the end of July at Saratoga Race Course in Saratoga Springs, New York, did War Front win in 2006?",
       "queries_used": [
-        "Which American Thoroughbred horse race held annually near the end of July at Saratoga Race Course in Saratoga Springs, New York did War Front win in 2006?",
+        "What American Thoroughbred horse race held annually near the end of July at Saratoga Race Course in Saratoga Springs, New York did War Front win in 2006?",
         "What American Thoroughbred horse race, held annually near the end of July at Saratoga Race Course in Saratoga Springs, New York, did War Front win in 2006?"
       ],
       "verified": true,
@@ -6866,11 +6866,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the name of the movie that was a two-part made-for-television film adapted from a Lewis Carroll book and also a Disney movie that Natalie Gregory appeared in?",
+      "sub_q1": "What is the title of the two-part made-for-television film adapted from a Lewis Carroll book that Natalie Gregory appeared in?",
       "hop1_answer": "Alice in Wonderland (1985 film)",
       "sub_q2": "When was Natalie Gregory, who played Kathy in Spot Marks the X, also appear in the 1985 film Alice in Wonderland?",
       "queries_used": [
-        "What is the name of the movie that was a two-part made-for-television film adapted from a Lewis Carroll book and also a Disney movie that Natalie Gregory appeared in?",
+        "What is the title of the two-part made-for-television film adapted from a Lewis Carroll book that Natalie Gregory appeared in?",
         "When was Natalie Gregory, who played Kathy in Spot Marks the X, also appear in the 1985 film Alice in Wonderland?"
       ],
       "verified": true,
@@ -7204,10 +7204,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who attempted to murder Larry Flynt?",
       "hop1_answer": "Joseph Paul Franklin",
-      "sub_q2": "What is the title of the fictional novel that used Joseph Paul Franklin's killing spree as its subject?",
+      "sub_q2": "What is the title of the fictional novel based on the killing spree of Joseph Paul Franklin?",
       "queries_used": [
         "Who attempted to murder Larry Flynt?",
-        "What is the title of the fictional novel that used Joseph Paul Franklin's killing spree as its subject?"
+        "What is the title of the fictional novel based on the killing spree of Joseph Paul Franklin?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7596,10 +7596,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is Tariq Alam?",
       "hop1_answer": "Former Pakistani first-class cricketer",
-      "sub_q2": "In what year was the son of Former Pakistani first-class cricketer Tariq Alam born?",
+      "sub_q2": "In what year was the son of the former Pakistani first-class cricketer Tariq Alam born?",
       "queries_used": [
         "Who is Tariq Alam?",
-        "In what year was the son of Former Pakistani first-class cricketer Tariq Alam born?"
+        "In what year was the son of the former Pakistani first-class cricketer Tariq Alam born?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7679,11 +7679,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is the star of Searching for the Elephant?",
-      "hop1_answer": "Jang Hyuk, Jo Dong-hyuk and Lee Sang-woo",
-      "sub_q2": "In what year was Jang Hyuk, Jo Dong-hyuk and Lee Sang-woo born? \n\n(Note: The original question seems incomplete or unclear regarding which specific actor from the list is being referred to as \"the star\". The",
+      "hop1_answer": "Jang Hyuk, Jo Dong-hyuk, and Lee Sang-woo",
+      "sub_q2": "In what year was Jang Hyuk, Jo Dong-hyuk, and Lee Sang-woo, the star of Searching for the Elephant, born? \n\n(Note: The original question seems incomplete or unclear regarding which specific actor it refers to",
       "queries_used": [
         "Who is the star of Searching for the Elephant?",
-        "In what year was Jang Hyuk, Jo Dong-hyuk and Lee Sang-woo born? \n\n(Note: The original question seems incomplete or unclear regarding which specific actor from the list is being referred to as \"the star\". The"
+        "In what year was Jang Hyuk, Jo Dong-hyuk, and Lee Sang-woo, the star of Searching for the Elephant, born? \n\n(Note: The original question seems incomplete or unclear regarding which specific actor it refers to"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7736,10 +7736,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What sitcom did Nicholas Lyndhurst play in that ran for 6 years on BBC1?",
       "hop1_answer": "Goodnight Sweetheart",
-      "sub_q2": "What sitcom did Nicholas Lyndhurst play in that ran for 6 years on BBC1 from 1993 to 1999, given that the show is Goodnight Sweetheart? \n\nHowever, following your instruction more",
+      "sub_q2": "What sitcom did Nicholas Lyndhurst play in that ran for 6 years on BBC1 from 1993 to 1999, given that the show is Goodnight Sweetheart? \n\nHowever, following your instruction strictly",
       "queries_used": [
         "What sitcom did Nicholas Lyndhurst play in that ran for 6 years on BBC1?",
-        "What sitcom did Nicholas Lyndhurst play in that ran for 6 years on BBC1 from 1993 to 1999, given that the show is Goodnight Sweetheart? \n\nHowever, following your instruction more"
+        "What sitcom did Nicholas Lyndhurst play in that ran for 6 years on BBC1 from 1993 to 1999, given that the show is Goodnight Sweetheart? \n\nHowever, following your instruction strictly"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7767,7 +7767,7 @@
       "sub_q2": null,
       "queries_used": [
         "What is one aspect of Dave Peters' career that allows for flexibility?",
-        "What is one aspect of Dave Knudson's career that limits flexibility?"
+        "What is one aspect of Dave Knudson's career that may limit flexibility?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7903,11 +7903,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who competed with Tim Dagget in the 1984 Los Angeles Olympics?",
-      "hop1_answer": "Bart Conner, Peter Vidmar, and Mitch Gaylord",
-      "sub_q2": "Who among Bart Conner, Peter Vidmar, and Mitch Gaylord competed with Tim Dagget in the 1984 Los Angeles Olympics and won two gold medals?",
+      "hop1_answer": "Bart Conner, Peter Vidmar, Mitch Gaylord",
+      "sub_q2": "Who among Bart Conner, Peter Vidmar, Mitch Gaylord competed with Tim Dagget in the 1984 Los Angeles Olympics and won two gold medals?",
       "queries_used": [
         "Who competed with Tim Dagget in the 1984 Los Angeles Olympics?",
-        "Who among Bart Conner, Peter Vidmar, and Mitch Gaylord competed with Tim Dagget in the 1984 Los Angeles Olympics and won two gold medals?"
+        "Who among Bart Conner, Peter Vidmar, Mitch Gaylord competed with Tim Dagget in the 1984 Los Angeles Olympics and won two gold medals?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -7930,12 +7930,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What fast fashion clothing company is based in Arteixo, Galicia?",
-      "hop1_answer": "Zara",
-      "sub_q2": "What is the occupation of Michelle Obama?\n\nCorrection:\nSub-q2: What is the occupation of the spouse of Barack Obama?\n\nRevised as per instruction:\nSub-q2: What is Michelle Obama's occupation?",
+      "sub_q1": "Where is the fast fashion clothing company based?",
+      "hop1_answer": "Los Angeles, California",
+      "sub_q2": "It seems there is an inconsistency between the original question asking about a company based in Arteixo, Galicia, and the Hop-1 answer providing a location in the United States. Given this scenario, a proper sub-question cannot be formulated as",
       "queries_used": [
-        "What fast fashion clothing company is based in Arteixo, Galicia?",
-        "What is the occupation of Michelle Obama?\n\nCorrection:\nSub-q2: What is the occupation of the spouse of Barack Obama?\n\nRevised as per instruction:\nSub-q2: What is Michelle Obama's occupation?"
+        "Where is the fast fashion clothing company based?",
+        "It seems there is an inconsistency between the original question asking about a company based in Arteixo, Galicia, and the Hop-1 answer providing a location in the United States. Given this scenario, a proper sub-question cannot be formulated as"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8018,8 +8018,8 @@
       "hop1_answer": null,
       "sub_q2": null,
       "queries_used": [
-        "What music genre does the band Interpol produce?",
-        "What music genre does the band Lilys produce?"
+        "What music genre does Interpol produce?",
+        "What music genre does Lilys produce?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8294,12 +8294,12 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What Irish singer-songwriter breeds cattle?",
+      "sub_q1": "What irish singer-songwriter breeds cattle?",
       "hop1_answer": "P. J. Murrihy",
-      "sub_q2": "What type of cattle does P. J. Murrihy breed whose meat is known for its quality and commands a high price?",
+      "sub_q2": "What is the quality and price characteristic of the cattle bred by P. J. Murrihy?",
       "queries_used": [
-        "What Irish singer-songwriter breeds cattle?",
-        "What type of cattle does P. J. Murrihy breed whose meat is known for its quality and commands a high price?"
+        "What irish singer-songwriter breeds cattle?",
+        "What is the quality and price characteristic of the cattle bred by P. J. Murrihy?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8886,8 +8886,8 @@
       "hop1_answer": null,
       "sub_q2": null,
       "queries_used": [
-        "What were A.C.N. Nambiar's roles in politics or society?",
-        "What were Subhas Chandra Bose's roles in politics or society?"
+        "What were A.C.N. Nambiar's roles in Indian politics?",
+        "What were Subhas Chandra Bose's roles in Indian politics?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -8968,10 +8968,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What American interactive media company owned by The Walt Disney Company published The Jungle Book Groove Party? \n\nCorrection based on instruction:\n\nWho published The Jungle Book Groove Party?",
       "hop1_answer": "Disney Interactive",
-      "sub_q2": "What American interactive media company published The Jungle Book Groove Party?",
+      "sub_q2": "What American interactive media company owned by The Walt Disney Company published The Jungle Book Groove Party? \n\nSince the Hop-1 answer \"Disney Interactive\" directly identifies the subject of the question, no further sub-question is needed as the information requested",
       "queries_used": [
         "What American interactive media company owned by The Walt Disney Company published The Jungle Book Groove Party? \n\nCorrection based on instruction:\n\nWho published The Jungle Book Groove Party?",
-        "What American interactive media company published The Jungle Book Groove Party?"
+        "What American interactive media company owned by The Walt Disney Company published The Jungle Book Groove Party? \n\nSince the Hop-1 answer \"Disney Interactive\" directly identifies the subject of the question, no further sub-question is needed as the information requested"
       ],
       "verified": true,
       "retry_count": 0,
@@ -9101,7 +9101,7 @@
       "id": "5adc781b55429947ff17398c",
       "question": "Virginia State Route 160 runs atop the highest mountain peak in Kentucky, which has what elevation level?",
       "gold": "4145 ft",
-      "prediction": "4145 ft above mean sea level",
+      "prediction": "4145 ft",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
@@ -9115,8 +9115,8 @@
       ],
       "verified": true,
       "retry_count": 0,
-      "em": 0,
-      "f1": 0.5,
+      "em": 1,
+      "f1": 1.0,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -9190,11 +9190,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What heavy metal band is the live DVD \"Rising in the East\" by?",
+      "sub_q1": "What heavy metal band released the live DVD \"Rising in the East\"?",
       "hop1_answer": "Judas Priest",
       "sub_q2": "In what English city was the heavy metal band Judas Priest formed?",
       "queries_used": [
-        "What heavy metal band is the live DVD \"Rising in the East\" by?",
+        "What heavy metal band released the live DVD \"Rising in the East\"?",
         "In what English city was the heavy metal band Judas Priest formed?"
       ],
       "verified": true,
@@ -9248,16 +9248,16 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who stars in Hotel Mumbai?",
       "hop1_answer": "Dev Patel, Armie Hammer, Nazanin Boniadi, Anupam Kher, Tilda Cobham-Hervey, Jason Isaacs, Suhail Nayyar, Natasha Liu Bordizzo, Nagesh Bhons",
-      "sub_q2": "Which of Dev Patel, Armie Hammer, Nazanin Boniadi, Anupam Kher, Tilda Cobham-Hervey, Jason Isaacs, Suhail Nayyar, Natasha Liu Bordizzo, Nagesh",
+      "sub_q2": "What is the nationality or origin of Dev Patel?",
       "queries_used": [
         "Who stars in Hotel Mumbai?",
-        "Which of Dev Patel, Armie Hammer, Nazanin Boniadi, Anupam Kher, Tilda Cobham-Hervey, Jason Isaacs, Suhail Nayyar, Natasha Liu Bordizzo, Nagesh"
+        "What is the nationality or origin of Dev Patel?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 1,
       "f1": 1.0,
-      "ctx_recall": 1.0,
+      "ctx_recall": 0.5,
       "ctx_precision": null,
       "ans_coverage": 1,
       "faithfulness": 1.0,
@@ -9276,10 +9276,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who published Comedy 23/6?",
       "hop1_answer": "Barry Diller's IAC/InterActiveCorp and \"The Huffington Post\"",
-      "sub_q2": "It seems there might be some confusion in the provided hop-1 answer as it does not directly relate to a person's name or identity needed for the next hop. Given the context of the question about a publication and its connection to an individual",
+      "sub_q2": "It seems there might be some confusion in the provided hop-1 answer as it does not directly relate to a person's name or identity needed for the next hop. The hop-1 answer should have identified a specific person related to the publication",
       "queries_used": [
         "Who published Comedy 23/6?",
-        "It seems there might be some confusion in the provided hop-1 answer as it does not directly relate to a person's name or identity needed for the next hop. Given the context of the question about a publication and its connection to an individual"
+        "It seems there might be some confusion in the provided hop-1 answer as it does not directly relate to a person's name or identity needed for the next hop. The hop-1 answer should have identified a specific person related to the publication"
       ],
       "verified": true,
       "retry_count": 0,
@@ -9409,25 +9409,25 @@
       "id": "5abdeb8755429976d4830a23",
       "question": "In which city did Clayster win a gold medal during the 2014 X Games with the winning team OpTic Gaming?",
       "gold": "Austin, Texas",
-      "prediction": "Sochi",
+      "prediction": "Austin",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What was the name of the team Clayster won a gold medal with during the 2014 X Games?",
-      "hop1_answer": "OpTic Gaming",
-      "sub_q2": "In which city did Clayster win a gold medal during the 2014 X Games with the winning team OpTic Gaming? \n\nNote: The provided hop-1 answer does not change the original question since it only identifies the",
+      "sub_q1": "What sport did Clayster compete in at the 2014 X Games?",
+      "hop1_answer": "\"Call of Duty\"",
+      "sub_q2": "In which city did Clayster win a gold medal during the 2014 X Games with the winning team OpTic Gaming in \"Call of Duty\"?",
       "queries_used": [
-        "What was the name of the team Clayster won a gold medal with during the 2014 X Games?",
-        "In which city did Clayster win a gold medal during the 2014 X Games with the winning team OpTic Gaming? \n\nNote: The provided hop-1 answer does not change the original question since it only identifies the"
+        "What sport did Clayster compete in at the 2014 X Games?",
+        "In which city did Clayster win a gold medal during the 2014 X Games with the winning team OpTic Gaming in \"Call of Duty\"?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.0,
-      "ctx_recall": 0.5,
+      "f1": 0.6666666666666666,
+      "ctx_recall": 1.0,
       "ctx_precision": null,
-      "ans_coverage": 0,
+      "ans_coverage": 1,
       "faithfulness": 1.0,
       "entailment": null,
       "contradiction": null,
@@ -9941,22 +9941,22 @@
       "id": "5ae7283a554299572ea5473f",
       "question": "What was The Desert Inn, which was run by Allard Roen as the managing director?",
       "gold": "casino hotel",
-      "prediction": "A casino hotel on the Las Vegas Strip.",
+      "prediction": "A casino hotel on the Las Vegas Strip in Paradise, Nevada.",
       "type": "bridge",
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What was The Desert Inn?",
       "hop1_answer": "A casino hotel on the Las Vegas Strip.",
-      "sub_q2": "What was the role of Allard Roen at the casino hotel on the Las Vegas Strip?",
+      "sub_q2": "What was the role or function of Allard Roen at the casino hotel on the Las Vegas Strip?",
       "queries_used": [
         "What was The Desert Inn?",
-        "What was the role of Allard Roen at the casino hotel on the Las Vegas Strip?"
+        "What was the role or function of Allard Roen at the casino hotel on the Las Vegas Strip?"
       ],
       "verified": true,
       "retry_count": 0,
       "em": 0,
-      "f1": 0.5,
+      "f1": 0.3636363636363636,
       "ctx_recall": 1.0,
       "ctx_precision": null,
       "ans_coverage": 1,
@@ -10702,11 +10702,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What is the name of the one-act play centered on two characters from Chekhov written by Brian Friel?",
+      "sub_q1": "What is the name of the one-act play centered on two characters from Chekhov and written by Brian Friel?",
       "hop1_answer": "Afterplay",
       "sub_q2": "What is the name of the one-act play centered on two characters from Chekhov that Brian Friel wrote?",
       "queries_used": [
-        "What is the name of the one-act play centered on two characters from Chekhov written by Brian Friel?",
+        "What is the name of the one-act play centered on two characters from Chekhov and written by Brian Friel?",
         "What is the name of the one-act play centered on two characters from Chekhov that Brian Friel wrote?"
       ],
       "verified": true,
@@ -10730,11 +10730,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Where is Nashua Street Jail located?",
+      "sub_q1": "Where is Nashua Street Jail located? \n\n(Note: The provided question seems to be missing its final part, making it difficult to accurately determine the intermediate entity without guessing. Based on the structure of previous examples, the sub-question aims to identify",
       "hop1_answer": "Boston, Massachusetts",
       "sub_q2": "What is the name of the person for whom an American medical student was detained at Nashua Street Jail in Boston, Massachusetts?",
       "queries_used": [
-        "Where is Nashua Street Jail located?",
+        "Where is Nashua Street Jail located? \n\n(Note: The provided question seems to be missing its final part, making it difficult to accurately determine the intermediate entity without guessing. Based on the structure of previous examples, the sub-question aims to identify",
         "What is the name of the person for whom an American medical student was detained at Nashua Street Jail in Boston, Massachusetts?"
       ],
       "verified": true,
@@ -11236,10 +11236,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Where did Catherine Cortez Masto serve as the 32nd Attorney General?",
       "hop1_answer": "Nevada",
-      "sub_q2": "What is the 32nd Attorney General position that Catherine Cortez Masto held in Nevada?",
+      "sub_q2": "What is the 32nd position that Catherine Cortez Masto held in Nevada?",
       "queries_used": [
         "Where did Catherine Cortez Masto serve as the 32nd Attorney General?",
-        "What is the 32nd Attorney General position that Catherine Cortez Masto held in Nevada?"
+        "What is the 32nd position that Catherine Cortez Masto held in Nevada?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -11292,10 +11292,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is the name of the 2009 Indian comedy-drama film based on the novel \"Five Point Someone\"?",
       "hop1_answer": "3 Idiots",
-      "sub_q2": "What is the name of the song sung by Suraj Jagan in the 2009 Indian comedy-drama film \"3 Idiots\"?",
+      "sub_q2": "What is the name of the song sung by Suraj Jagan in the 2009 Indian comedy-drama film 3 Idiots?",
       "queries_used": [
         "What is the name of the 2009 Indian comedy-drama film based on the novel \"Five Point Someone\"?",
-        "What is the name of the song sung by Suraj Jagan in the 2009 Indian comedy-drama film \"3 Idiots\"?"
+        "What is the name of the song sung by Suraj Jagan in the 2009 Indian comedy-drama film 3 Idiots?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12019,11 +12019,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What is Davide di Lernia known for?",
-      "hop1_answer": "film director, producer, and editor",
-      "sub_q2": "How is film director, producer, and editor Davide di Lernia related to Radio Monte Carlo?",
+      "hop1_answer": "Film director, producer, and editor",
+      "sub_q2": "How is Film director, producer, and editor Davide di Lernia related to Radio Monte Carlo?",
       "queries_used": [
         "What is Davide di Lernia known for?",
-        "How is film director, producer, and editor Davide di Lernia related to Radio Monte Carlo?"
+        "How is Film director, producer, and editor Davide di Lernia related to Radio Monte Carlo?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12158,11 +12158,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "What military conflict was the Battle of Bov a part of?",
+      "sub_q1": "What military conflict was the Battle of Bornhoved a part of?",
       "hop1_answer": "First Schleswig War",
       "sub_q2": "What military conflict between southern Denmark and northern Germany was the First Schleswig War?",
       "queries_used": [
-        "What military conflict was the Battle of Bov a part of?",
+        "What military conflict was the Battle of Bornhoved a part of?",
         "What military conflict between southern Denmark and northern Germany was the First Schleswig War?"
       ],
       "verified": true,
@@ -12187,11 +12187,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What feature does a Manx cat have that affects its body type?",
-      "hop1_answer": "Taillessness",
-      "sub_q2": "What feature does taillessness affect in a Manx cat's body type?",
+      "hop1_answer": "Tailless or shortened tail",
+      "sub_q2": "What feature does a Manx cat have that affects its body type?",
       "queries_used": [
         "What feature does a Manx cat have that affects its body type?",
-        "What feature does taillessness affect in a Manx cat's body type?"
+        "What feature does a Manx cat have that affects its body type?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12215,11 +12215,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Who is the Ghazal singer married to Rajindar Nath Rehbar in the 1970s and '80s?",
-      "hop1_answer": "Chitra Singh",
-      "sub_q2": "Who was Chitra Singh married to in the 1970s and '80s?",
+      "hop1_answer": "Jagjit Singh",
+      "sub_q2": "Who was Jagjit Singh married to in the 1970s and '80s?",
       "queries_used": [
         "Who is the Ghazal singer married to Rajindar Nath Rehbar in the 1970s and '80s?",
-        "Who was Chitra Singh married to in the 1970s and '80s?"
+        "Who was Jagjit Singh married to in the 1970s and '80s?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12328,10 +12328,10 @@
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "What cuisine is based largely on the raw materials readily available in Norway and its mountains, wilderness, and coast?",
       "hop1_answer": "Norwegian cuisine",
-      "sub_q2": "What cuisine is based largely on the raw materials readily available in Norway and its mountains, wilderness, and coast, including dishes like rakfisk?",
+      "sub_q2": "What is Norwegian cuisine titled, which in its traditional form is based largely on the raw materials readily available in Norway and its mountains, wilderness, and coast?",
       "queries_used": [
         "What cuisine is based largely on the raw materials readily available in Norway and its mountains, wilderness, and coast?",
-        "What cuisine is based largely on the raw materials readily available in Norway and its mountains, wilderness, and coast, including dishes like rakfisk?"
+        "What is Norwegian cuisine titled, which in its traditional form is based largely on the raw materials readily available in Norway and its mountains, wilderness, and coast?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -12551,11 +12551,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Where did Herodias Gardiner get whipped for sharing her religious testimony?",
-      "hop1_answer": "Massachusetts",
-      "sub_q2": "In what city in metropolitan Greater Boston did Herodias Gardiner get whipped for sharing her religious testimony?",
+      "hop1_answer": "Weymouth",
+      "sub_q2": "In what city in metropolitan Greater Boston did Herodias Gardiner get whipped for sharing her religious testimony? \n\nNote: The hop-1 answer provided does not seem to directly correspond to the question asked. The question asks about a location event",
       "queries_used": [
         "Where did Herodias Gardiner get whipped for sharing her religious testimony?",
-        "In what city in metropolitan Greater Boston did Herodias Gardiner get whipped for sharing her religious testimony?"
+        "In what city in metropolitan Greater Boston did Herodias Gardiner get whipped for sharing her religious testimony? \n\nNote: The hop-1 answer provided does not seem to directly correspond to the question asked. The question asks about a location event"
       ],
       "verified": true,
       "retry_count": 0,
@@ -13196,11 +13196,11 @@
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
       "sub_q1": "Where is the Melbourne Grand Prix Circuit located?",
-      "hop1_answer": "around Albert Park Lake, central Melbourne",
-      "sub_q2": "How is the 2001 Australian Grand Prix connected to the Melbourne Grand Prix Circuit around Albert Park Lake, central Melbourne?",
+      "hop1_answer": "around Albert Park Lake, Melbourne",
+      "sub_q2": "How is the 2001 Australian Grand Prix connected to the Melbourne Grand Prix Circuit around Albert Park Lake, Melbourne?",
       "queries_used": [
         "Where is the Melbourne Grand Prix Circuit located?",
-        "How is the 2001 Australian Grand Prix connected to the Melbourne Grand Prix Circuit around Albert Park Lake, central Melbourne?"
+        "How is the 2001 Australian Grand Prix connected to the Melbourne Grand Prix Circuit around Albert Park Lake, Melbourne?"
       ],
       "verified": true,
       "retry_count": 0,
@@ -13363,11 +13363,11 @@
       "level": "medium",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who has played for the Lakers, Suns, Mavericks, and another team breaking Randy Smith's record of 906 straight games?",
+      "sub_q1": "Who has played for the Lakers, Suns, Mavericks, and another team and broke Randy Smith's record of 906 straight games?",
       "hop1_answer": "A. C. Green",
       "sub_q2": "What other team has A. C. Green played for besides the Lakers, Suns, and Mavericks?",
       "queries_used": [
-        "Who has played for the Lakers, Suns, Mavericks, and another team breaking Randy Smith's record of 906 straight games?",
+        "Who has played for the Lakers, Suns, Mavericks, and another team and broke Randy Smith's record of 906 straight games?",
         "What other team has A. C. Green played for besides the Lakers, Suns, and Mavericks?"
       ],
       "verified": true,
@@ -13587,11 +13587,11 @@
       "level": "easy",
       "qtype_inferred": "bridge",
       "retrieval_mode": "bridge_decompose",
-      "sub_q1": "Who gained national fame by appearing on the nationally broadcast CBS/syndicated television series \"Hee Haw\"?",
+      "sub_q1": "Who is the woman who gained national fame by appearing on the nationally broadcast CBS/syndicated television series \"Hee Haw\"?",
       "hop1_answer": "Jana Jae",
       "sub_q2": "What did Jana Jae win before her work with the owns?",
       "queries_used": [
-        "Who gained national fame by appearing on the nationally broadcast CBS/syndicated television series \"Hee Haw\"?",
+        "Who is the woman who gained national fame by appearing on the nationally broadcast CBS/syndicated television series \"Hee Haw\"?",
         "What did Jana Jae win before her work with the owns?"
       ],
       "verified": true,
