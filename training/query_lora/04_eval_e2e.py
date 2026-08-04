@@ -188,7 +188,13 @@ def main():
 
     # Load Query LoRA adapter
     print(f"Loading Query LoRA adapter: {args.query_adapter}")
-    model.load_adapter(args.query_adapter, adapter_name="query")
+    q_parts = args.query_adapter.split("/")
+    if not args.query_adapter.startswith("/") and len(q_parts) >= 3:
+        q_repo_id   = "/".join(q_parts[:2])
+        q_subfolder = "/".join(q_parts[2:])
+        model.load_adapter(q_repo_id, subfolder=q_subfolder, adapter_name="query")
+    else:
+        model.load_adapter(args.query_adapter, adapter_name="query")
 
     # Set GRPO as the default active adapter (used by answer_final in graph.py)
     model.set_adapter("grpo")
