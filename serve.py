@@ -346,7 +346,7 @@ def main():
     )
 
     print(f"\nReady — open http://localhost:{args.port}\n")
-    build_ui().launch(server_port=args.port, share=False)
+    build_ui().launch(server_port=args.port, server_name="0.0.0.0", share=False)
 
 
 if __name__ == "__main__":
