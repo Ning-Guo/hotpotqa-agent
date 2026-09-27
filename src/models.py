@@ -49,17 +49,12 @@ def load_model_and_tokenizer(
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     if device == "cuda":
-        # 4-bit quantization: reduces VRAM from ~6 GB to ~2 GB and improves
-        # inference speed on consumer GPUs (RTX 4090) via reduced memory bandwidth.
-        from transformers import BitsAndBytesConfig
-        bnb_cfg = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
-        )
+        # bfloat16: RTX 4090 has 1008 GB/s memory bandwidth and 24 GB VRAM.
+        # The 3B model uses ~6 GB — no memory pressure, so bfloat16 is faster
+        # than 4-bit quantization (which adds dequantization overhead).
         base = AutoModelForCausalLM.from_pretrained(
             model_name,
-            quantization_config=bnb_cfg,
+            torch_dtype=torch.bfloat16,
             device_map="auto",
         )
     else:
