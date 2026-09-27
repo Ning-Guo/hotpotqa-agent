@@ -100,4 +100,38 @@ Errors: 0.
 
 ### Bottleneck
 
-With BGE retrieval being fast, the dominant cost is LLM inference (Qwen2.5-3B on A100). Each `/ask` request triggers 3–5 model forward passes depending on question type and whether verify triggers a retry. Batching or speculative decoding would be the next lever for latency reduction.
+With BGE retrieval being fast, the dominant cost is LLM inference (Qwen2.5-3B on RTX 4090). Each `/ask` request triggers 3–5 model forward passes depending on question type and whether verify triggers a retry. Batching or speculative decoding would be the next lever for latency reduction.
+
+---
+
+## Optimisation Round 1 — `max_new_tokens` reduction
+
+**Changes:** reduced token generation limits across all nodes (`reasoner.py` default 48→24, `rewrite_comparison` 80→48, `answer_final` in `graph.py` 64→20). Model precision kept at bfloat16.
+
+> Note: 4-bit quantization (`bitsandbytes` NF4) was tested and reverted — it increased latency 3× on RTX 4090 because the GPU's high memory bandwidth (1008 GB/s) means dequantization overhead outweighs any memory savings for a 3B model.
+
+### On-GPU results
+
+| Type | p50 | p75 | p95 | p99 | # reqs | vs baseline |
+|------|-----|-----|-----|-----|--------|-------------|
+| bridge | 7700ms | 8400ms | 12000ms | 12000ms | 8 | ≈ 持平 |
+| comparison | 5600ms | 7000ms | 10000ms | 10000ms | 12 | **-700ms (-11%)** |
+| random | 4100ms | 9100ms | 10000ms | 10000ms | 10 | **-2000ms (-33%)** |
+| /health | 2ms | 15ms | 15ms | 15ms | 4 | — |
+| **Aggregated** | **5200ms** | **7300ms** | **10000ms** | **12000ms** | **34** | **-900ms (-15%)** |
+
+### Remote results
+
+| Type | p50 | p75 | p95 | p99 | # reqs |
+|------|-----|-----|-----|-----|--------|
+| bridge | 8400ms | 9300ms | 14000ms | 14000ms | 11 |
+| comparison | 11000ms | 13000ms | 15000ms | 15000ms | 7 |
+| random | 9600ms | 10000ms | 11000ms | 11000ms | 5 |
+| /health | 1100ms | 1100ms | 1100ms | 1100ms | 1 |
+| **Aggregated** | **8900ms** | **11000ms** | **14000ms** | **15000ms** | **24** |
+
+> Remote comparison p50 increase (6900ms → 11000ms) is statistical noise — only 7 samples.
+
+### Finding
+
+`max_new_tokens` reduction gives ~15% improvement on aggregated p50 (6100ms → 5200ms on-GPU), driven mainly by comparison and random questions which generate short answers. Bridge latency is unchanged — its bottleneck is 5 sequential LLM calls, not token count per call.
