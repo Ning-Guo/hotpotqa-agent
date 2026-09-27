@@ -252,7 +252,7 @@ def make_answer_final_node(model, tokenizer, device: str, reasoner: "Reasoner"):
         input_len = inputs["input_ids"].shape[1]
         with torch.no_grad():
             outputs = model.generate(
-                **inputs, max_new_tokens=64, do_sample=False,
+                **inputs, max_new_tokens=20, do_sample=False,
                 pad_token_id=tokenizer.eos_token_id,
             )
         prediction = tokenizer.decode(outputs[0][input_len:], skip_special_tokens=True).strip()

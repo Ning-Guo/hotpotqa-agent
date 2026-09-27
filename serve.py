@@ -320,6 +320,10 @@ def main():
     parser.add_argument("--load-index", action="store_true",
                         help="Load pre-built FAISS index (skip rebuild)")
     parser.add_argument("--port", type=int, default=7860)
+    parser.add_argument("--username", type=str, default="demo",
+                        help="Gradio login username")
+    parser.add_argument("--password", type=str, default="hotpot123",
+                        help="Gradio login password")
     args = parser.parse_args()
 
     print("Loading model and tokenizer...")
@@ -346,7 +350,12 @@ def main():
     )
 
     print(f"\nReady — open http://localhost:{args.port}\n")
-    build_ui().launch(server_port=args.port, server_name="0.0.0.0", share=False)
+    build_ui().launch(
+        server_port=args.port,
+        server_name="0.0.0.0",
+        share=False,
+        auth=(args.username, args.password),
+    )
 
 
 if __name__ == "__main__":

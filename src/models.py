@@ -48,30 +48,18 @@ def load_model_and_tokenizer(
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    # if device == "cuda":
-    #     from transformers import BitsAndBytesConfig
-    #     bnb_cfg = BitsAndBytesConfig(
-    #         load_in_4bit=True,
-    #         bnb_4bit_compute_dtype=torch.float16,
-    #         bnb_4bit_use_double_quant=True,
-    #     )
-    #     base = AutoModelForCausalLM.from_pretrained(
-    #         model_name,
-    #         quantization_config=bnb_cfg,
-    #         device_map="auto",
-    #     )
-    # else:
-    #     base = AutoModelForCausalLM.from_pretrained(
-    #         model_name,
-    #         torch_dtype=torch.float16,
-    #     ).to(device)
-
     if device == "cuda":
-        # Load in bfloat16 — no quantization needed on A100/H100 (80 GB VRAM).
-        # The 3B model uses ~6 GB, well within budget.
+        # 4-bit quantization: reduces VRAM from ~6 GB to ~2 GB and improves
+        # inference speed on consumer GPUs (RTX 4090) via reduced memory bandwidth.
+        from transformers import BitsAndBytesConfig
+        bnb_cfg = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+        )
         base = AutoModelForCausalLM.from_pretrained(
             model_name,
-            torch_dtype=torch.bfloat16,
+            quantization_config=bnb_cfg,
             device_map="auto",
         )
     else:

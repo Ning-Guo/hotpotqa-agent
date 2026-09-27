@@ -1,6 +1,10 @@
 # HotpotQA Multi-Hop QA Agent
 
-A multi-hop question answering agent built with LangGraph + Qwen2.5-3B-Instruct, trained with GRPO and distilled with a Query LoRA adapter, evaluated on HotpotQA distractor split. All reasoning happens at inference time — no pre-computed chain-of-thought.
+Multi-hop QA requires reasoning across multiple documents — a problem that seems to call for structured decomposition. This project builds exactly that: a LangGraph pipeline over Qwen2.5-3B-Instruct, trained end-to-end with GRPO, with classify → decompose → retrieve → answer → verify happening at inference time.
+
+The most revealing finding came from a retriever upgrade. Switching from MiniLM to BGE raised context recall from 0.748 → 0.907 — and suddenly the multi-hop pipeline's error propagation became the dominant failure mode, not missing context. The best result (EM 0.592, F1 0.670) came from GRPO answer synthesis over single-hop retrieval, no decomposition.
+
+**The agent was solving a retrieval problem. Once retrieval was fixed, the pipeline got out of the way.**
 
 ---
 
@@ -173,3 +177,9 @@ Trained adapters and datasets on HuggingFace:
 - GRPO training data: `Norm11/qwen2.5-3b-sft-grpo-hotpotqa-dataset`
 - Query LoRA adapter: `Norm11/qwen2.5-3b-querylora-hotpotqa`
 - Query LoRA training data: `Norm11/qwen2.5-3b-querylora-hotpotqa-dataset`
+
+---
+
+## Deployment & Performance
+
+See [`DEPLOYMENT.md`](DEPLOYMENT.md) for cloud GPU setup (RunPod), API serving, and load test results comparing on-GPU vs remote latency.

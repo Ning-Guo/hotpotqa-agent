@@ -23,7 +23,7 @@ class Reasoner:
     model's unbiased reasoning rather than the GRPO answer-synthesis style.
     """
 
-    def __init__(self, model, tokenizer, device: str, max_new_tokens: int = 48):
+    def __init__(self, model, tokenizer, device: str, max_new_tokens: int = 24):
         self.model          = model
         self.tokenizer      = tokenizer
         self.device         = device
@@ -65,7 +65,7 @@ class Reasoner:
         Falls back to the original question if parsing fails.
         """
         prompt = self._rewrite_prompt(question)
-        raw    = self._generate(prompt, max_new_tokens=80)
+        raw    = self._generate(prompt, max_new_tokens=48)
         queries = self._parse_rewritten_queries(raw)
         return queries if len(queries) >= 2 else [question]
 
