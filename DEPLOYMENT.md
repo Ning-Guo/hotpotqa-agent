@@ -138,6 +138,159 @@ With BGE retrieval being fast, the dominant cost is LLM inference (Qwen2.5-3B on
 
 ---
 
+## Quick Re-deploy Checklist
+
+Complete steps to go from a fresh RunPod pod to a fully running service with monitoring.
+
+### 0. Pod setup
+
+- GPU: RTX 4090 24GB
+- Image: `runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04`
+- Expose ports: `8000` (API), `3000` (Grafana), `9090` (Prometheus), `7860` (Gradio, optional)
+
+### 1. Clone repo and install dependencies
+
+```bash
+cd /root
+git clone <your-repo-url> hotpotqa-agent && cd hotpotqa-agent
+
+# torchvision conflicts with torch 2.6.0 on the RunPod base image — remove it first
+pip uninstall torchvision torchaudio -y
+
+pip install -r requirements.txt
+
+# locust needs special handling due to system blinker conflict
+pip install locust --ignore-installed blinker
+```
+
+Verify environment is clean:
+```bash
+python -c "import torch; print(torch.__version__); import peft; print('peft ok')"
+# Expected: 2.6.0+cu124 / peft ok
+```
+
+### 2. Install Prometheus and Grafana binaries (one-time, not in requirements.txt)
+
+```bash
+# Prometheus
+cd /tmp
+wget -q https://github.com/prometheus/prometheus/releases/download/v2.51.2/prometheus-2.51.2.linux-amd64.tar.gz
+tar xzf prometheus-2.51.2.linux-amd64.tar.gz
+mv prometheus-2.51.2.linux-amd64/prometheus /usr/local/bin/
+
+# Grafana
+wget -q https://dl.grafana.com/oss/release/grafana-11.0.0.linux-amd64.tar.gz
+tar xzf grafana-11.0.0.linux-amd64.tar.gz
+mv grafana-v11.0.0 /opt/grafana
+cd /root/hotpotqa-agent
+```
+
+### 3. Configure Grafana for RunPod proxy
+
+Replace `<pod-id>` with your actual RunPod Pod ID (visible in the proxy URL):
+
+```bash
+POD_ID="<pod-id>"
+
+printf '[server]\nhttp_port = 3000\ndomain = %s-3000.proxy.runpod.net\nroot_url = https://%s-3000.proxy.runpod.net\n\n[security]\nadmin_password = admin123\ncookie_samesite = none\ncookie_secure = true\ncsrf_trusted_origins = %s-3000.proxy.runpod.net\n\n[users]\nallow_sign_up = false\n' \
+  "$POD_ID" "$POD_ID" "$POD_ID" > /opt/grafana/conf/custom.ini
+```
+
+### 4. Start the API
+
+```bash
+cd /root/hotpotqa-agent
+LOAD_INDEX=1 uvicorn api:app --host 0.0.0.0 --port 8000 > /tmp/api.log 2>&1 &
+
+# Wait for model to load (~60s), then verify
+sleep 60 && curl -s http://localhost:8000/health
+# Expected: {"status":"ok","model_loaded":true}
+```
+
+### 5. Start Prometheus and Grafana
+
+```bash
+prometheus \
+  --config.file=/root/hotpotqa-agent/monitoring/prometheus.yml \
+  --storage.tsdb.retention.time=7d \
+  --web.listen-address=0.0.0.0:9090 \
+  > /tmp/prometheus.log 2>&1 &
+
+/opt/grafana/bin/grafana server \
+  --homepath /opt/grafana \
+  --config /opt/grafana/conf/custom.ini \
+  > /tmp/grafana.log 2>&1 &
+
+sleep 5 && curl -s http://localhost:3000/api/health
+# Expected: {"database":"ok",...}
+```
+
+### 6. Add Prometheus datasource to Grafana
+
+Must be done once each time the Grafana database is new (grafana.db resets on fresh pod):
+
+```bash
+curl -s -X POST -u admin:admin123 \
+  -H "Content-Type: application/json" \
+  http://localhost:3000/api/datasources \
+  -d '{"name":"Prometheus","type":"prometheus","url":"http://localhost:9090","access":"proxy","isDefault":true,"jsonData":{}}' \
+  | python3 -m json.tool
+# Expected: "message": "Datasource added"
+```
+
+Verify in browser: `https://<pod-id>-3000.proxy.runpod.net`
+→ Login: `admin` / `admin123`
+→ Connections → Data sources → Prometheus → Save & test → green
+
+### 7. Restore Grafana dashboard
+
+Dashboard panels need to be recreated manually after a fresh pod (no persistent storage).
+See the **Grafana dashboard panels** table in the Observability Stack section below for all queries.
+
+Alternatively, export the dashboard JSON from Grafana UI (**Dashboard → Share → Export**) and save it to `monitoring/grafana/dashboards/agent.json` — then it survives across sessions.
+
+### 8. Verify full stack
+
+```bash
+# Send a test request
+curl -s -X POST http://localhost:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Were Scott Derrickson and Ed Wood of the same nationality?"}' \
+  | python3 -m json.tool
+
+# Check metrics are updating
+curl -s http://localhost:8000/metrics | grep -E "agent_requests_total|gpu_utilization"
+```
+
+### 9. Run load test
+
+```bash
+cd /root/hotpotqa-agent
+locust -f locustfile.py --host http://localhost:8000 \
+  --headless -u 5 -r 1 --run-time 60s
+```
+
+### Ports summary
+
+| Service | Local port | RunPod proxy URL |
+|---------|-----------|-----------------|
+| API | 8000 | `https://<pod-id>-8000.proxy.runpod.net` |
+| Grafana | 3000 | `https://<pod-id>-3000.proxy.runpod.net` |
+| Prometheus | 9090 | `https://<pod-id>-9090.proxy.runpod.net` |
+| Gradio UI | 7860 | `https://<pod-id>-7860.proxy.runpod.net` |
+
+### Known issues
+
+| Issue | Fix |
+|-------|-----|
+| `torchvision::nms does not exist` on startup | `pip uninstall torchvision torchaudio -y` |
+| Grafana login: `origin not allowed` | Set `GF_SERVER_ROOT_URL` and `csrf_trusted_origins` to match RunPod proxy domain (step 3) |
+| Grafana datasource `Cannot delete read-only data source` | `rm /opt/grafana/data/grafana.db` and restart Grafana, then re-add datasource via API (step 6) |
+| `gpu_utilization_percent` always 0 in Grafana | Use `max_over_time(gpu_utilization_percent[30s])` — inference bursts are shorter than the polling interval |
+| `locust` install fails with blinker conflict | `pip install locust --ignore-installed blinker` |
+
+---
+
 ## Observability Stack
 
 Added production monitoring to `api.py` covering GPU metrics, token accounting, per-node latency, and optional LLM tracing.
