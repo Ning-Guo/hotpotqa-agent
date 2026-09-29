@@ -14,3 +14,8 @@ tqdm>=4.65.0
 gradio>=4.0.0
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
+
+# Observability
+prometheus-client>=0.20.0   # /metrics endpoint + metric types
+nvidia-ml-py>=12.0.0        # pynvml — GPU stats (requires NVIDIA driver)
+langfuse>=2.0.0             # LLM tracing (optional — disabled if keys not set)

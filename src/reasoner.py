@@ -210,6 +210,15 @@ class Reasoner:
                 )
 
         generated = outputs[0][input_len:]
+
+        # Record token counts for the current request (thread-local, no-op if
+        # monitoring module is unavailable)
+        try:
+            from monitoring.token_context import add as _tok_add
+            _tok_add(input_tokens=input_len, output_tokens=len(generated))
+        except ImportError:
+            pass
+
         return self.tokenizer.decode(generated, skip_special_tokens=True).strip()
 
     def _parse_rewritten_queries(self, raw: str) -> list[str]:

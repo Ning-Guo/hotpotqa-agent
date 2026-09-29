@@ -1,0 +1,69 @@
+version: "3.9"
+
+# Monitoring stack for hotpotqa-agent
+# Starts: Prometheus, Grafana, Node-Exporter
+# The agent itself runs separately (uvicorn api:app --port 8000)
+#
+# Usage:
+#   docker compose -f docker-compose.monitoring.yml up -d
+#
+# Ports:
+#   Grafana    → http://localhost:3000  (admin / admin — change on first login)
+#   Prometheus → http://localhost:9090
+#
+# On RunPod expose ports 3000 and 9090 in the pod settings (or use SSH tunnel).
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle          # allows POST /-/reload
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      # Lets containers reach the host machine as "host.docker.internal" on Linux
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: host                   # needed to read host-level /proc stats correctly
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    ports:
+      - "9100:9100"
+
+volumes:
+  prometheus_data:
+  grafana_data:
