@@ -93,7 +93,7 @@ async def lifespan(app: FastAPI):
 
     # Observability setup (both are no-ops if not configured)
     init_langfuse()
-    start_gpu_collector(interval=5.0)
+    start_gpu_collector(interval=1.0)
 
     load_index = os.environ.get("LOAD_INDEX", "1") == "1"
 
