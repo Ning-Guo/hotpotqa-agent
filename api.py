@@ -37,8 +37,9 @@ from contextlib import asynccontextmanager
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
-from prometheus_client import make_asgi_app
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 import config
 from src.models import load_model_and_tokenizer
@@ -134,8 +135,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Mount Prometheus metrics endpoint
-app.mount("/metrics", make_asgi_app())
 
 
 # ---------------------------------------------------------------------------
@@ -180,6 +179,11 @@ class AnswerResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
+
+@app.get("/metrics", include_in_schema=False)
+async def metrics():
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
 
 @app.get("/health")
 async def health():
