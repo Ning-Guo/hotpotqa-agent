@@ -183,3 +183,19 @@ Trained adapters and datasets on HuggingFace:
 ## Deployment & Performance
 
 See [`DEPLOYMENT.md`](DEPLOYMENT.md) for cloud GPU setup (RunPod), API serving, and load test results comparing on-GPU vs remote latency.
+
+---
+
+## Demo UI
+
+The Gradio demo (`serve.py`) streams each reasoning step in real time and highlights the retrieved passages used to generate the answer.
+
+![Gradio UI](assets/gradio_overview.png)
+
+---
+
+## Monitoring Dashboard
+
+Prometheus + Grafana dashboard tracking GPU utilisation, request latency, token consumption, and per-node pipeline timing.
+
+![Grafana — overview](assets/grafana_overview.png)

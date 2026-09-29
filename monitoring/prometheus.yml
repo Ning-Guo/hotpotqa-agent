@@ -7,7 +7,7 @@ scrape_configs:
   - job_name: hotpotqa-agent
     static_configs:
       - targets:
-          - host.docker.internal:8000  # reaches the host from inside Docker on Linux
+          - localhost:8000  # reaches the host from inside Docker on Linux
     metrics_path: /metrics
 
   # Host OS metrics (CPU, disk, network)

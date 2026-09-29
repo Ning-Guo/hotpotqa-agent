@@ -135,3 +135,146 @@ With BGE retrieval being fast, the dominant cost is LLM inference (Qwen2.5-3B on
 ### Finding
 
 `max_new_tokens` reduction gives ~15% improvement on aggregated p50 (6100ms → 5200ms on-GPU), driven mainly by comparison and random questions which generate short answers. Bridge latency is unchanged — its bottleneck is 5 sequential LLM calls, not token count per call.
+
+---
+
+## Observability Stack
+
+Added production monitoring to `api.py` covering GPU metrics, token accounting, per-node latency, and optional LLM tracing.
+
+### New files
+
+```
+monitoring/
+├── __init__.py
+├── metrics.py          # Prometheus metric definitions + GPU background poller
+├── tracer.py           # Langfuse request-trace wrapper (graceful no-op if unconfigured)
+├── token_context.py    # Thread-local token counter (input/output tokens per request)
+├── prometheus.yml      # Prometheus scrape config (targets: localhost:8000, node-exporter)
+└── grafana/
+    └── provisioning/
+        └── datasources/
+            └── prometheus.yml   # Auto-provisions Prometheus datasource in Grafana
+docker-compose.monitoring.yml    # Prometheus + Grafana + node-exporter (for Docker envs)
+```
+
+### Modified files
+
+| File | Change |
+|------|--------|
+| `api.py` | API key auth (`X-Api-Key` header), `/metrics` endpoint, Prometheus instrumentation, Langfuse trace per request, `request_id` + `tokens` in response |
+| `src/reasoner.py` | `_generate()` records input/output token counts via `token_context` |
+| `requirements.txt` | Added `prometheus-client`, `nvidia-ml-py`, `langfuse`, `locust` |
+
+### Metrics exposed at `GET /metrics`
+
+| Metric | Type | Description |
+|--------|------|-------------|
+| `agent_requests_total{status}` | Counter | Request count by status (`ok` / `error`) |
+| `agent_request_latency_seconds` | Histogram | End-to-end /ask latency |
+| `agent_node_latency_seconds{node}` | Histogram | Wall-clock time per LangGraph node |
+| `agent_input_tokens_total` | Counter | Cumulative prompt tokens (all model calls) |
+| `agent_output_tokens_total` | Counter | Cumulative generated tokens |
+| `agent_verify_failures_total` | Counter | verify node returned `verified=False` |
+| `agent_fallback_total{type}` | Counter | Fallback triggers (`local` / `web`) |
+| `agent_question_type_total{qtype}` | Counter | Questions by type (`bridge` / `comparison`) |
+| `gpu_memory_used_bytes{gpu_id}` | Gauge | VRAM in use (polled every 1s) |
+| `gpu_memory_total_bytes{gpu_id}` | Gauge | Total VRAM |
+| `gpu_utilization_percent{gpu_id}` | Gauge | GPU compute utilisation |
+| `gpu_temperature_celsius{gpu_id}` | Gauge | GPU die temperature |
+
+### API changes
+
+**New response fields:**
+```json
+{
+  "answer": "yes",
+  "verified": true,
+  "qtype": "comparison",
+  "steps": ["classify", "rewrite", "retrieve_comparison", "answer_final", "verify"],
+  "request_id": "b3d2a1f0-...",
+  "tokens": { "input": 3241, "output": 12 }
+}
+```
+
+**Auth (optional):** set `API_KEYS=key1,key2` env var. If unset, auth is disabled.
+```bash
+curl -X POST http://localhost:8000/ask \
+  -H "X-Api-Key: key1" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "...", "tenant_id": "my-app"}'
+```
+
+### RunPod deployment (no Docker)
+
+Prometheus and Grafana run as standalone binaries. Install once:
+
+```bash
+# Prometheus
+cd /tmp
+wget -q https://github.com/prometheus/prometheus/releases/download/v2.51.2/prometheus-2.51.2.linux-amd64.tar.gz
+tar xzf prometheus-2.51.2.linux-amd64.tar.gz
+mv prometheus-2.51.2.linux-amd64/prometheus /usr/local/bin/
+
+# Grafana
+wget -q https://dl.grafana.com/oss/release/grafana-11.0.0.linux-amd64.tar.gz
+tar xzf grafana-11.0.0.linux-amd64.tar.gz
+mv grafana-v11.0.0 /opt/grafana
+```
+
+Start everything (script saved at `/root/start_monitoring.sh`):
+
+```bash
+# Prometheus
+prometheus \
+  --config.file=/root/hotpotqa-agent/monitoring/prometheus.yml \
+  --storage.tsdb.retention.time=7d \
+  --web.listen-address=0.0.0.0:9090 \
+  > /tmp/prometheus.log 2>&1 &
+
+# Grafana — replace <pod-id> with your RunPod pod ID
+GF_SERVER_HTTP_PORT=3000 \
+GF_SERVER_ROOT_URL=https://<pod-id>-3000.proxy.runpod.net \
+GF_SERVER_DOMAIN=<pod-id>-3000.proxy.runpod.net \
+/opt/grafana/bin/grafana server \
+  --homepath /opt/grafana \
+  --config /opt/grafana/conf/custom.ini \
+  > /tmp/grafana.log 2>&1 &
+```
+
+Expose ports `3000` and `9090` in RunPod pod settings to access via proxy.
+
+**Grafana datasource:** add manually via API (provisioning file is present but Grafana DB takes precedence on RunPod):
+```bash
+curl -s -X POST -u admin:admin123 \
+  -H "Content-Type: application/json" \
+  http://localhost:3000/api/datasources \
+  -d '{"name":"Prometheus","type":"prometheus","url":"http://localhost:9090","access":"proxy","isDefault":true,"jsonData":{}}'
+```
+
+### Grafana dashboard panels
+
+| Panel | Query | Type |
+|-------|-------|------|
+| Request Rate | `rate(agent_requests_total[1m])` | Time series |
+| Latency P50/P95 | `histogram_quantile(0.5\|0.95, rate(agent_request_latency_seconds_bucket[5m]))` | Time series |
+| GPU VRAM % | `gpu_memory_used_bytes / gpu_memory_total_bytes * 100` | Gauge |
+| GPU Utilization | `max_over_time(gpu_utilization_percent[30s])` | Gauge |
+| Token Rate | `rate(agent_input/output_tokens_total[1m])` | Time series |
+| Per-Node Latency | `histogram_quantile(0.5, sum by(node,le)(rate(agent_node_latency_seconds_bucket[5m])))` | Time series |
+
+> **Token rate note:** input tokens (~3000/req) vastly outnumber output tokens (~10/req). Use logarithmic Y-axis scale to see both on the same panel.
+
+> **GPU utilization note:** inference bursts last 100–300ms on RTX 4090. Use `max_over_time(...[30s])` to capture peaks that fall between 1s polling intervals.
+
+### Langfuse tracing (optional)
+
+Per-request LLM traces with per-node input/output snapshots. Disabled by default; enable by setting env vars:
+
+```bash
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_HOST=https://cloud.langfuse.com   # or self-hosted URL
+```
+
+Each `/ask` request creates one Langfuse trace containing a span per LangGraph node (classify, decompose, retrieve, answer, verify) with inputs, outputs, and timing.
